@@ -16,7 +16,7 @@ class App extends Component {
       return 0
     } else if (val === 'projects?all=true') {
       return 1
-    } else if (val === 'projects?my=true') {
+    } else if (val === 'registry') {
       return 2
     }
   }
