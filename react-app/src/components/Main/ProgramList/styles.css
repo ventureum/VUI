@@ -27,6 +27,9 @@
 :root:root .program-list .ReactTable .rt-td {
   padding: 7px 5px;
 }
+:root:root .program-list .ReactTable .rt-table {
+  overflow: auto;
+}
 :root:root .program-list .ReactTable .rt-table::-webkit-scrollbar {
   width: 5px;
   height: 5px;
