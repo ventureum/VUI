@@ -5,7 +5,68 @@ import Application from './Application/index.jsx'
 import ProgramList from './ProgramList/index.jsx'
 import Registry from './Registry/index.jsx'
 
+import commafy from 'commafy'
+import store from '../../store'
+import registry from '../../services/registry'
+import token from '../../services/token'
+
 class Main extends Component {
+  constructor () {
+    super()
+
+    this.state = {
+      address: null,
+      account: null,
+      ethBalance: null,
+      vthBalance: null,
+      isLoading: true
+    }
+  }
+  componentDidMount () {
+    this.updateAddress()
+    this.updateBalance()
+    this.setState({
+      isLoading: false
+    })
+    console.log(this)
+
+    store.subscribe(x => {
+      this.updateAddress()
+      this.updateBalance()
+    })
+  }
+  async updateAddress () {
+    var address = registry.getAccount()
+
+    this.setState({
+      address
+    })
+  }
+  async updateBalance () {
+    try {
+      const vthBalance = await token.getBalance()
+
+      this.setState({
+        vthBalance: (vthBalance | 0)
+      })
+    } catch (error) {
+      this.setState({
+        vthBalance: null
+      })
+    }
+
+    try {
+      const ethBalance = await registry.getEthBalance()
+
+      this.setState({
+        ethBalance: ethBalance.toNumber()
+      })
+    } catch (error) {
+      this.setState({
+        ethBalance: null
+      })
+    }
+  }
   render() {
     return (
       <div className="main column twelve wide">
