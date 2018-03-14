@@ -7,6 +7,12 @@
 :root:root:root .main .ui.grid {
   margin: 0;
 }
+:root:root:root .main .ui.grid > .row {
+  padding-bottom: 0;
+}
+:root:root:root .main .ui.grid .row .column + .column {
+  padding-left: 0;
+}
 :root:root:root .main .top-bar {
   width: 100%;
   box-shadow: 0 2px 4px 0 rgba(0,0,0,0.5);

@@ -5,6 +5,7 @@ import moment from 'moment'
 import { Popup } from 'semantic-ui-react'
 import registry from '../../../../services/registry'
 import InProgress from './InProgress'
+import Countdown from '../Countdown'
 
 import './styles.css'
 
@@ -13,8 +14,8 @@ class Challenge extends Component {
     super()
 
     this.state = {
-      applicationExpiry: null,
-      minDeposit: null,
+      applicationExpiry: 1527811200,
+      minDeposit: 100,
       currentDeposit: null,
       inProgress: false
     }
@@ -53,16 +54,26 @@ class Challenge extends Component {
               />
             </div>
           </div>
-          <div className='ui divider' />
           <div className='column sixteen wide center aligned'>
             <form className='ui form'>
+              <div className='ui divider' />
+              <div className='column sixteen wide center aligned'>
+                <div className='ui message info'>
+                  <p>Challenge stage ends</p>
+                  <p><strong>{stageEnd}</strong></p>
+                  <p>Remaining time: <Countdown
+                    endDate={stageEndMoment}
+                    onExpire={this.onCountdownExpire.bind(this)} /></p>
+                </div>
+              </div>
+              <div className='ui divider' />
               <div className='ui field'>
-                <label>Challenge </label>
+                <label>Challenge Project</label>
               </div>
               <div className='ui field'>
                 <div className='ui message default'>
                   <p>Minimum deposit required</p>
-                  <p><strong>{minDeposit ? commafy(minDeposit) : '-'} ADT</strong></p>
+                  <p><strong>{minDeposit ? commafy(minDeposit) : '-'} VTH</strong></p>
                 </div>
               </div>
               <div className='ui field'>
@@ -79,6 +90,13 @@ class Challenge extends Component {
         {inProgress ? <InProgress /> : null}
       </div>
     )
+  }
+
+  onCountdownExpire () {
+    // allow some time for new block to get mined and reload page
+    setTimeout(() => {
+      window.location.reload()
+    }, 15000)
   }
 
   async getMinDeposit () {

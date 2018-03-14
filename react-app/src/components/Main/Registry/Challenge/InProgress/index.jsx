@@ -10,7 +10,7 @@ class InProgress extends Component {
 
   render () {
     return (
-      <div className='in-progress'>
+      <div className='challenge-in-progress'>
         <div className='content'>
           <div><strong>Challenge in progress. </strong>
             <Loader indeterminate active inline />
