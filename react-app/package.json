@@ -21,6 +21,7 @@
     "semantic-ui-css": "^2.3.0",
     "semantic-ui-react": "^0.78.3",
     "solidity-sha3": "^0.4.1",
+    "toastr": "^2.1.4",
     "truffle-contract": "^3.0.4",
     "web3-detect-network": "0.0.17"
   },

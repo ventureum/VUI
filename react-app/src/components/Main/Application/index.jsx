@@ -7,7 +7,7 @@ class Application extends Component {
     return (
       <div className="application">
         <div className="ui grid stackable padded">
-          <div className="column sixteen wide">
+          <div className="column eight wide">
             <div className="application-form">
               <div className="ui grid stackable">
                 <div className="column sixteen wide left aligned">
@@ -62,7 +62,7 @@ class Application extends Component {
                     </div>
                     <div className="field required">
                       <label>
-                        Total ADT to Stake (Min:
+                        Total VTH to Stake (Min:
                         <a href="#!">
                                     10,000 VTH
                                 </a>)
