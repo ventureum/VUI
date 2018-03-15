@@ -88,7 +88,7 @@ class VoteCommit extends Component {
               VOTING – COMMIT
               <Popup
                 trigger={<i className='icon info circle' />}
-                content='The first phase of the voting process is the commit phase where the ADT holder stakes a hidden amount of votes to SUPPORT or OPPOSE the domain application. The second phase is the reveal phase where the ADT holder reveals the staked amount of votes to either the SUPPORT or OPPOSE side.'
+                content='The first phase of the voting process is the commit phase where the VTH holder stakes a hidden amount of votes to SUPPORT or OPPOSE the domain application. The second phase is the reveal phase where the VTH holder reveals the staked amount of votes to either the SUPPORT or OPPOSE side.'
               />
             </div>
           </div>
@@ -105,107 +105,105 @@ class VoteCommit extends Component {
           </div>
           : null}
           <div className='column sixteen wide center aligned'>
-            <form>
-              <div className='ui divider' />
-              <div className='column sixteen wide center aligned'>
-                <div className='ui message info'>
-                  <p>
-                  Voting commit stage ends
-                  </p>
-                  <p><strong>{stageEnd}</strong></p>
-                  <p>Remaining time: <Countdown
-                    endDate={stageEndMoment}
-                    onExpire={this.onCountdownExpire.bind(this)} /></p>
+            <div className='ui divider' />
+            <div className='column sixteen wide center aligned'>
+              <div className='ui message info'>
+                <p>
+                Voting commit stage ends
+                </p>
+                <p><strong>{stageEnd}</strong></p>
+                <p>Remaining time: <Countdown
+                  endDate={stageEndMoment}
+                  onExpire={this.onCountdownExpire.bind(this)} /></p>
+              </div>
+            </div>
+            <div className='ui divider' />
+            <div className='column sixteen wide center aligned'>
+              <form
+                onSubmit={this.onFormSubmit}
+                className='ui form center aligned'>
+                <div className='ui field'>
+                  <label>SUPPORT or OPPOSE {domain}</label>
                 </div>
-              </div>
-              <div className='ui divider' />
-              <div className='column sixteen wide center aligned'>
-                <form
-                  onSubmit={this.onFormSubmit}
-                  className='ui form center aligned'>
+                <div className='ui field'>
+                  <p>Challenge ID: <label className='ui label'>{challengeId}</label></p>
+                </div>
+                <div className='ui field'>
+                  <label>Enter Votes to Commit</label>
+                  <div className='ui input small'>
+                    <input
+                      type='text'
+                      placeholder='100'
+                      onKeyUp={this.onDepositKeyUp}
+                    />
+                  </div>
+                </div>
+                <div className='ui field'>
+                  <label>Vote Option</label>
+                </div>
+                <div className='ui two fields VoteOptions'>
                   <div className='ui field'>
-                    <label>SUPPORT or OPPOSE {domain}</label>
+                    <Radio
+                      label='SUPPORT'
+                      name='voteOption'
+                      value='1'
+                      checked={this.state.voteOption === 1}
+                      onChange={this.onVoteOptionChange}
+                    />
                   </div>
                   <div className='ui field'>
-                    <p>Challenge ID: <label className='ui label'>{challengeId}</label></p>
+                    <Radio
+                      label='OPPOSE'
+                      name='voteOption'
+                      value='0'
+                      checked={this.state.voteOption === 0}
+                      onChange={this.onVoteOptionChange}
+                    />
                   </div>
-                  <div className='ui field'>
-                    <label>Enter Votes to Commit</label>
-                    <div className='ui input small'>
-                      <input
-                        type='text'
-                        placeholder='100'
-                        onKeyUp={this.onDepositKeyUp}
-                      />
-                    </div>
+                </div>
+                <div className='ui field'>
+                  <label>Secret Phrase<br /><small>PLEASE SAVE THIS. This random phrase (known as a "salt") will be required to reveal your vote and claim rewards.</small></label>
+                  <div className='ui message tiny default SaltField'>
+                    {salt}
                   </div>
-                  <div className='ui field'>
-                    <label>Vote Option</label>
-                  </div>
-                  <div className='ui two fields VoteOptions'>
-                    <div className='ui field'>
-                      <Radio
-                        label='SUPPORT'
-                        name='voteOption'
-                        value='1'
-                        checked={this.state.voteOption === 1}
-                        onChange={this.onVoteOptionChange}
-                      />
-                    </div>
-                    <div className='ui field'>
-                      <Radio
-                        label='OPPOSE'
-                        name='voteOption'
-                        value='0'
-                        checked={this.state.voteOption === 0}
-                        onChange={this.onVoteOptionChange}
-                      />
-                    </div>
-                  </div>
-                  <div className='ui field'>
-                    <label>Secret Phrase<br /><small>PLEASE SAVE THIS. This random phrase (known as a "salt") will be required to reveal your vote and claim rewards.</small></label>
-                    <div className='ui message tiny default SaltField'>
-                      {salt}
-                    </div>
-                  </div>
-                  <div className='ui field'>
-                    <label><small>Download commit info required for reveal stage</small></label>
-                    <button
-                      onClick={this.onDownload}
-                      title='Download commit info'
-                      className={`ui button ${enableDownload ? '' : 'disabled'} right labeled icon ${commitDownloaded ? 'default' : 'blue'}`}>
-                      Download Commit
-                      <i className='icon download' />
+                </div>
+                <div className='ui field'>
+                  <label><small>Download commit info required for reveal stage</small></label>
+                  <button
+                    onClick={this.onDownload}
+                    title='Download commit info'
+                    className={`ui button ${enableDownload ? '' : 'disabled'} right labeled icon ${commitDownloaded ? 'default' : 'blue'}`}>
+                    Download Commit
+                    <i className='icon download' />
+                  </button>
+                </div>
+                {commitDownloaded
+                ? <div className='ui field'>
+                  <label><small>Download a calendar reminder for revealing vote</small></label>
+                  <button
+                    onClick={this.onReminderDownload}
+                    title='Download commit info'
+                    className={`ui mini button right labeled icon ${revealReminderDownloaded ? 'default' : 'blue'}`}>
+                    Reveal Reminder
+                    <i className='icon download' />
+                  </button>
+                </div>
+                : null}
+                <div className='ui field'>
+                  {(voteOption === null || !votes || !commitDownloaded)
+                    ? <button
+                      className='ui button disabled'>
+                      {voteOption === null ? 'Select Vote Option' : (!votes ? 'Enter votes' : 'Vote')}
                     </button>
-                  </div>
-                  {commitDownloaded
-                  ? <div className='ui field'>
-                    <label><small>Download a calendar reminder for revealing vote</small></label>
-                    <button
-                      onClick={this.onReminderDownload}
-                      title='Download commit info'
-                      className={`ui mini button right labeled icon ${revealReminderDownloaded ? 'default' : 'blue'}`}>
-                      Reveal Reminder
-                      <i className='icon download' />
-                    </button>
-                  </div>
-                  : null}
-                  <div className='ui field'>
-                    {(voteOption === null || !votes || !commitDownloaded)
-                      ? <button
-                        className='ui button disabled'>
-                        {voteOption === null ? 'Select Vote Option' : (!votes ? 'Enter votes' : 'Vote')}
-                      </button>
-                    : <button
-                      type='submit'
-                      className={`ui button ${voteOption ? 'blue' : 'purple'} right labeled icon`}>
-                        VOTE TO {voteOption ? 'SUPPORT' : 'OPPOSE'} <i className={`icon thumbs ${voteOption ? 'up' : 'down'}`} />
-                    </button>
-                    }
-                  </div>
-                </form>
-              </div>
-            </form>
+                  : <button
+                    type='submit'
+                    className={`ui button ${voteOption ? 'blue' : 'purple'} right labeled icon`}>
+                      VOTE TO {voteOption ? 'SUPPORT' : 'OPPOSE'} <i className={`icon thumbs ${voteOption ? 'up' : 'down'}`} />
+                  </button>
+                  }
+                </div>
+              </form>
+            </div>
           </div>
         </div>
         {inProgress ? <InProgress /> : null}

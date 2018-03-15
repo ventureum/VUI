@@ -28,10 +28,13 @@ class SideMenu extends Component {
                 <a onClick={this.handleUrlChangeWrapper('apply')} href="/apply">Apply Now</a>
               </li>
               <li className={"item " + (this.props.mainIndex === 1 ? "active" : "")}>
-                <a onClick={this.handleUrlChangeWrapper('projects?all=true')} href="/projects?all=true">All Projects</a>
+                <a onClick={this.handleUrlChangeWrapper('projects')} href="/projects">All Projects</a>
               </li>
               <li className={"item " + (this.props.mainIndex === 2 ? "active" : "")}>
                 <a onClick={this.handleUrlChangeWrapper('registry')} href="/registry">Registry Status</a>
+              </li>
+              <li className={"item " + (this.props.mainIndex === 3 ? "active" : "")}>
+                <a onClick={this.handleUrlChangeWrapper('account')} href="/account">Account Dashboard</a>
               </li>
             </ul>
           </div>

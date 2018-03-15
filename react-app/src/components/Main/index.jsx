@@ -4,6 +4,7 @@ import styles from './styles.css'
 import Application from './Application/index.jsx'
 import ProgramList from './ProgramList/index.jsx'
 import Registry from './Registry/index.jsx'
+import Account from './Account/index.jsx'
 
 import commafy from 'commafy'
 import store from '../../store'
@@ -104,9 +105,10 @@ class Main extends Component {
             </div>
           </div>
           <span className="main-wrapper">
-            {this.props.mainIndex === 0 && <Application></Application>}
-            {this.props.mainIndex === 1 && <ProgramList list={[]}></ProgramList>}
-            {this.props.mainIndex === 2 && <Registry></Registry>}
+            {this.props.mainIndex === 0 && <Application />}
+            {this.props.mainIndex === 1 && <ProgramList list={[]} />}
+            {this.props.mainIndex === 2 && <Registry />}
+            {this.props.mainIndex === 3 && <Account />}
           </span>
         </div>
       </div>

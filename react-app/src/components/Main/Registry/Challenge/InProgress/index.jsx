@@ -16,7 +16,7 @@ class InProgress extends Component {
             <Loader indeterminate active inline />
           </div>
           <p>You will receive <strong>two</strong> MetaMask prompts:</p>
-          <p><strong>First prompt:</strong> Allow adChain Registry contract to transfer adToken deposit from your account.</p>
+          <p><strong>First prompt:</strong> Allow adChain Registry contract to transfer vToken deposit from your account.</p>
           <p><strong>Second prompt:</strong> Submit challenge to the adChain Registry contract.</p>
         </div>
       </div>

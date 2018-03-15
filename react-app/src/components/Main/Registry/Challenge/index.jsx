@@ -50,7 +50,7 @@ class Challenge extends Component {
               IN APPLICATION
               <Popup
                 trigger={<i className='icon info circle' />}
-                content='ADT holders are encouraged to challenge publisher applications where the token holders believe the Publisher to be fraudulent.'
+                content='VTH holders are encouraged to challenge publisher applications where the token holders believe the Publisher to be fraudulent.'
               />
             </div>
           </div>

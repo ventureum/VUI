@@ -71,7 +71,7 @@ class PlcrService {
         }
 
         if (map.votesFor) {
-          // nano ADT to normal ADT
+          // nano VTH to normal VTH
           map.votesFor = map.votesFor / Math.pow(10, token.decimals)
 
           // clamp

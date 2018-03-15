@@ -10,7 +10,7 @@
 :root:root:root .main .ui.grid > .row {
   padding-bottom: 0;
 }
-:root:root:root .main .ui.grid .row .column + .column {
+:root:root:root .main .ui.grid .column + .column {
   padding-left: 0;
 }
 :root:root:root .main .top-bar {

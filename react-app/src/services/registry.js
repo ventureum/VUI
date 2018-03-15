@@ -400,7 +400,7 @@ class RegistryService {
       throw new Error('Domain is required')
     }
 
-    // nano ADT to normal ADT
+    // nano VTH to normal VTH
     const bigVotes = big(votes).mul(tenToTheNinth).toString(10)
 
     domain = domain.toLowerCase()
@@ -619,7 +619,7 @@ class RegistryService {
   }
 
   async requestVotingRights (votes) {
-    // normal ADT to nano ADT
+    // normal VTH to nano VTH
     const tokens = big(votes).mul(tenToTheNinth).toString(10)
 
     await token.approve(plcr.address, tokens)

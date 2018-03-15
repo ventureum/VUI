@@ -14,10 +14,12 @@ class App extends Component {
   calculateIndex(val) {
     if (val === 'apply') {
       return 0
-    } else if (val === 'projects?all=true') {
+    } else if (val === 'projects') {
       return 1
     } else if (val === 'registry') {
       return 2
+    } else if (val === 'account') {
+      return 3
     }
   }
   handleUrlChange (val) {
