@@ -52,6 +52,9 @@
 :root:root:root .side-menu .side-menu-list {
   padding: 1em;
 }
+:root:root:root .side-menu .side-menu-list .list.ui {
+  margin: 0;
+}
 :root:root:root .side-menu .side-menu-list .list-title {
   color: rgba(255,255,255,0.66);
 }

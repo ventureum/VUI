@@ -2,9 +2,6 @@ import React, { Component } from 'react'
 import CSSModules from 'react-css-modules'
 import styles from './styles.css'
 import { Popup, Icon } from 'semantic-ui-react'
-import Challenge from './Challenge'
-import VoteCommit from './VoteCommit'
-import VoteReveal from './VoteReveal'
 
 class Registry extends Component {
   render() {
@@ -73,7 +70,7 @@ class Registry extends Component {
               </div>
             </div>
           </div>
-          <div className="row">
+         {/* <div className="row">
             <div className="column eight wide">
               <VoteCommit />
             </div>
@@ -85,7 +82,7 @@ class Registry extends Component {
             <div className="column eight wide">
               <Challenge />
             </div>
-          </div>
+          </div>*/}
         </div>
       </div>
 
