@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
 import CSSModules from 'react-css-modules'
 import { Popup, Modal } from 'semantic-ui-react'
+import moment from 'moment'
 import styles from './styles.css'
-import Challenge from './Challenge'
+import Delegate from './Delegate'
 import VoteCommit from './VoteCommit'
 import VoteReveal from './VoteReveal'
+import Countdown from './Countdown'
 
 class ProgramList extends Component {
 	constructor (props) {
@@ -17,43 +19,37 @@ class ProgramList extends Component {
 					stage: 'Proxy Vote - Delegate',
 					stageEnd: '2018-04-10 00:00:00',
 					action: 'delegate',
-					currentMileStone: 'MileStone B'
+					currentMileStone: 'Milestone B'
 				}, {
 					projectName: 'project-2',
 					stage: 'Proxy Vote - Commit',
 					stageEnd: '2018-04-15 00:00:00',
 					action: 'vote',
-					currentMileStone: 'MileStone B'
+					currentMileStone: 'Milestone B'
 				}, {
 					projectName: 'project-3',
 					stage: 'Proxy Vote - Reveal',
 					stageEnd: '2018-04-20 00:00:00',
 					action: 'reveal',
-					currentMileStone: 'MileStone B'
+					currentMileStone: 'Milestone B'
 				}, {
 					projectName: 'project-4',
 					stage: 'Put Option - Commit',
 					stageEnd: '2018-06-10 00:00:00',
 					action: 'vote',
-					currentMileStone: 'MileStone B'
+					currentMileStone: 'Milestone B'
 				}, {
 					projectName: 'project-5',
-					stage: 'Put Option - Reveal',
-					stageEnd: '2018-06-15 00:00:00',
-					action: 'reveal',
-					currentMileStone: 'MileStone B'
-				}, {
-					projectName: 'project-6',
 					stage: 'Refund',
 					stageEnd: '2018-06-20 00:00:00',
 					action: 'withdraw',
-					currentMileStone: 'MileStone B'
+					currentMileStone: 'Milestone B'
 				}, {
-					projectName: 'project-7',
+					projectName: 'project-6',
 					stage: 'Circuit Breaker Trigger',
 					stageEnd: '2018-06-20 00:00:00',
 					action: 'merge',
-					currentMileStone: 'MileStone B'
+					currentMileStone: 'Milestone B'
 				}
       ]
     }
@@ -72,28 +68,35 @@ class ProgramList extends Component {
               </a>
             </div>
             <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}><span className="">{project.currentMileStone}</span></div>
+            <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}><span className="">{project.stage}</span></div>
+            <div className="rt-td Number" style={{flex: '150 0 auto', width: '150px'}}>{project.stageEnd}</div>
             <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}>
-              <Modal trigger={<a className="ui mini button blue" href="#!" title="Challenge">{project.action}</a>}>
+              <Modal trigger={<a className={"ui mini button" + (project.stage === 'Proxy Vote - Delegate' ? ' purple' : ' blue')} href="#!" title="Challenge">{project.action}</a>}>
                 <Modal.Header>{project.stage}</Modal.Header>
                 <Modal.Content>
-                  {project.action === 'delegate' && <Challenge />}
-                  {project.action === 'vote' && <VoteCommit />}
-                  {project.action === 'reveal' && <VoteReveal />}
+                  {project.action === 'delegate' && <Delegate stage={project.stage} endDate={moment(project.stageEnd, "YYYY-MM-DD HH:mm:ss").unix()} />}
+                  {project.action === 'vote' && <VoteCommit stage={project.stage} endDate={moment(project.stageEnd, "YYYY-MM-DD HH:mm:ss").unix()} />}
+                  {project.action === 'reveal' && <VoteReveal stage={project.stage} endDate={moment(project.stageEnd, "YYYY-MM-DD HH:mm:ss").unix()} />}
                   {project.action === 'withdraw' && 
                     <div className="column five wide">
                       <div className='withdraw-voting-rights-container'>
                         <div className='ui grid stackable center aligned'>
-                          <div className='column sixteen wide'>
-                            <p>Withdraw Voting Rights
-                              <Popup
-                                trigger={<i className='icon info circle' />}
-                                content='Withdraw vToken held by the PLCR contract. VToken is locked up during voting and unlocked after the reveal stage. When it is unlocked you may withdraw the vToken to your account at any time.'
-                              />
-                            </p>
-                            <div><small>Available unlocked VTH: 100<strong> (Locked VTH: 10)</strong></small></div>
+                          <div className='column sixteen wide ui form'>
+                            <div className='column sixteen wide center aligned field'>
+                              <div className='ui message info'>
+                                <p>
+                                Withdraw stage ends
+                                </p>
+                                <p><strong>{project.stageEnd}</strong></p>
+                                <p>Remaining time: <Countdown endDate={moment(moment(project.stageEnd, "YYYY-MM-DD HH:mm:ss").valueOf())} /></p>
+                              </div>
+                            </div>
+                            <div className="field">
+                              <label>Available ETH: <strong>100</strong></label>
+                            </div>
                             <div>
                               <button className='ui button blue tiny'>
-                                Withdraw ADT
+                                Withdraw VTH
                               </button>
                             </div>
                           </div>
@@ -105,9 +108,7 @@ class ProgramList extends Component {
                 </Modal.Content>
               </Modal>
             </div>
-            <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}><span className="">{project.stage}</span></div>
-            <div className="rt-td Number" style={{flex: '150 0 auto', width: '150px'}}>{project.stageEnd}</div>
-          </div>
+            </div>
         </div>
   		)
   	}
@@ -128,10 +129,6 @@ class ProgramList extends Component {
 	                    <div className="rt-resizer"></div>
 	                  </div>
 	                  <div className=" rt-resizable-header -cursor-pointer rt-th" style={{flex: '200 0 auto', width: '200px'}}>
-	                    <div className="rt-resizable-header-content">Action</div>
-	                    <div className="rt-resizer"></div>
-	                  </div>
-	                  <div className=" rt-resizable-header -cursor-pointer rt-th" style={{flex: '200 0 auto', width: '200px'}}>
 	                    <div className="rt-resizable-header-content">Stage</div>
 	                    <div className="rt-resizer"></div>
 	                  </div>
@@ -139,6 +136,10 @@ class ProgramList extends Component {
 	                    <div className="rt-resizable-header-content">Stage Ends</div>
 	                    <div className="rt-resizer"></div>
 	                  </div>
+                    <div className=" rt-resizable-header -cursor-pointer rt-th" style={{flex: '200 0 auto', width: '200px'}}>
+                      <div className="rt-resizable-header-content">Action</div>
+                      <div className="rt-resizer"></div>
+                    </div>
 	                </div>
 	              </div>
 	              <div className="rt-tbody" style={{minWidth: '600px'}}>

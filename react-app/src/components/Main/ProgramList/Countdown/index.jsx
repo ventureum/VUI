@@ -9,10 +9,9 @@ class Countdown extends Component {
     super()
 
     const endDate = props.endDate
-
     this.state = {
       endDate: endDate || moment(),
-      countdown: '00:00:00',
+      countdown: this.calculateCountdownStr(endDate),
       isExpired: false,
 
       // expired if no endDate set on init
@@ -70,32 +69,19 @@ class Countdown extends Component {
     )
   }
 
-  tick () {
-    const {endDate, onExpireCalled} = this.state
-
-    if (!endDate) {
-      if (this._isMounted) {
-        this.setState({
-          countdown: '00:00:00',
-          isExpired: true
-        })
-      }
-
-      return false
-    }
-
+  calculateCountdownStr (endDate) {
     const now = moment()
     const diff = endDate.diff(now, 'seconds')
 
     if (diff <= 0) {
       if (this._isMounted) {
         this.setState({
-          countdown: '00:00:00',
+          countdown: '',
           isExpired: true
         })
       }
 
-      if (!onExpireCalled) {
+      if (!this.onExpireCalled) {
         if (this._isMounted) {
           this.setState({onExpireCalled: true})
         }
@@ -106,9 +92,28 @@ class Countdown extends Component {
     }
 
     const dur = moment.duration(diff, 'seconds')
-    const hours = dur.hours() + (dur.days() * 24)
+    const seconds = dur.seconds()
+    const hours = dur.hours()
+    const days = dur.days()
+    const months = dur.months()
+    const years = dur.years()
+    const countdown = (years ? years + ' years ' : '') + (months ? months + ' months ' : '') + (days ? days + ' days ' : '') + (hours ? pad(hours, 2, 0) + ' hours ' : '') + (seconds ? pad(seconds, 2, 0) + ' seconds ' : '')
+    return countdown
+  }
 
-    const countdown = `${pad(hours, 2, 0)}:${pad(dur.minutes(), 2, 0)}:${pad(dur.seconds(), 2, 0)}`
+  tick () {
+    const {endDate, onExpireCalled} = this.state
+    var countdown = this.calculateCountdownStr(endDate)
+    if (!endDate) {
+      if (this._isMounted) {
+        this.setState({
+          countdown: '',
+          isExpired: true
+        })
+      }
+
+      return false
+    }
 
     if (this._isMounted) {
       this.setState({

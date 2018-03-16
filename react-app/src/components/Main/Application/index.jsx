@@ -28,7 +28,7 @@ class Application extends Component {
                         <input type="text" placeholder="example.com" name="domain" required="" />
                       </div>
                     </div>
-                    <div className="field">
+                    {/*<div className="field">
                       <label>Site Name</label>
                       <div className="ui input">
                         <input type="text" placeholder="Site Name" name="siteName" />
@@ -70,7 +70,7 @@ class Application extends Component {
                       <div className="ui input">
                         <input type="text" id="PublisherApplicationFormStakeInput" placeholder="10000" name="stake" required="" />
                       </div>
-                    </div>
+                    </div>*/}
                     <div className="field">
                       <button type="submit" className="ui blue submit button">APPLY</button>
                     </div>

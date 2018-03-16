@@ -22,7 +22,7 @@ class VoteCommit extends Component {
       votes: 0,
       applicationExpiry: null,
       challengeId: null,
-      commitEndDate: 1527811200,
+      commitEndDate: props.endDate,
       revealEndDate: null,
       didChallenge: null,
       didCommit: null,
@@ -31,7 +31,8 @@ class VoteCommit extends Component {
       voteOption: null,
       enableDownload: false,
       commitDownloaded: false,
-      revealReminderDownloaded: false
+      revealReminderDownloaded: false,
+      stage: props.stage
     }
 
     // this.getListing()
@@ -85,10 +86,10 @@ class VoteCommit extends Component {
         <div className='ui grid stackable'>
           <div className='column sixteen wide'>
             <div className='ui large header center aligned'>
-              VOTING – COMMIT
+              {this.state.stage}
               <Popup
                 trigger={<i className='icon info circle' />}
-                content='The first phase of the voting process is the commit phase where the VTH holder stakes a hidden amount of votes to SUPPORT or OPPOSE the domain application. The second phase is the reveal phase where the VTH holder reveals the staked amount of votes to either the SUPPORT or OPPOSE side.'
+                content='The first phase of the voting process is the commit phase where the VTH holder stakes a hidden amount of votes. The second phase is the reveal phase where the VTH holder reveals the staked amount of votes to either the SUPPORT or OPPOSE side.'
               />
             </div>
           </div>
@@ -122,35 +123,35 @@ class VoteCommit extends Component {
               <form
                 onSubmit={this.onFormSubmit}
                 className='ui form center aligned'>
-                <div className='ui field'>
-                  <label>SUPPORT or OPPOSE {domain}</label>
-                </div>
-                <div className='ui field'>
-                  <p>Challenge ID: <label className='ui label'>{challengeId}</label></p>
-                </div>
-                <div className='ui field'>
-                  <label>Enter Votes to Commit</label>
-                  <div className='ui input small'>
-                    <input
-                      type='text'
-                      placeholder='100'
-                      onKeyUp={this.onDepositKeyUp}
-                    />
-                  </div>
+                <div className="field">
+                  <label>My Voting{this.state.stage === 'Proxy Vote - Commit' && ' Weights'}: <strong>100</strong></label>
                 </div>
                 <div className='ui field'>
                   <label>Vote Option</label>
                 </div>
-                <div className='ui two fields VoteOptions'>
-                  <div className='ui field'>
-                    <Radio
-                      label='SUPPORT'
-                      name='voteOption'
-                      value='1'
-                      checked={this.state.voteOption === 1}
-                      onChange={this.onVoteOptionChange}
-                    />
+                {this.state.stage !== 'Put Option - Commit' &&
+                  <div className='ui two fields VoteOptions'>
+                    <div className='ui field'>
+                      <Radio
+                        label='SUPPORT'
+                        name='voteOption'
+                        value='1'
+                        checked={this.state.voteOption === 1}
+                        onChange={this.onVoteOptionChange}
+                      />
+                    </div>
+                    <div className='ui field'>
+                      <Radio
+                        label='OPPOSE'
+                        name='voteOption'
+                        value='0'
+                        checked={this.state.voteOption === 0}
+                        onChange={this.onVoteOptionChange}
+                      />
+                    </div>
                   </div>
+                }
+                {this.state.stage === 'Put Option - Commit' &&
                   <div className='ui field'>
                     <Radio
                       label='OPPOSE'
@@ -160,7 +161,7 @@ class VoteCommit extends Component {
                       onChange={this.onVoteOptionChange}
                     />
                   </div>
-                </div>
+                }
                 <div className='ui field'>
                   <label>Secret Phrase<br /><small>PLEASE SAVE THIS. This random phrase (known as a "salt") will be required to reveal your vote and claim rewards.</small></label>
                   <div className='ui message tiny default SaltField'>

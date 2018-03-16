@@ -69,11 +69,6 @@
 :root:root .program-list .ReactTable .rt-tbody .rt-td {
   border-right: none;
 }
-:root:root .program-list .ReactTable .rt-thead .rt-th.Number,
-:root:root .program-list .ReactTable .rt-thead .rt-td.Number,
-:root:root .program-list .ReactTable .rt-tbody .rt-td.Number {
-  text-align: right;
-}
 :root:root .program-list .ReactTable .ui.button {
   font-size: 0.7em;
   text-transform: uppercase;

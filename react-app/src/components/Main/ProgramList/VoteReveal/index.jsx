@@ -21,14 +21,15 @@ class VoteReveal extends Component {
       votesFor: 0,
       votesAgainst: 0,
       commitEndDate: null,
-      revealEndDate: 1527811200,
+      revealEndDate: props.endDate,
       inProgress: false,
       didChallenge: false,
       didCommit: false,
       didReveal: false,
       salt: null,
       voteOption: null,
-      challengeId: null
+      challengeId: null,
+      stage: props.stage
     }
 
     this.onVoteOptionChange = this.onVoteOptionChange.bind(this)
@@ -71,7 +72,7 @@ class VoteReveal extends Component {
         <div className='ui grid stackable'>
           <div className='column sixteen wide'>
             <div className='ui large header center aligned'>
-              VOTING – REVEAL
+              {this.state.stage}
               <Popup
                 trigger={<i className='icon info circle' />}
                 content='The first phase of the voting process is the commit phase where the VTH holder stakes a hidden amount of votes to SUPPORT or OPPOSE the domain application. The second phase is the reveal phase where the VTH holder reveals the staked amount of votes to either the SUPPORT or OPPOSE side.'
@@ -116,9 +117,6 @@ class VoteReveal extends Component {
               <form
                 onSubmit={this.onFormSubmit}
                 className='ui form'>
-                <div className='ui field'>
-                  <p>Challenge ID: <label className='ui label'>{challengeId}</label></p>
-                </div>
                 <div className='ui field'>
                   <label>Upload Commit File to reveal vote</label>
                   <input
