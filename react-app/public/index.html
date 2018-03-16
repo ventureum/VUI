@@ -9,8 +9,11 @@
       homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
+    <link rel="stylesheet" href="%PUBLIC_URL%/calendar.min.css">
     <link rel="shortcut icon" href="http://ventureum.io/img/apple-touch-icon-152x152.png">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/semantic.min.css"></link>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/components/popup.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/components/transition.min.css">
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -58,5 +61,10 @@
         return query_string;
       }
     </script>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/components/popup.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/components/transition.min.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/calendar.min.js"></script>
   </body>
 </html>

@@ -96,7 +96,7 @@ class ProgramList extends Component {
                             </div>
                             <div>
                               <button className='ui button blue tiny'>
-                                Withdraw VTH
+                                Withdraw
                               </button>
                             </div>
                           </div>
