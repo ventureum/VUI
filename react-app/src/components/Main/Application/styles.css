@@ -1,0 +1,22 @@
+:root:root .application-form {
+  position: relative;
+  background: #fff;
+  padding: 0 20px 20px 20px;
+  box-shadow: 0 1px 1px #b7b7b7;
+}
+:root:root .application-form .header {
+  border-bottom: 4px solid #6a2499;
+}
+:root:root .application-form textarea {
+  resize: none;
+}
+:root:root .application-form .font-big {
+  font-size: 20px;
+}
+:root:root .application-form .font-bigger {
+  border-bottom-width: 2px;
+  font-size: 24px;
+}
+:root:root .application-form .font-biggest {
+  font-size: 30px;
+}
