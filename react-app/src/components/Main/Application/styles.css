@@ -39,3 +39,8 @@
 :root:root .application .fixed-footer .button + .button {
   margin-left: 20px;
 }
+@media only screen and (max-width: 767px) {
+  :root:root .application .fixed-footer {
+    left: 0px;
+  }
+}

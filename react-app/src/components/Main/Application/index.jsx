@@ -582,7 +582,7 @@ class Application extends Component {
           </div>
         </div>
         <div className="fixed-footer">
-          <div className="ui grid stackable">
+          <div className="ui grid stackable center aligned">
             <div className="row">
               <div onClick={this.resetForm.bind(this)} className="ui button red">Clear</div>
               <div className="ui button green">Save</div>
