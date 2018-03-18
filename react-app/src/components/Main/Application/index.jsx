@@ -201,7 +201,7 @@ class Application extends Component {
           <td>{item.msDeadline}</td>
           <td>{item.msPercent}</td>
           <td>{this.objectiveToStr(item.objectiveList, '<br />')}</td>
-          <td><div onClick={this.removeItem.bind(this, 'teamMemberList', item)} className="ui button red">Remove</div></td>
+          <td><div onClick={this.removeItem.bind(this, 'msList', item)} className="ui button red">Remove</div></td>
         </tr>
       )
     }
@@ -212,7 +212,7 @@ class Application extends Component {
       objectiveElems.push(
         <tr key={item.objective}>
           <td>{item.objective}</td>
-          <td><div onClick={this.removeItem.bind(this, 'msList', item)} className="ui button red">Remove</div></td>
+          <td><div onClick={this.removeItem.bind(this, 'objectiveList', item)} className="ui button red">Remove</div></td>
         </tr>
       )
     }
