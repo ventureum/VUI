@@ -35,7 +35,9 @@ class Application extends Component {
     var that = this
     window.calendarChange = function (target, date, text, mode) {
       if (target == 'msDeadline') {
-        that.setState(basicState)
+        that.setState({
+          msDeadline: text
+        })
       }
     }
   }
