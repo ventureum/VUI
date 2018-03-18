@@ -2,19 +2,41 @@ import React, { Component } from 'react'
 import CSSModules from 'react-css-modules'
 import { Popup, Checkbox, Modal } from 'semantic-ui-react'
 import styles from './styles.css'
-import $ from 'jquery'
+
+var $ = window.jQuery
+
+const basicState = function () {
+  return {
+    fileInput: '',
+    fundingText: 'Corporate Reserves or Foundation Reserves \n\nFounder / Employee / Advisor Allocation \n\nSAFT \n\nPublic Sale \n\nVesting and Lock-up Schedules per Class of Token',
+    legalEntity: '',
+    legalLoc: '',
+    legalOwner: '',
+    legalList: [],
+    boardMemberName: '',
+    boardMemberList: [],
+    teamMemberName: '',
+    teamMemberList: [],
+    objective: '',
+    objectiveList: [],
+    msName: '',
+    msDeadline: '',
+    msPercent: '',
+    msList: []
+  }
+}
 
 class Application extends Component {
   constructor () {
     super()
 
-    this.state = {
-      fileInput: '',
-      fundingText: 'Corporate Reserves or Foundation Reserves \n\nFounder / Employee / Advisor Allocation \n\nSAFT \n\nPublic Sale \n\nVesting and Lock-up Schedules per Class of Token',
-      legalEntity: '',
-      legalLoc: '',
-      legalOwner: '',
-      legalList: []
+    this.state = basicState()
+
+    var that = this
+    window.calendarChange = function (target, date, text, mode) {
+      if (target == 'msDeadline') {
+        that.setState(basicState)
+      }
     }
   }
 
@@ -26,6 +48,7 @@ class Application extends Component {
     $.each($('form.form.ui'), function (i, val) {
       val.reset()
     })
+    this.setState(basicState())
   }
 
   handleChange (key, e) {
@@ -52,19 +75,38 @@ class Application extends Component {
     return false
   }
 
+  addMilestone () {
+    var success = this.addItem(['msName', 'msDeadline', 'msPercent', 'objectiveList'], 'msList')
+    if (success) {
+      alert('Success!')
+      this.setState({
+        msName: '',
+        msDeadline: '',
+        msPercent: '',
+        objectiveList: [],
+        objective: ''
+      })
+    }
+  }
+
   addItem (src, dist) {
     var newItem = {}
     for (var i = 0; i < src.length; i++) {
+      if (this.state[src[i]] === '' || this.state[src[i]] === undefined) {
+        alert('You have missed information, please fill all blanks!')
+        return
+      }
       newItem[src[i]] = this.state[src[i]]
     }
     if (this.isDup(newItem, this.state[dist])) {
       alert('You have added this item, please don\'t add again!')
-      return
+      return false
     }
     var newDist = {}
     newDist[dist] = this.state[dist]
     newDist[dist].push(newItem)
     this.setState(newDist)
+    return true
   }
 
   removeItem (dist, item) {
@@ -89,7 +131,27 @@ class Application extends Component {
   }
 
   componentDidMount () {
-    setTimeout("$('div.calendar').calendar()", 0)
+    this.initCalendar()
+  }
+
+  initCalendar () {
+    function _initCalendar () {
+      $.each($('div.calendar'), function (i, val) {
+        $(val).calendar({
+          onChange: window.calendarChange.bind(null, $(val).data('target'))
+        })
+      })
+    }
+
+    setTimeout(_initCalendar, 0)
+  }
+
+  objectiveToStr (arr, sep) {
+    var result = []
+    for (var i = 0; i < arr.length; i++) {
+      result.push(arr[i].objective)
+    }
+    return result.join(sep)
   }
 
   render() {
@@ -102,6 +164,53 @@ class Application extends Component {
           <td>{item.legalLoc}</td>
           <td>{item.legalOwner}</td>
           <td><div onClick={this.removeItem.bind(this, 'legalList', item)} className="ui button red">Remove</div></td>
+        </tr>
+      )
+    }
+
+    var boardMemberElems = []
+    for (var i = 0; i < this.state.boardMemberList.length; i++) {
+      var item = this.state.boardMemberList[i]
+      boardMemberElems.push(
+        <tr key={item.boardMemberName}>
+          <td>{item.boardMemberName}</td>
+          <td><div onClick={this.removeItem.bind(this, 'boardMemberList', item)} className="ui button red">Remove</div></td>
+        </tr>
+      )
+    }
+
+    var teamMemberElems = []
+    for (var i = 0; i < this.state.teamMemberList.length; i++) {
+      var item = this.state.teamMemberList[i]
+      teamMemberElems.push(
+        <tr key={item.teamMemberName}>
+          <td>{item.teamMemberName}</td>
+          <td><div onClick={this.removeItem.bind(this, 'teamMemberList', item)} className="ui button red">Remove</div></td>
+        </tr>
+      )
+    }
+
+    var msElems = []
+    for (var i = 0; i < this.state.msList.length; i++) {
+      var item = this.state.msList[i]
+      msElems.push(
+        <tr key={item.msName + this.objectiveToStr(item.objectiveList, '')}>
+          <td>{item.msName}</td>
+          <td>{item.msDeadline}</td>
+          <td>{item.msPercent}</td>
+          <td>{this.objectiveToStr(item.objectiveList, '<br />')}</td>
+          <td><div onClick={this.removeItem.bind(this, 'teamMemberList', item)} className="ui button red">Remove</div></td>
+        </tr>
+      )
+    }
+
+    var objectiveElems = []
+    for (var i = 0; i < this.state.objectiveList.length; i++) {
+      var item = this.state.objectiveList[i]
+      objectiveElems.push(
+        <tr key={item.objective}>
+          <td>{item.objective}</td>
+          <td><div onClick={this.removeItem.bind(this, 'msList', item)} className="ui button red">Remove</div></td>
         </tr>
       )
     }
@@ -195,11 +304,11 @@ class Application extends Component {
                   <div className="field">
                     <label>Name</label>
                     <div className="ui input">
-                      <input type="text" name="name" required="" />
+                      <input onChange={this.handleChange.bind(this, 'boardMemberName')} value={this.state.boardMemberName} type="text" name="name" required="" />
                     </div>
                   </div>
                   <div className="field">
-                    <div className="ui button blue">Add</div>
+                    <div onClick={this.addItem.bind(this, ['boardMemberName'], 'boardMemberList')} className="ui button blue">Add</div>
                   </div>
                 </div>
                 <div className="field">
@@ -211,10 +320,7 @@ class Application extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>1</td>
-                        <td><div className="ui button red">Remove</div></td>
-                      </tr>
+                      {boardMemberElems}
                     </tbody>
                   </table>
                 </div>
@@ -227,11 +333,11 @@ class Application extends Component {
                   <div className="field">
                     <label>Name</label>
                     <div className="ui input">
-                      <input type="text" name="name" required="" />
+                      <input onChange={this.handleChange.bind(this, 'teamMemberName')} value={this.state.teamMembarName}  type="text" name="name" required="" />
                     </div>
                   </div>
                   <div className="field">
-                    <div className="ui button blue">Add</div>
+                    <div onClick={this.addItem.bind(this, ['teamMemberName'], 'teamMemberList')} className="ui button blue">Add</div>
                   </div>
                 </div>
                 <div className="field">
@@ -243,17 +349,14 @@ class Application extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>1</td>
-                        <td><div className="ui button red">Remove</div></td>
-                      </tr>
+                      {teamMemberElems}
                     </tbody>
                   </table>
                 </div>
                 <div className="field">
                   <label>Operating Committees (Audit Committee, Compensation Committee, etc.)</label>
                   <div className="ui input">
-                    <textarea type="text" rows="5" maxlength="10000" name="committee" required="" />
+                    <textarea type="text" rows="5" maxLength="10000" name="committee" required="" />
                   </div>
                 </div>
                 <div className="field">
@@ -364,8 +467,8 @@ class Application extends Component {
                 <div className="inline fields">
                   <label className="four wide field">Start Time</label>
                   <div className="ui calendar field">
-                    <div class="ui input left icon">
-                      <i class="calendar icon"></i>
+                    <div className="ui input left icon">
+                      <i className="calendar icon"></i>
                       <input type="text" placeholder="Date/Time" />
                     </div>
                   </div>
@@ -373,8 +476,8 @@ class Application extends Component {
                 <div className="inline fields">
                   <label className="four wide field">End Time</label>
                   <div className="ui calendar field">
-                    <div class="ui input left icon">
-                      <i class="calendar icon"></i>
+                    <div className="ui input left icon">
+                      <i className="calendar icon"></i>
                       <input type="text" placeholder="Date/Time" />
                     </div>
                   </div>
@@ -382,42 +485,42 @@ class Application extends Component {
                 <div className="field">
                   <label>Total Anticipated Funding Raised by Funding Type</label>
                   <div className="ui input">
-                    <textarea type="text" rows="5" maxlength="10000" name="funding" required="" />
+                    <textarea type="text" rows="5" maxLength="10000" name="funding" required="" />
                   </div>
                 </div>
                 <div className="field">
                   <label>Tokens Authorized and Outstanding by Class</label>
                   <div className="ui input">
-                    <textarea type="text" rows="10" maxlength="10000" name="funding" required="" value={this.state.fundingText}></textarea> </div>
+                    <textarea type="text" rows="10" maxLength="10000" name="funding" required="" value={this.state.fundingText}></textarea> </div>
                 </div>
               </form>
               <form className="ui form">
                 <div className="ui medium header font-bigger">Roadmap Definition</div>
                 <div className="field">
-                  <Modal trigger={<div className="ui button blue">Add Milestone</div>}>
+                  <Modal onMount={this.initCalendar} trigger={<div className="ui button blue">Add Milestone</div>}>
                     <Modal.Header>Add Milestone</Modal.Header>
                     <Modal.Content>
                       <form className="ui form">
                         <div className="inline fields">
                           <label className="four wide field">Milestone Name</label>
                           <div className="ui input eight wide field">
-                            <input type="text" name="twitter" required="" />
+                            <input onChange={this.handleChange.bind(this, 'msName')} value={this.state.msName} type="text" name="twitter" required="" />
                           </div>
                         </div>
                         <div className="inline fields">
                           <label className="four wide field">Deadline</label>
-                          <div className="ui calendar field">
-                            <div class="ui input left icon">
-                              <i class="calendar icon"></i>
-                              <input type="text" placeholder="Date/Time" />
+                          <div className="ui calendar field" data-target="msDeadline">
+                            <div className="ui input left icon">
+                              <i className="calendar icon"></i>
+                              <input value={this.state.msDeadline} type="text" placeholder="Date/Time" />
                             </div>
                           </div>
                         </div>
                         <div className="inline fields">
                           <label className="four wide field">Percentage of Funds Locked</label>
                           <div className="ui input right labeled">
-                            <input type="number" name="percentage" required="" />
-                            <div class="ui basic label label">%</div>
+                            <input onChange={this.handleChange.bind(this, 'msPercent')} value={this.state.msPercent} type="number" name="percentage" required="" />
+                            <div className="ui basic label label">%</div>
                           </div>
                         </div>
                         <div className="ui divider"></div>
@@ -425,11 +528,11 @@ class Application extends Component {
                           <div className="field">
                             <label>Objective</label>
                             <div className="ui input">
-                              <input type="text" name="name" required="" />
+                              <input onChange={this.handleChange.bind(this, 'objective')} value={this.state.objective} type="text" name="name" required="" />
                             </div>
                           </div>
                           <div className="field">
-                            <div className="ui button blue">Add</div>
+                            <div onClick={this.addItem.bind(this, ['objective'], 'objectiveList')} className="ui button blue">Add</div>
                           </div>
                         </div>
                         <div className="field">
@@ -441,16 +544,13 @@ class Application extends Component {
                               </tr>
                             </thead>
                             <tbody>
-                              <tr>
-                                <td>1</td>
-                                <td><div className="ui button red">Remove</div></td>
-                              </tr>
+                              {objectiveElems}
                             </tbody>
                           </table>
                         </div>
                         <div className="ui divider"></div>
                         <div className="fields inline">
-                          <div className="ui button blue">Add Milestone</div>
+                          <div onClick={this.addMilestone.bind(this)} className="ui button blue">Add Milestone</div>
                         </div>
                       </form>
                     </Modal.Content>
@@ -460,27 +560,21 @@ class Application extends Component {
                   <table className="ui celled table">
                     <thead>
                       <tr>
-                        <th className="one wide">Select</th>
                         <th className="three wide">Milestone Name</th>
                         <th className="two wide">Deadline</th>
                         <th className="two wide">Percentage of Funds Locked</th>
-                        <th className="eight wide">Objectives</th>
+                        <th className="seven wide">Objectives</th>
+                        <th className="two wide">Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td><Checkbox label='' /></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
+                      {msElems}
                     </tbody>
-                    <tfoot>
-                      <tr colspan="5">
-                        <th colspan="5"><div className="ui button red">Remove</div></th>
+                    {/*<tfoot>
+                      <tr colSpan="5">
+                        <th colSpan="5"><div className="ui button red">Remove</div></th>
                       </tr>
-                    </tfoot>
+                    </tfoot>*/}
                   </table>
                 </div>
               </form>
@@ -490,7 +584,7 @@ class Application extends Component {
         <div className="fixed-footer">
           <div className="ui grid stackable">
             <div className="row">
-              <div onClick={this.resetForm} className="ui button red">Clear</div>
+              <div onClick={this.resetForm.bind(this)} className="ui button red">Clear</div>
               <div className="ui button green">Save</div>
               <div className="ui button blue">Submit</div>
             </div>
