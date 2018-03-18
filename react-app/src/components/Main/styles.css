@@ -14,12 +14,13 @@
   padding-left: 0;
 }
 :root:root:root .main .top-bar {
+  overflow: visible;
   width: 100%;
   box-shadow: 0 2px 4px 0 rgba(0,0,0,0.5);
   padding: 0 1rem;
 }
 :root:root:root .main .top-bar .overflow-x {
-  overflow: auto;
+  overflow: visible;
 }
 :root:root:root .main .top-bar .overflow-x::-webkit-scrollbar {
   width: 5px;
