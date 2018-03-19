@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import toastr from 'toastr'
 import moment from 'moment'
-import { Radio, Popup } from 'semantic-ui-react'
+import {Button, Dropdown, Radio, Popup } from 'semantic-ui-react'
 
 import Countdown from '../Countdown'
 import registry from '../../../../services/registry'
@@ -29,7 +29,8 @@ class VoteReveal extends Component {
       salt: null,
       voteOption: null,
       challengeId: null,
-      stage: props.stage
+      stage: props.stage,
+      obj: props.obj
     }
 
     this.onVoteOptionChange = this.onVoteOptionChange.bind(this)
@@ -41,6 +42,11 @@ class VoteReveal extends Component {
     // this.getChallenge()
     // this.getCommit()
     // this.getReveal()
+
+    this.objSelection=[]
+    for(var i = 0; i < this.state.obj.length; i++) {
+      this.objSelection.push({text:this.state.obj[i].objTitle, value:this.state.obj[i].objTitle})
+    }
   }
 
   componentDidMount () {
@@ -84,36 +90,36 @@ class VoteReveal extends Component {
               You've <strong>challenged</strong> this domain.
             </div>
           </div>
-          : null}
+           : null}
           {didCommit ? <div className='column sixteen wide center aligned'>
             <div className='ui message warning'>
               You've <strong>commited</strong> for this domain.
             </div>
           </div>
-          : null}
+           : null}
           {didReveal ? <div className='column sixteen wide center aligned'>
             <div className='ui message warning'>
               You've <strong>revealed</strong> for this domain.
             </div>
           </div>
-          : null}
+           : null}
           <div className='column sixteen wide center aligned'>
-            <div className='ui divider' />
-            <TokenDistribution domain={domain} />
             <div className='ui divider' />
             <div className='column sixteen wide center aligned'>
               <div className='ui message info'>
                 <p>
-              Reveal stage ends
+                  Reveal stage ends
                 </p>
                 <p><strong>{stageEnd}</strong></p>
                 <p>Remaining time: <Countdown
-                  endDate={stageEndMoment}
-                  onExpire={this.onCountdownExpire.bind(this)} /></p>
+                                     endDate={stageEndMoment}
+                                     onExpire={this.onCountdownExpire.bind(this)} /></p>
               </div>
             </div>
             <div className='ui divider' />
             <div className='column sixteen wide center aligned'>
+              <h4> Select Milestone Objective </h4>
+              <Dropdown placeholder='Select Objective' fluid selection options={this.objSelection} />
               <form
                 onSubmit={this.onFormSubmit}
                 className='ui form'>
@@ -126,7 +132,7 @@ class VoteReveal extends Component {
                     className='ui file' />
                 </div>
                 <div className='ui field'>
-                    or
+                  or
                 </div>
                 <div className='ui field'>
                   <label>Secret Phrase (salt)</label>
@@ -143,39 +149,9 @@ class VoteReveal extends Component {
                 <div className='ui field'>
                   <label>Vote Option<br /><small>must be what you committed</small></label>
                 </div>
-                <div className='ui two fields VoteOptions'>
-                  <div className='ui field'>
-                    <Radio
-                      label='SUPPORT'
-                      name='voteOption'
-                      value='1'
-                      checked={this.state.voteOption === 1}
-                      onChange={this.onVoteOptionChange}
-                    />
-                  </div>
-                  <div className='ui field'>
-                    <Radio
-                      label='OPPOSE'
-                      name='voteOption'
-                      value='0'
-                      checked={this.state.voteOption === 0}
-                      onChange={this.onVoteOptionChange}
-                    />
-                  </div>
-                </div>
-                <div className='ui field'>
-                  {voteOption === null
-                    ? <button
-                      className='ui button disabled'>
-                        Select Vote Option
-                    </button>
-                  : <button
-                    type='submit'
-                    className={`ui button ${voteOption ? 'blue' : 'purple'} right labeled icon`}>
-                    REVEAL {voteOption ? 'SUPPORT' : 'OPPOSE'} VOTE
-                    <i className={`icon thumbs ${voteOption ? 'up' : 'down'}`} />
-                  </button>
-                  }
+                <div className='ui grid center aligned row'>
+                  <Button.Group buttons={['1', '2', '3','4','5']} />
+                  <Button primary> Submit </Button>
                 </div>
               </form>
             </div>

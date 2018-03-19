@@ -28,7 +28,7 @@ class SideMenu extends Component {
                 <a onClick={this.handleUrlChangeWrapper('apply')} href="/apply">Apply Now</a>
               </li>
               <li className={"item " + (this.props.mainIndex === 1 ? "active" : "")}>
-                <a onClick={this.handleUrlChangeWrapper('projects')} href="/projects">All Projects</a>
+                <a onClick={this.handleUrlChangeWrapper('projects')} href="/projects">Projects</a>
               </li>
               <li className={"item " + (this.props.mainIndex === 2 ? "active" : "")}>
                 <a onClick={this.handleUrlChangeWrapper('registry')} href="/registry">Registry Status</a>

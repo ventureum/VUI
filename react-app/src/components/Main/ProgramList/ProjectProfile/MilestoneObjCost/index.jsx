@@ -23,16 +23,17 @@ class MilestoneObjCost extends Component {
   }
 
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({addressType: nextProps.addressType})
+  }
+
   render () {
     const { activeIndex } = this.state
     var objElems = []
     var btns = []
     if (this.state.milestone.stage === "Audit Cost Evaluation") {
       if (this.state.addressType === "proxies") {
-        btns.push(<Button pri	                  <div className=" rt-resizable-header -cursor-pointer rt-th" style={{flex: '200 0 auto', width: '200px'}}>
-	                    <div className="rt-resizable-header-content">Current Milestone</div>
-	                    <div className="rt-resizer"></div>
-	                  </div>mary>Accept and Join</Button>)
+        btns.push(<Button primary>Accept and Join</Button>)
       } else if (this.state.addressType === "projectFounders") {
         btns.push(<Button primary>Bid</Button>)
       }
@@ -68,7 +69,7 @@ class MilestoneObjCost extends Component {
             <div className="ui grid stackable padded">
               <div className="column fourteen wide">
                 <Segment>
-                  <ParticipatingProxyList proxyList = {obj.proxyList} currentRewards = {obj.currentRewards} rewardSet = {obj.rewardSet}/>
+                  <ParticipatingProxyList addressType = {this.state.addressType} proxyList = {obj.proxyList} currentRewards = {obj.currentRewards} rewardSet = {obj.rewardSet}/>
                   {btns[i]}
                 </Segment>
                 <Segment>

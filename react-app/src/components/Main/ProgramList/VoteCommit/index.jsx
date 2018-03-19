@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import toastr from 'toastr'
 import moment from 'moment'
-import { Radio, Popup } from 'semantic-ui-react'
+import { Button, Dropdown, Radio, Popup } from 'semantic-ui-react'
 import randomInt from 'random-int'
 
 import saveFile from '../../../../utils/saveFile'
@@ -32,7 +32,8 @@ class VoteCommit extends Component {
       enableDownload: false,
       commitDownloaded: false,
       revealReminderDownloaded: false,
-      stage: props.stage
+      stage: props.stage,
+      obj: props.obj
     }
 
     // this.getListing()
@@ -46,6 +47,11 @@ class VoteCommit extends Component {
     this.onDownload = this.onDownload.bind(this)
     this.onReminderDownload = this.onReminderDownload.bind(this)
     this.enableDownloadCheck = this.enableDownloadCheck.bind(this)
+
+    this.objSelection=[]
+    for(var i = 0; i < this.state.obj.length; i++) {
+      this.objSelection.push({text:this.state.obj[i].objTitle, value:this.state.obj[i].objTitle})
+    }
   }
 
   componentDidMount () {
@@ -98,24 +104,24 @@ class VoteCommit extends Component {
               You've <strong>challenged</strong> this domain.
             </div>
           </div>
-          : null}
+           : null}
           {didCommit ? <div className='column sixteen wide center aligned'>
             <div className='ui message warning'>
               You've <strong>commited</strong> for this domain.
             </div>
           </div>
-          : null}
+           : null}
           <div className='column sixteen wide center aligned'>
             <div className='ui divider' />
             <div className='column sixteen wide center aligned'>
               <div className='ui message info'>
                 <p>
-                Voting commit stage ends
+                  Voting commit stage ends
                 </p>
                 <p><strong>{stageEnd}</strong></p>
                 <p>Remaining time: <Countdown
-                  endDate={stageEndMoment}
-                  onExpire={this.onCountdownExpire.bind(this)} /></p>
+                                     endDate={stageEndMoment}
+                                     onExpire={this.onCountdownExpire.bind(this)} /></p>
               </div>
             </div>
             <div className='ui divider' />
@@ -124,43 +130,27 @@ class VoteCommit extends Component {
                 onSubmit={this.onFormSubmit}
                 className='ui form center aligned'>
                 <div className="field">
-                  <label>My Voting{this.state.stage === 'Proxy Vote - Commit' && ' Weights'}: <strong>100</strong></label>
+                  <label>Your votes{this.state.stage === 'Proxy Vote - Commit' && ' Weights'}: <strong>5600000</strong></label>
                 </div>
                 <div className='ui field'>
                   <label>Vote Option</label>
                 </div>
-                {this.state.stage !== 'Put Option - Commit' &&
-                  <div className='ui two fields VoteOptions'>
-                    <div className='ui field'>
-                      <Radio
-                        label='SUPPORT'
-                        name='voteOption'
-                        value='1'
-                        checked={this.state.voteOption === 1}
-                        onChange={this.onVoteOptionChange}
-                      />
-                    </div>
-                    <div className='ui field'>
-                      <Radio
-                        label='OPPOSE'
-                        name='voteOption'
-                        value='0'
-                        checked={this.state.voteOption === 0}
-                        onChange={this.onVoteOptionChange}
-                      />
-                    </div>
-                  </div>
+                {this.state.stage !== 'Put Option' &&
+                 <div className='ui two fields VoteOptions'>
+                   <Dropdown placeholder='Select Objective' fluid selection options={this.objSelection} />
+                   <Button.Group buttons={['1', '2', '3','4','5']} />
+                 </div>
                 }
-                {this.state.stage === 'Put Option - Commit' &&
-                  <div className='ui field'>
-                    <Radio
-                      label='OPPOSE'
-                      name='voteOption'
-                      value='0'
-                      checked={this.state.voteOption === 0}
-                      onChange={this.onVoteOptionChange}
-                    />
-                  </div>
+                {this.state.stage === 'Put Option' &&
+                 <div className='ui field'>
+                   <Radio
+                     label='Exercise'
+                     name='voteOption'
+                     value='0'
+                     checked={this.state.voteOption === 0}
+                     onChange={this.onVoteOptionChange}
+                   />
+                 </div>
                 }
                 <div className='ui field'>
                   <label>Secret Phrase<br /><small>PLEASE SAVE THIS. This random phrase (known as a "salt") will be required to reveal your vote and claim rewards.</small></label>
@@ -179,28 +169,28 @@ class VoteCommit extends Component {
                   </button>
                 </div>
                 {commitDownloaded
-                ? <div className='ui field'>
-                  <label><small>Download a calendar reminder for revealing vote</small></label>
-                  <button
-                    onClick={this.onReminderDownload}
-                    title='Download commit info'
-                    className={`ui mini button right labeled icon ${revealReminderDownloaded ? 'default' : 'blue'}`}>
-                    Reveal Reminder
-                    <i className='icon download' />
-                  </button>
-                </div>
-                : null}
+                 ? <div className='ui field'>
+                   <label><small>Download a calendar reminder for revealing vote</small></label>
+                   <button
+                     onClick={this.onReminderDownload}
+                     title='Download commit info'
+                     className={`ui mini button right labeled icon ${revealReminderDownloaded ? 'default' : 'blue'}`}>
+                     Reveal Reminder
+                     <i className='icon download' />
+                   </button>
+                 </div>
+                 : null}
                 <div className='ui field'>
                   {(voteOption === null || !votes || !commitDownloaded)
-                    ? <button
-                      className='ui button disabled'>
-                      {voteOption === null ? 'Select Vote Option' : (!votes ? 'Enter votes' : 'Vote')}
-                    </button>
-                  : <button
-                    type='submit'
-                    className={`ui button ${voteOption ? 'blue' : 'purple'} right labeled icon`}>
-                      VOTE TO {voteOption ? 'SUPPORT' : 'OPPOSE'} <i className={`icon thumbs ${voteOption ? 'up' : 'down'}`} />
-                  </button>
+                   ? <button
+                       className='ui button disabled'>
+                     {voteOption === null ? 'Select Vote Option' : (!votes ? 'Enter votes' : 'Vote')}
+                   </button>
+                   : <button
+                       type='submit'
+                       className={`ui button ${voteOption ? 'blue' : 'purple'} right labeled icon`}>
+                     VOTE TO {voteOption ? 'SUPPORT' : 'OPPOSE'} <i className={`icon thumbs ${voteOption ? 'up' : 'down'}`} />
+                   </button>
                   }
                 </div>
               </form>
