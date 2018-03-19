@@ -14,7 +14,7 @@ class ProjectInfo extends Component {
       <div>
         <h2> Project Description </h2>
         <p class="break-word">
-          UTRUST will be a revolutionary payment platform that enables buyers to use their
+          DTRUST will be a revolutionary payment platform that enables buyers to use their
           favorite cryptocurrency in order to pay sellers (private or merchants). We provide
           sellers with the safety and convenience of receiving funds in fiat currency, and offer
           the best consumer-protection to buyers, by acting as trusted mediators. We

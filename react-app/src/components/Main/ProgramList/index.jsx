@@ -16,52 +16,52 @@ class ProgramList extends Component {
     this.state = {
       programList: [
         {
-		  projectName: 'project-0',
+		  projectName: 'DTrust-Demo #0',
 		  stage: 'In Application',
 		  stageEnd: '2018-01-10 00:00:00',
 		  action: 'Challenge',
 		}, {
-		  projectName: 'project-1',
+		  projectName: 'DTrust-Demo #1',
 		  stage: 'In Registry',
 		  stageEnd: '',
 		  action: '',
 		}, {
-		  projectName: 'project-2',
+		  projectName: 'DTrust-Demo #2',
 		  stage: 'In Registry',
 		  stageEnd: '',
 		  action: '',
 		}, {
-		  projectName: 'project-3',
+		  projectName: 'DTrust-Demo #3',
 		  stage: 'In Registry',
 		  stageEnd: '',
 		  action: '',
 		}, {
-		  projectName: 'project-4',
+		  projectName: 'DTrust-Demo #4',
 		  stage: 'In Registry',
 		  stageEnd: '',
 		  action: '',
 		}, {
-		  projectName: 'project-5',
+		  projectName: 'DTrust-Demo #5',
 		  stage: 'In Registry',
 		  stageEnd: '',
 		  action: '',
 		}, {
-		  projectName: 'project-6',
+		  projectName: 'DTrust-Demo #6',
 		  stage: 'In Registry',
 		  stageEnd: '',
 		  action: '',
 		}, {
-		  projectName: 'project-7',
+		  projectName: 'DTrust-Demo #7',
 		  stage: 'In Registry',
 		  stageEnd: '',
 		  action: '',
 		}, {
-		  projectName: 'project-8',
+		  projectName: 'DTrust-Demo #8',
 		  stage: 'In Registry',
 		  stageEnd: '',
 		  action: '',
 		}, {
-		  projectName: 'project-9',
+		  projectName: 'DTrust-Demo #9',
 		  stage: 'In Registry',
 		  stageEnd: '',
 		  action: '',

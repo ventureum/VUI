@@ -152,39 +152,43 @@ class VoteCommit extends Component {
                    />
                  </div>
                 }
-                <div className='ui field'>
-                  <label>Secret Phrase<br /><small>PLEASE SAVE THIS. This random phrase (known as a "salt") will be required to reveal your vote and claim rewards.</small></label>
-                  <div className='ui message tiny default SaltField'>
-                    {salt}
-                  </div>
-                </div>
-                <div className='ui field'>
-                  <label><small>Download commit info required for reveal stage</small></label>
-                  <button
-                    onClick={this.onDownload}
-                    title='Download commit info'
-                    className={`ui button ${enableDownload ? '' : 'disabled'} right labeled icon ${commitDownloaded ? 'default' : 'blue'}`}>
-                    Download Commit
-                    <i className='icon download' />
-                  </button>
-                </div>
-                {commitDownloaded
-                 ? <div className='ui field'>
-                   <label><small>Download a calendar reminder for revealing vote</small></label>
-                   <button
-                     onClick={this.onReminderDownload}
-                     title='Download commit info'
-                     className={`ui mini button right labeled icon ${revealReminderDownloaded ? 'default' : 'blue'}`}>
-                     Reveal Reminder
-                     <i className='icon download' />
-                   </button>
-                 </div>
-                 : null}
+      {this.state.stage !== 'Put Option' &&
+       <div className='ui field'>
+         <label>Secret Phrase<br /><small>PLEASE SAVE THIS. This random phrase (known as a "salt") will be required to reveal your vote and claim rewards.</small></label>
+         <div className='ui message tiny default SaltField'>
+           {salt}
+         </div>
+       </div>
+      }
+      {this.state.stage !== 'Put Option' &&
+       <div className='ui field'>
+        <label><small>Download commit info required for reveal stage</small></label>
+        <button
+        onClick={this.onDownload}
+        title='Download commit info'
+        className={`ui button ${enableDownload ? '' : 'disabled'} right labeled icon ${commitDownloaded ? 'default' : 'blue'}`}>
+        Download Commit
+        <i className='icon download' />
+        </button>
+        </div>
+      }
+        {commitDownloaded
+       ? <div className='ui field'>
+         <label><small>Download a calendar reminder for revealing vote</small></label>
+         <button
+           onClick={this.onReminderDownload}
+           title='Download commit info'
+           className={`ui mini button right labeled icon ${revealReminderDownloaded ? 'default' : 'blue'}`}>
+           Reveal Reminder
+           <i className='icon download' />
+         </button>
+       </div>
+       : null}
                 <div className='ui field'>
                   {(voteOption === null || !votes || !commitDownloaded)
                    ? <button
                        className='ui button disabled'>
-                     {voteOption === null ? 'Select Vote Option' : (!votes ? 'Enter votes' : 'Vote')}
+                     {voteOption === null ? 'Select Vote Option' :  'Submit'}
                    </button>
                    : <button
                        type='submit'

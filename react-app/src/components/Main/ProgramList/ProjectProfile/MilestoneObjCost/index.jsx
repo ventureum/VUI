@@ -33,17 +33,17 @@ class MilestoneObjCost extends Component {
     var btns = []
     if (this.state.milestone.stage === "Audit Cost Evaluation") {
       if (this.state.addressType === "proxies") {
-        btns.push(<Button primary>Accept and Join</Button>)
-      } else if (this.state.addressType === "projectFounders") {
         btns.push(<Button primary>Bid</Button>)
+      } else if (this.state.addressType === "projectFounders") {
+        btns.push(<Button primary>Accept and Finalize</Button>)
       }
     }
 
     if (this.state.milestone.stage === "Audit Cost Evaluation") {
       if (this.state.addressType === "proxies") {
-        btns.push(<Button primary>Accept and Join</Button>)
+        btns.push(<Button primary>Bid</Button>)
       } else if (this.state.addressType === "projectFounders") {
-        btns.push(<Button disabled>Bid</Button>)
+        btns.push(<Button disabled>Accept and Finalize</Button>)
       }
     }
 
@@ -51,9 +51,9 @@ class MilestoneObjCost extends Component {
       let obj = this.state.milestone.obj[i];
       if (this.state.milestone.stage === "Audit Cost Evaluation") {
         if (this.state.addressType === "proxies") {
-          btns.push(<Button primary>Accept and Join</Button>)
-        } else if (this.state.addressType === "projectFounders") {
           btns.push(<Button primary>Bid</Button>)
+        } else if (this.state.addressType === "projectFounders") {
+          btns.push(<Button primary>Accept and Finalize</Button>)
         }
       }
       objElems.push(

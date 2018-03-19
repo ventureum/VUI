@@ -17,7 +17,7 @@ class ProjectProfile extends Component {
     let addressType = props.addressType;
     //addressType = "proxies";
     var secondMilestone = {
-      'project-0': {
+      'DTrust-Demo #0': {
         milestoneId: 2,
         milestoneName: 'Client API, Wallet Web App',
 		stage: 'Inactive',
@@ -25,7 +25,7 @@ class ProjectProfile extends Component {
 		milestoneDeadline: '2018-06-15 00:00',
         action: '',
       },
-      'project-1': {
+      'DTrust-Demo #1': {
         milestoneId: 2,
         milestoneName: 'Client API, Wallet Web App',
 		stage: 'In Progress',
@@ -33,7 +33,7 @@ class ProjectProfile extends Component {
 		milestoneDeadline: '2018-06-15 00:00',
         action: '',
       },
-      'project-2': {
+      'DTrust-Demo #2': {
         milestoneId: 2,
         milestoneName: 'Client API, Wallet Web App',
 		stage: 'Proxy Vote - Delegate',
@@ -41,7 +41,7 @@ class ProjectProfile extends Component {
 		milestoneDeadline: '2018-06-15 00:00',
         action: addressType == 'investors' ? 'delegate' : '',
       },
-      'project-3': {
+      'DTrust-Demo #3': {
         milestoneId: 2,
         milestoneName: 'Client API, Wallet Web App',
 		stage: 'Audit Cost Evaluation',
@@ -49,7 +49,7 @@ class ProjectProfile extends Component {
 		milestoneDeadline: '2018-06-15 00:00',
         action: addressType != 'investors' ? 'cost evaluation' : '',
       },
-      'project-4': {
+      'DTrust-Demo #4': {
         milestoneId: 2,
         milestoneName: 'Client API, Wallet Web App',
 		stage: 'Proxy Vote - Commit',
@@ -57,7 +57,7 @@ class ProjectProfile extends Component {
 		milestoneDeadline: '2018-06-15 00:00',
         action: addressType == 'proxies' ? 'vote' : '',
       },
-      'project-5': {
+      'DTrust-Demo #5': {
         milestoneId: 2,
         milestoneName: 'Client API, Wallet Web App',
 		stage: 'Proxy Vote - Reveal',
@@ -65,7 +65,7 @@ class ProjectProfile extends Component {
 		milestoneDeadline: '2018-06-15 00:00',
         action: addressType == 'proxies' ? 'reveal' : '',
       },
-      'project-6': {
+      'DTrust-Demo #6': {
         milestoneId: 2,
         milestoneName: 'Client API, Wallet Web App',
 		stage: 'Put Option',
@@ -73,7 +73,7 @@ class ProjectProfile extends Component {
 		milestoneDeadline: '2018-06-15 00:00',
         action: addressType == 'investors' ? 'vote' : '',
       },
-      'project-7': {
+      'DTrust-Demo #7': {
         milestoneId: 2,
         milestoneName: 'Client API, Wallet Web App',
 		stage: 'Refund',
@@ -81,7 +81,7 @@ class ProjectProfile extends Component {
 		milestoneDeadline: '2018-06-20 00:00',
         action: addressType == 'investors' ? 'withdraw' : '',
       },
-      'project-8': {
+      'DTrust-Demo #8': {
         milestoneId: 2,
         milestoneName: 'Client API, Wallet Web App',
 		stage: 'Circuit Breaker Triggered',
@@ -89,7 +89,7 @@ class ProjectProfile extends Component {
 		milestoneDeadline: '2018-06-15 00:00',
         action: addressType == 'projectFounders' ? 'merge' : '',
       },
-      'project-9': {
+      'DTrust-Demo #9': {
         milestoneId: 2,
         milestoneName: 'Client API, Wallet Web App',
 		stage: 'Complete',
