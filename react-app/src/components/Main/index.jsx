@@ -5,6 +5,7 @@ import Application from './Application/index.jsx'
 import ProgramList from './ProgramList/index.jsx'
 import Registry from './Registry/index.jsx'
 import Account from './Account/index.jsx'
+import { Dropdown } from 'semantic-ui-react'
 
 import commafy from 'commafy'
 import store from '../../store'
@@ -17,6 +18,19 @@ class Main extends Component {
 
     this.state = {
       address: null,
+      addressType: 'investors',
+      addressTypeOptions: [
+        {
+          text: 'Investor',
+          value: 'investors'
+        }, {
+          text: 'Proxy',
+          value: 'proxies'
+        }, {
+          text: 'Founder',
+          value: 'projectFounders'
+        }
+      ],
       account: null,
       ethBalance: null,
       vthBalance: null,
@@ -29,7 +43,6 @@ class Main extends Component {
     this.setState({
       isLoading: false
     })
-    console.log(this)
 
     store.subscribe(x => {
       this.updateAddress()
@@ -43,6 +56,13 @@ class Main extends Component {
       address
     })
   }
+
+  changeAddressType (e, data) {
+    this.setState({
+      addressType: data.value
+    })
+  }
+
   async updateBalance () {
     try {
       const vthBalance = await token.getBalance()
@@ -73,7 +93,7 @@ class Main extends Component {
       <div className="main column twelve wide">
         <div className="ui grid">
           <div className="top-bar">
-            <div className="ui top attached menu stackable inverted overflow-x">
+            <div className="ui grid top attached menu stackable inverted">
               <div className="item">
                 <div className="addr">
                   <div className="avatar">
@@ -81,6 +101,10 @@ class Main extends Component {
                   </div>
                   <span>0x3f1c922ae22832ca3c2cd5888cdd49edacb912ca</span>
                 </div>
+              </div>
+              <div className="item">
+                Address Type:&nbsp;
+                <Dropdown value={this.addressType} onChange={this.changeAddressType.bind(this)} inline options={this.state.addressTypeOptions} defaultValue={this.state.addressTypeOptions[0].value} />
               </div>
               <div className="item">
                 <span>Network: <strong>test</strong></span>
@@ -106,7 +130,7 @@ class Main extends Component {
           </div>
           <span className="main-wrapper">
             {this.props.mainIndex === 0 && <Application />}
-            {this.props.mainIndex === 1 && <ProgramList list={[]} />}
+            {this.props.mainIndex === 1 && <ProgramList addressType={this.state.addressType} list={[]} />}
             {this.props.mainIndex === 2 && <Registry />}
             {this.props.mainIndex === 3 && <Account />}
           </span>
