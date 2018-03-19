@@ -42,7 +42,7 @@ class Account extends Component {
 			            <div><small>Available unlocked VTH: 100<strong> (Locked VTH: 10)</strong></small></div>
 			            <div>
 			              <button className='ui button blue tiny'>
-			                Withdraw ADT
+			                Withdraw VTH
 			            	</button>
 			            </div>
 			          </div>

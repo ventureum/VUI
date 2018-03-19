@@ -25,6 +25,7 @@ class MilestoneInfo extends Component {
     var objElems = []
     for (var i = 0; i < this.state.milestone.obj.length; i++ ) {
       let obj = this.state.milestone.obj[i];
+      let c = obj.objScore > 2.5 ? "green" : "red";
       objElems.push(
         <Segment padded>
           <Accordion.Title active={activeIndex === i+1} index={i+1} onClick={this.handleClick}>
@@ -32,7 +33,7 @@ class MilestoneInfo extends Component {
               <div className="column fourteen wide">
                 <h3> <Icon name='dropdown' /> {obj.objTitle} </h3>
               </div>
-              { (this.state.milestone.stage === "Complete" ||  this.state.milestone.stage === "Put Option" ||  this.state.milestone.stage === "Refund" || this.state.milestone.stage === "Circuit Breaker Triggered") &&  <div className="column two wide"> <Button color = 'green'>{obj.objScore}/5</Button> </div>}
+              { (this.state.milestone.stage === "Complete" ||  this.state.milestone.stage === "Put Option" ||  this.state.milestone.stage === "Refund" || this.state.milestone.stage === "Circuit Breaker Triggered") &&  <div className="column two wide"> <Button color = {c}>{obj.objScore}/5</Button> </div>}
             </div>
           </Accordion.Title>
           <Accordion.Content active={activeIndex === i+1}>
