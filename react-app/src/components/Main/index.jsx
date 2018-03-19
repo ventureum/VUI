@@ -21,13 +21,13 @@ class Main extends Component {
       addressType: 'investors',
       addressTypeOptions: [
         {
-          text: 'Investor',
+          text: 'Investor: 0x88cebf69c703b239e8e333273836a4bcfa94a415',
           value: 'investors'
         }, {
-          text: 'Proxy',
+          text: 'Proxy: 0x7b458ff830040ec6fda7ec4ab96634ba67a93ddf',
           value: 'proxies'
         }, {
-          text: 'Founder',
+          text: 'Founder: 0xe4b8ba1957b16a1f6c5663917c0fb067f7fa0e5b',
           value: 'projectFounders'
         }
       ],
@@ -99,12 +99,8 @@ class Main extends Component {
                   <div className="avatar">
                     <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAtUlEQVRYR2O8Z9r2nwEL2Jg/FZsw1cT8J2ZjNYtx1EHQcBkNIUKJbeiE0KFtplhzmUx9ICFPUiT/pHE99lw26iBouIyGEKEENvRDCJcPz757RsjzKPLGQlIkqWfElctGHQQNgdEQIpSghk4I4cpNpOYaUs3BGUKkGkRqrsTlsVEHwUJyNIRgIUFqWsSZhkZbjISqjtEQGg0htKKcak1YXAbhqjpwpcVRB8FCbDSECLUAh3wIAQCl1e/d0wBVcwAAAABJRU5ErkJggg==" alt=""/>
                   </div>
-                  <span>0x3f1c922ae22832ca3c2cd5888cdd49edacb912ca</span>
+                  <Dropdown value={this.addressType} onChange={this.changeAddressType.bind(this)} inline options={this.state.addressTypeOptions} defaultValue={this.state.addressTypeOptions[0].value} />
                 </div>
-              </div>
-              <div className="item">
-                Address Type:&nbsp;
-                <Dropdown value={this.addressType} onChange={this.changeAddressType.bind(this)} inline options={this.state.addressTypeOptions} defaultValue={this.state.addressTypeOptions[0].value} />
               </div>
               <div className="item">
                 <span>Network: <strong>test</strong></span>
