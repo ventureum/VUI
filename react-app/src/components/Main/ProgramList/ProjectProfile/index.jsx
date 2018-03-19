@@ -17,8 +17,16 @@ class ProjectProfile extends Component {
     let addressType = props.addressType;
     //addressType = "proxies";
     var secondMilestone = {
+      'project-0': {
+        milestoneId: 2,
+        milestoneName: 'Client API, Wallet Web App',
+		stage: 'Inactive',
+		stageEnd: '2018-04-15 03:33:02',
+		milestoneDeadline: '2018-06-15 00:00',
+        action: '',
+      },
       'project-1': {
-        milestoneId: 1,
+        milestoneId: 2,
         milestoneName: 'Client API, Wallet Web App',
 		stage: 'In Progress',
 		stageEnd: '2018-04-15 03:33:02',
@@ -26,7 +34,7 @@ class ProjectProfile extends Component {
         action: '',
       },
       'project-2': {
-        milestoneId: 1,
+        milestoneId: 2,
         milestoneName: 'Client API, Wallet Web App',
 		stage: 'Proxy Vote - Delegate',
 		stageEnd: '2018-04-10 00:00:00',
@@ -34,7 +42,7 @@ class ProjectProfile extends Component {
         action: addressType == 'investors' ? 'delegate' : '',
       },
       'project-3': {
-        milestoneId: 1,
+        milestoneId: 2,
         milestoneName: 'Client API, Wallet Web App',
 		stage: 'Audit Cost Evaluation',
 		stageEnd: '2018-04-10 00:00:00',
@@ -42,7 +50,7 @@ class ProjectProfile extends Component {
         action: addressType != 'investors' ? 'cost evaluation' : '',
       },
       'project-4': {
-        milestoneId: 1,
+        milestoneId: 2,
         milestoneName: 'Client API, Wallet Web App',
 		stage: 'Proxy Vote - Commit',
 		stageEnd: '2018-04-15 00:00:00',
@@ -50,7 +58,7 @@ class ProjectProfile extends Component {
         action: addressType == 'proxies' ? 'vote' : '',
       },
       'project-5': {
-        milestoneId: 1,
+        milestoneId: 2,
         milestoneName: 'Client API, Wallet Web App',
 		stage: 'Proxy Vote - Reveal',
 		stageEnd: '2018-04-20 00:00:00',
@@ -58,7 +66,7 @@ class ProjectProfile extends Component {
         action: addressType == 'proxies' ? 'reveal' : '',
       },
       'project-6': {
-        milestoneId: 1,
+        milestoneId: 2,
         milestoneName: 'Client API, Wallet Web App',
 		stage: 'Put Option',
 		stageEnd: '2018-06-15 00:00:00',
@@ -66,7 +74,7 @@ class ProjectProfile extends Component {
         action: addressType == 'investors' ? 'vote' : '',
       },
       'project-7': {
-        milestoneId: 1,
+        milestoneId: 2,
         milestoneName: 'Client API, Wallet Web App',
 		stage: 'Refund',
 		stageEnd: '2018-06-20 00:00:00',
@@ -74,7 +82,7 @@ class ProjectProfile extends Component {
         action: addressType == 'investors' ? 'withdraw' : '',
       },
       'project-8': {
-        milestoneId: 1,
+        milestoneId: 2,
         milestoneName: 'Client API, Wallet Web App',
 		stage: 'Circuit Breaker Triggered',
 		stageEnd: '2018-06-20 00:00:00',
@@ -82,7 +90,7 @@ class ProjectProfile extends Component {
         action: addressType == 'projectFounders' ? 'merge' : '',
       },
       'project-9': {
-        milestoneId: 1,
+        milestoneId: 2,
         milestoneName: 'Client API, Wallet Web App',
 		stage: 'Complete',
 		stageEnd: '2018-06-20 00:00:00',
@@ -93,17 +101,25 @@ class ProjectProfile extends Component {
     var milestones = [
       {
         milestoneId: 0,
-		milestoneName: 'Platform Test API for Merchants',
-		stage: 'Complete',
+		milestoneName: 'Token Sale',
+		stage: props.projectName!="project-0" ? 'Complete' : 'Inactive',
 		stageEnd: '',
-		milestoneDeadline: '2018-02-15 00:00',
+		milestoneDeadline: props.projectName!="project-0"?'2018-02-15 00:00':'',
+        action: '',
+	  },
+      {
+        milestoneId: 1,
+		milestoneName: 'Platform Test API for Merchants',
+		stage: props.projectName!="project-0" ? 'Complete' : 'Inactive',
+		stageEnd: '',
+		milestoneDeadline: props.projectName!="project-0"?'2018-02-15 00:00':'',
         action: '',
 	  },
     ];
     milestones.push(secondMilestone[props.projectName]);
     milestones.push(
       {
-        milestoneId: 2,
+        milestoneId: 3,
         milestoneName: 'Native apps iOS, Android',
 		stage: 'Inactive',
 		stageEnd: '',
@@ -113,7 +129,7 @@ class ProjectProfile extends Component {
     );
     milestones.push(
       {
-        milestoneId: 3,
+        milestoneId: 4,
         milestoneName: 'Platform Refinements & Expansion',
 		stage: 'Inactive',
 		stageEnd: '',
@@ -122,8 +138,9 @@ class ProjectProfile extends Component {
       }
     );
 
+    milestones[0].obj = []
     // set milestone objectives
-    milestones[0].obj = [
+    milestones[1].obj = [
       {
         objTitle : "Integrate with merchant checkout mechanisms",
         objContent : "Integration between Platform APIs and merchant checkout mechanisms will be implemented and fully tested.",
@@ -135,7 +152,7 @@ class ProjectProfile extends Component {
         objScore : 1.5
       }
     ]
-    milestones[1].obj = [
+    milestones[2].obj = [
       {
         objTitle : "Check your balance & transactions",
         objContent : "Clients will be able to use the Wallet Web App which is a HTML5 Single Page Application (SPA) to check the balance and make transactions.",
@@ -185,7 +202,7 @@ class ProjectProfile extends Component {
         rewardSet: true,
       }
     ]
-    milestones[2].obj = [
+    milestones[3].obj = [
       {
         objTitle : "200+ Merchants",
         objContent : "More than 200 merchants will join the DTRUST platform.",
@@ -197,7 +214,7 @@ class ProjectProfile extends Component {
         objScore : 1.5
       }
     ]
-    milestones[3].obj = [
+    milestones[4].obj = [
       {
         objTitle : "1000+ Merchants",
         objContent : "More than 1000 merchants will join the DTRUST platform.",
@@ -214,6 +231,10 @@ class ProjectProfile extends Component {
       milestoneList:milestones,
       projectName: props.projectName,
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({addressType: nextProps.addressType})
   }
 
   render() {
@@ -241,8 +262,8 @@ class ProjectProfile extends Component {
                 <Modal.Content>
                   {milestone.action === 'cost evaluation' && <MilestoneObjCost milestone = {milestone} addressType = {this.state.addressType} endDate={moment(milestone.stageEnd, "YYYY-MM-DD HH:mm:ss").unix()} />}
                   {milestone.action === 'delegate' && <Delegate stage={milestone.stage} endDate={moment(milestone.stageEnd, "YYYY-MM-DD HH:mm:ss").unix()} />}
-                  {milestone.action === 'vote' && <VoteCommit stage={milestone.stage} endDate={moment(milestone.stageEnd, "YYYY-MM-DD HH:mm:ss").unix()} />}
-                  {milestone.action === 'reveal' && <VoteReveal stage={milestone.stage} endDate={moment(milestone.stageEnd, "YYYY-MM-DD HH:mm:ss").unix()} />}
+                  {milestone.action === 'vote' && <VoteCommit obj = {milestone.obj} stage={milestone.stage} endDate={moment(milestone.stageEnd, "YYYY-MM-DD HH:mm:ss").unix()} />}
+                  {milestone.action === 'reveal' && <VoteReveal obj = {milestone.obj} stage={milestone.stage} endDate={moment(milestone.stageEnd, "YYYY-MM-DD HH:mm:ss").unix()} />}
                   {milestone.action === 'withdraw' && 
                    <div className="column five wide">
                      <div className='withdraw-voting-rights-container'>
@@ -257,8 +278,14 @@ class ProjectProfile extends Component {
                                <p>Remaining time: <Countdown endDate={moment(moment(milestone.stageEnd, "YYYY-MM-DD HH:mm:ss").valueOf())} /></p>
                              </div>
                            </div>
+                           <div className="inline field">
+                             <label>Withdraw Amount </label>
+                             <div className="ui input">
+                               <input type="text" placeholder="10" />
+                             </div>
+                           </div>
                            <div className="field">
-                             <label>Available ETH: <strong>100</strong></label>
+                             <label>Available ETH: <strong>1200</strong></label>
                            </div>
                            <div>
                              <button className='ui button blue tiny'>
@@ -311,21 +338,7 @@ class ProjectProfile extends Component {
 	              {milestoneElems}
 	            </div>
 	          </div>
-	          <div className="pagination-bottom">
-	            <div className="-pagination">
-	              <div className="-previous">
-	                <button type="button" disabled className="-btn">Previous</button>
-	              </div>
-	              <div className="-center"><span className="-pageInfo">Page&nbsp;
-	                <div className="-pageJump"><input type="number" value="1" /></div>
-	  &nbsp;of&nbsp;
-	  <span className="-totalPages">12</span></span>
-	              </div>
-	              <div className="-next">
-	                <button type="button" className="-btn">Next</button>
-	              </div>
-	            </div>
-	          </div>
+
 	        </div>
           </div>
         </div>

@@ -7,165 +7,155 @@ import Delegate from './Delegate'
 import VoteCommit from './VoteCommit'
 import VoteReveal from './VoteReveal'
 import Countdown from './Countdown'
+import ProjectProfile from './ProjectProfile'
 
 class ProgramList extends Component {
-	constructor (props) {
+  constructor (props) {
     super()
 
     this.state = {
       programList: [
-				{
-					projectName: 'project-1',
-					stage: 'Proxy Vote - Delegate',
-					stageEnd: '2018-04-10 00:00:00',
-					action: 'delegate',
-					currentMileStone: 'Milestone B'
-				}, {
-					projectName: 'project-2',
-					stage: 'Proxy Vote - Commit',
-					stageEnd: '2018-04-15 00:00:00',
-					action: 'vote',
-					currentMileStone: 'Milestone B'
-				}, {
-					projectName: 'project-3',
-					stage: 'Proxy Vote - Reveal',
-					stageEnd: '2018-04-20 00:00:00',
-					action: 'reveal',
-					currentMileStone: 'Milestone B'
-				}, {
-					projectName: 'project-4',
-					stage: 'Put Option - Commit',
-					stageEnd: '2018-06-10 00:00:00',
-					action: 'vote',
-					currentMileStone: 'Milestone B'
-				}, {
-					projectName: 'project-5',
-					stage: 'Refund',
-					stageEnd: '2018-06-20 00:00:00',
-					action: 'withdraw',
-					currentMileStone: 'Milestone B'
-				}, {
-					projectName: 'project-6',
-					stage: 'Circuit Breaker Trigger',
-					stageEnd: '2018-06-20 00:00:00',
-					action: 'merge',
-					currentMileStone: 'Milestone B'
-				}
-      ]
+        {
+		  projectName: 'project-0',
+		  stage: 'In Application',
+		  stageEnd: '2018-01-10 00:00:00',
+		  action: 'Challenge',
+		}, {
+		  projectName: 'project-1',
+		  stage: 'In Registry',
+		  stageEnd: '',
+		  action: '',
+		}, {
+		  projectName: 'project-2',
+		  stage: 'In Registry',
+		  stageEnd: '',
+		  action: '',
+		}, {
+		  projectName: 'project-3',
+		  stage: 'In Registry',
+		  stageEnd: '',
+		  action: '',
+		}, {
+		  projectName: 'project-4',
+		  stage: 'In Registry',
+		  stageEnd: '',
+		  action: '',
+		}, {
+		  projectName: 'project-5',
+		  stage: 'In Registry',
+		  stageEnd: '',
+		  action: '',
+		}, {
+		  projectName: 'project-6',
+		  stage: 'In Registry',
+		  stageEnd: '',
+		  action: '',
+		}, {
+		  projectName: 'project-7',
+		  stage: 'In Registry',
+		  stageEnd: '',
+		  action: '',
+		}, {
+		  projectName: 'project-8',
+		  stage: 'In Registry',
+		  stageEnd: '',
+		  action: '',
+		}, {
+		  projectName: 'project-9',
+		  stage: 'In Registry',
+		  stageEnd: '',
+		  action: '',
+		}
+      ],
+      addressType: props.addressType
     }
   }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({addressType: nextProps.addressType})
+  }
+
   render() {
   	var projectElems = []
   	var project
   	for (var i = 0; i < this.state.programList.length; i++) {
-  		project = this.state.programList[i]
-  		projectElems.push(
-				<div className="rt-tr-group">
+  	  project = this.state.programList[i]
+  	  projectElems.push(
+		<div className="rt-tr-group">
           <div className="rt-tr -odd">
             <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}>
-              <a href="#!" className="domain" title="View profile">
-                {project.projectName}
-              </a>
-            </div>
-            <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}><span className="">{project.currentMileStone}</span></div>
-            <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}><span className="">{project.stage}</span></div>
-            <div className="rt-td Number" style={{flex: '150 0 auto', width: '150px'}}>{project.stageEnd}</div>
-            <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}>
-              <Modal trigger={<a className={"ui mini button" + (project.stage === 'Proxy Vote - Delegate' ? ' purple' : ' blue')} href="#!" title="Challenge">{project.action}</a>}>
-                <Modal.Header>{project.stage}</Modal.Header>
+              <Modal size="large" trigger={<a href="#!" className="domain" title="View profile">{project.projectName}</a>}>
+                <Modal.Header>{project.projectName}</Modal.Header>
                 <Modal.Content>
-                  {project.action === 'delegate' && <Delegate stage={project.stage} endDate={moment(project.stageEnd, "YYYY-MM-DD HH:mm:ss").unix()} />}
-                  {project.action === 'vote' && <VoteCommit stage={project.stage} endDate={moment(project.stageEnd, "YYYY-MM-DD HH:mm:ss").unix()} />}
-                  {project.action === 'reveal' && <VoteReveal stage={project.stage} endDate={moment(project.stageEnd, "YYYY-MM-DD HH:mm:ss").unix()} />}
-                  {project.action === 'withdraw' && 
-                    <div className="column five wide">
-                      <div className='withdraw-voting-rights-container'>
-                        <div className='ui grid stackable center aligned'>
-                          <div className='column sixteen wide ui form'>
-                            <div className='column sixteen wide center aligned field'>
-                              <div className='ui message info'>
-                                <p>
-                                Withdraw stage ends
-                                </p>
-                                <p><strong>{project.stageEnd}</strong></p>
-                                <p>Remaining time: <Countdown endDate={moment(moment(project.stageEnd, "YYYY-MM-DD HH:mm:ss").valueOf())} /></p>
-                              </div>
-                            </div>
-                            <div className="field">
-                              <label>Available ETH: <strong>100</strong></label>
-                            </div>
-                            <div>
-                              <button className='ui button blue tiny'>
-                                Withdraw
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  }
-                  {project.action === 'merge' && 'merge'}
+                  <ProjectProfile addressType = {this.state.addressType} projectName = {project.projectName} />
                 </Modal.Content>
               </Modal>
             </div>
+            <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}><span className="">{project.stage}</span></div>
+            <div className="rt-td Number" style={{flex: '150 0 auto', width: '150px'}}>{project.stageEnd}</div>
+            <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}>
+              {project.action!='' &&
+              <Modal trigger={<a className="ui mini button purple" href="#!">{project.action}</a>}>
+                <Modal.Header>{project.stage}</Modal.Header>
+                <Modal.Content>
+                </Modal.Content>
+              </Modal>
+              }
             </div>
+          </div>
         </div>
-  		)
-  	}
+  	  )
+    }
     return (
       <div className="program-list">
         <div className="ui grid stackable padded">
-        	<div className="column sixteen wide">
-        		<div className="ReactTable ui table">
-	            <div className="rt-table">
-	              <div className="rt-thead -header" style={{minWidth: '600px'}}>
-	                <div className="rt-tr">
-	                  <div className=" rt-resizable-header -cursor-pointer rt-th" style={{flex: '200 0 auto', width: '200px'}}>
-	                    <div className="rt-resizable-header-content">Project Name</div>
-	                    <div className="rt-resizer"></div>
-	                  </div>
-	                  <div className=" rt-resizable-header -cursor-pointer rt-th" style={{flex: '200 0 auto', width: '200px'}}>
-	                    <div className="rt-resizable-header-content">Current Milestone</div>
-	                    <div className="rt-resizer"></div>
-	                  </div>
-	                  <div className=" rt-resizable-header -cursor-pointer rt-th" style={{flex: '200 0 auto', width: '200px'}}>
-	                    <div className="rt-resizable-header-content">Stage</div>
-	                    <div className="rt-resizer"></div>
-	                  </div>
-	                  <div className="Number rt-resizable-header -cursor-pointer rt-th" style={{flex: '150 0 auto', minWidth: '150px'}}>
-	                    <div className="rt-resizable-header-content">Stage Ends</div>
-	                    <div className="rt-resizer"></div>
-	                  </div>
+          <div className="column sixteen wide">
+            <div className="ReactTable ui table">
+	          <div className="rt-table">
+	            <div className="rt-thead -header" style={{minWidth: '600px'}}>
+	              <div className="rt-tr">
+	                <div className=" rt-resizable-header -cursor-pointer rt-th" style={{flex: '200 0 auto', width: '200px'}}>
+	                  <div className="rt-resizable-header-content">Project Name</div>
+	                  <div className="rt-resizer"></div>
+	                </div>
+	                <div className=" rt-resizable-header -cursor-pointer rt-th" style={{flex: '200 0 auto', width: '200px'}}>
+	                  <div className="rt-resizable-header-content">Stage</div>
+	                  <div className="rt-resizer"></div>
+	                </div>
+	                <div className="Number rt-resizable-header -cursor-pointer rt-th" style={{flex: '150 0 auto', minWidth: '150px'}}>
+	                  <div className="rt-resizable-header-content">Stage Ends</div>
+	                  <div className="rt-resizer"></div>
+	                </div>
                     <div className=" rt-resizable-header -cursor-pointer rt-th" style={{flex: '200 0 auto', width: '200px'}}>
                       <div className="rt-resizable-header-content">Action</div>
                       <div className="rt-resizer"></div>
                     </div>
-	                </div>
-	              </div>
-	              <div className="rt-tbody" style={{minWidth: '600px'}}>
-	              	{projectElems}
 	              </div>
 	            </div>
-	            <div className="pagination-bottom">
-	              <div className="-pagination">
-	                <div className="-previous">
-	                  <button type="button" disabled className="-btn">Previous</button>
-	                </div>
-	                <div className="-center"><span className="-pageInfo">Page&nbsp;
-	                  <div className="-pageJump"><input type="number" value="1" /></div>
-	                  &nbsp;of&nbsp;
-	                  <span className="-totalPages">12</span></span>
-	                </div>
-	                <div className="-next">
-	                  <button type="button" className="-btn">Next</button>
-	                </div>
-	              </div>
-	            </div>
-	            <div className="-loading">
-	              <div className="-loading-inner">Loading...</div>
+	            <div className="rt-tbody" style={{minHeight: '400px'}}>
+	              {projectElems}
 	            </div>
 	          </div>
-        	</div>
+	          <div className="pagination-bottom">
+	            <div className="-pagination">
+	              <div className="-previous">
+	                <button type="button" disabled className="-btn">Previous</button>
+	              </div>
+	              <div className="-center"><span className="-pageInfo">Page&nbsp;
+	                <div className="-pageJump"><input type="number" value="1" /></div>
+	  &nbsp;of&nbsp;
+	  <span className="-totalPages">12</span></span>
+	              </div>
+	              <div className="-next">
+	                <button type="button" className="-btn">Next</button>
+	              </div>
+	            </div>
+	          </div>
+	          <div className="-loading">
+	            <div className="-loading-inner">Loading...</div>
+	          </div>
+	        </div>
+          </div>
         </div>
       </div>
     );

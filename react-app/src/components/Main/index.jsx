@@ -21,13 +21,13 @@ class Main extends Component {
       addressType: 'investors',
       addressTypeOptions: [
         {
-          text: 'Investor: 0x88cebf69c703b239e8e333273836a4bcfa94a415',
+          text: '0x88cebf69c703b239e8e333273836a4bcfa94a415 (Investor)',
           value: 'investors'
         }, {
-          text: 'Proxy: 0x7b458ff830040ec6fda7ec4ab96634ba67a93ddf',
+          text: '0x7b458ff830040ec6fda7ec4ab96634ba67a93ddf (Regulator)',
           value: 'proxies'
         }, {
-          text: 'Founder: 0xe4b8ba1957b16a1f6c5663917c0fb067f7fa0e5b',
+          text: '0xe4b8ba1957b16a1f6c5663917c0fb067f7fa0e5b (Project Founder)',
           value: 'projectFounders'
         }
       ],
@@ -103,19 +103,19 @@ class Main extends Component {
                 </div>
               </div>
               <div className="item">
-                <span>Network: <strong>test</strong></span>
+                <span>Network: <strong>Ropsten Testnet</strong></span>
               </div>
               <div className="menu right">
                 <div className="item">
                   <div className="eth-logo ui image">
                     <img src="https://www.ethereum.org/images/diamond-icon@2x.png" alt=""/>
-                    2.33 ETH
+                    150 ETH
                   </div>
                 </div>
                 <div className="item">
                   <div className="vth-logo ui image">
                     <img src="http://ventureum.io/img/logo.png" alt=""/>
-                    2.33 VTH
+                    231002 VTH
                   </div>
                 </div>
                 <div className="item">

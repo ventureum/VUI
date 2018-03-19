@@ -14,7 +14,13 @@ class ProjectInfo extends Component {
       <div>
         <h2> Project Description </h2>
         <p class="break-word">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          UTRUST will be a revolutionary payment platform that enables buyers to use their
+          favorite cryptocurrency in order to pay sellers (private or merchants). We provide
+          sellers with the safety and convenience of receiving funds in fiat currency, and offer
+          the best consumer-protection to buyers, by acting as trusted mediators. We
+          combine the best payment protection features of current generation fiat systems
+          with the innovative features of blockchain while blending in the unique features
+          provided by our own token.
         </p>
         <div>
           <button class="ui button">Download Full Package</button>

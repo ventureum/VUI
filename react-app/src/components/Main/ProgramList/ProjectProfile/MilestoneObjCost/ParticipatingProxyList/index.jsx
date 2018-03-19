@@ -9,9 +9,14 @@ class ParticipatingProxyList extends Component {
       proxyList: props.proxyList,
       currentRewards: props.currentRewards,
       rewardSet: props.rewardSet,
+      addressType: props.addressType,
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({addressType: nextProps.addressType})
+  }
+  
   render () {
     var proxyElems = []
     var totalVotes = 0
@@ -35,7 +40,7 @@ class ParticipatingProxyList extends Component {
                                                              <span style={{color:"grey"}}> (Reward will be increased to {"$"+this.state.currentRewards*1.15} in the next block)</span>
                                                            : <span style={{color:"grey"}}> (Reward has been permanently set to  {"$"+this.state.currentRewards})</span>}
         </h4>
-        <h4>Your Votes: 5600000</h4>
+        {this.state.addressType === "proxies" && <h4>Your Votes: 5600000</h4>}
         <Table celled>
           <Table.Header>
             <Table.Row>
