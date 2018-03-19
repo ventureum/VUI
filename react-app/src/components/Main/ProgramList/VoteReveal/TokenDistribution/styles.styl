@@ -1,0 +1,41 @@
+:root:root:root .token-distribution 
+  .progress-container .divider
+    padding-bottom 1rem
+  .bar-container
+    max-width 300px
+    margin 0 auto
+  .breakdown
+    display flex
+    max-width 250px
+    margin 0 auto
+    padding-top 0.6em
+  .breakdown-item
+    display inline-flex
+    width 50%
+    justify-content center
+    align-items center
+    position relative
+    &:nth-child(2)
+      &:after
+        content ''
+        display block
+        position absolute
+        left -1px
+        top 0
+        width 1px
+        height 100%
+        background #ddd
+      .breakdown-itembox
+        background #633e80
+      .breakdown-itemlabel
+        color #633e80
+  .breakdown-itembox
+    display inline-block
+    width 12px
+    height 12px
+    background #4585c7
+    margin-right 0.5em
+  .breakdown-itemlabel
+    color #4585c7
+    font-size 0.8em
+    font-weight bold
