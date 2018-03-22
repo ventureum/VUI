@@ -1,0 +1,47 @@
+.stat-progress-bar .stat-bar-container {
+  width: 100%;
+  height: 1.6em;
+  border: none;
+  position: relative;
+  border-radius: 15px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+.stat-progress-bar .stat-bar-fill-container {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  float: left;
+  height: 100%;
+  background: #4585c7;
+  text-align: center;
+  color: #fff;
+  font-size: 0.9em;
+}
+.stat-progress-bar .stat-bar-fill-container:first-child {
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
+}
+.stat-progress-bar .stat-bar-fill-container:nth-child(2) {
+  background: #633e80;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+.stat-progress-bar .stat-bar-fill-container.round {
+  border-radius: 15px;
+}
+.stat-progress-bar .stat-bar-legend {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1px 10px;
+}
+.stat-progress-bar .fill-label {
+  font-size: 0.8em;
+  color: #4585c7;
+}
+.stat-progress-bar .fill-label:nth-child(2) {
+  color: #633e80;
+}
