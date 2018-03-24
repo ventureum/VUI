@@ -2,7 +2,7 @@ import contract from 'truffle-contract'
 import { getProvider } from '../services/provider'
 
 export const getAbi = async (contract) => {
-  const storageKey = `adchain:abi:${contract}`
+  const storageKey = `ventureum:abi:${contract}`
   const cached = window.sessionStorage.getItem(storageKey)
 
   try {
@@ -13,7 +13,7 @@ export const getAbi = async (contract) => {
     console.error(error)
   }
 
-  const url = 'https://s3-us-west-2.amazonaws.com/registry-contracts'
+  const url = '/contracts'
   const data = await window.fetch(`${url}/${contract}.json`)
   const json = await data.json()
 

@@ -22,6 +22,7 @@ function reducer (state = -1, action) {
     case 'TOKEN_CONTRACT_INIT':
     case 'TOKEN_EVENT':
     case 'TOKEN_APPROVE':
+    case 'TOKEN_TRANSFERED':
     case 'REGISTRY_CONTRACT_INIT':
     case 'REGISTRY_DOMAIN_APPLY':
     case 'REGISTRY_DOMAIN_CHALLENGE':

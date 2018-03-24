@@ -44,9 +44,10 @@ class RegistryService {
     this.account = accounts[0]
 
     this.registry = await getRegistry(this.account)
+
     this.address = this.registry.address
 
-    this.setUpEvents()
+    // this.setUpEvents()
     this.setAccount()
 
     store.dispatch({
@@ -182,6 +183,38 @@ class RegistryService {
     } catch (error) {
       throw error
     }
+  }
+
+  async getProjectList () {
+    var hashList = []
+    var projectList = []
+    var next = 0
+    var num
+    var propertyNameMap = {
+      '0': 'applicationExpiry',
+      '1': 'whitelisted',
+      '2': 'owner',
+      '3': 'unstakedDeposit',
+      '4': 'challengeID',
+      '5': 'projectName'
+    }
+    do {
+        next = await this.registry.getNextProjectHash.call(next)
+        num = new Eth.BN(next.substring(2), 16)
+    } while(!num.eq(new Eth.BN('0')) && hashList.push(next))
+    for (let hash of hashList) {
+      let projectData = await this.registry.listings.call(hash)
+      let projectObj = {}
+      for (let i = 0; i < projectData.length; i++) {
+        if (projectData[i].constructor.name == 'BigNumber') {
+          projectObj[propertyNameMap[i]] = projectData[i].toNumber()
+        } else {
+          projectObj[propertyNameMap[i]] = projectData[i]
+        }
+      }
+      projectList.push(projectObj)
+    }
+    return projectList
   }
 
   async getListing (domain) {
@@ -655,7 +688,14 @@ class RegistryService {
 
   async approveTokens (tokens) {
     const bigTokens = big(tokens).mul(tenToTheNinth).toString(10)
+
     return token.approve(this.address, bigTokens)
+  }
+
+  async transferTokens (tokens) {
+    const bigTokens = big(tokens).mul(tenToTheNinth).toString(10)
+
+    // TODO
   }
 
   async getTokenAllowance () {

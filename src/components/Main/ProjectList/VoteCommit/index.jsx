@@ -8,7 +8,7 @@ import saveFile from '../../../../utils/saveFile'
 import generateReminder from '../../../../utils/generateReminder'
 import Countdown from '../Countdown'
 import registry from '../../../../services/registry'
-import InProgress from './InProgress'
+import InProgress from '../../InProgress'
 
 import './styles.css'
 

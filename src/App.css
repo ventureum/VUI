@@ -2,3 +2,25 @@ body {
   color: #333;
   background-color: #f2f6f9;
 }
+:root:root:root .overflow-x,
+:root:root:root .overflow-y {
+  overflow: auto;
+}
+:root:root:root .overflow-x::-webkit-scrollbar,
+:root:root:root .overflow-y::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+:root:root:root .overflow-x::-webkit-scrollbar-track,
+:root:root:root .overflow-y::-webkit-scrollbar-track {
+  background: #2e323a;
+}
+:root:root:root .overflow-x::-webkit-scrollbar-thumb,
+:root:root:root .overflow-y::-webkit-scrollbar-thumb {
+  background-color: #414652;
+  border: 1px solid #414652;
+}
+:root:root:root .overflow-x::-webkit-scrollbar-thumb:hover,
+:root:root:root .overflow-y::-webkit-scrollbar-thumb:hover {
+  background-color: #1a1d23;
+}
