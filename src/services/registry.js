@@ -47,7 +47,7 @@ class RegistryService {
 
     this.address = this.registry.address
 
-    // this.setUpEvents()
+    this.setUpEvents()
     this.setAccount()
 
     store.dispatch({
@@ -58,18 +58,17 @@ class RegistryService {
   async setUpEvents () {
     try {
       // websocket provider required for events
-      const provider = getWebsocketProvider()
-      const registry = await getRegistry(null, provider)
-
-      registry.allEvents()
+      // const provider = getWebsocketProvider()
+      // const registry = await getRegistry(null, provider)
+      this.registry.allEvents()
         .watch((error, log) => {
           if (error) {
             console.error(error)
             return false
           }
-
           store.dispatch({
-            type: 'REGISTRY_EVENT'
+            type: 'REGISTRY_EVENT',
+            data: log
           })
         })
     } catch (error) {
@@ -89,40 +88,36 @@ class RegistryService {
     return this.account
   }
 
-  async apply (domain, deposit = 0) {
-    if (!domain) {
-      throw new Error('Domain is required')
+  async apply (name, deposit = 500000) {
+    if (!name) {
+      throw new Error('Project name is required')
     }
 
-    domain = domain.toLowerCase()
-
-    const bigDeposit = big(deposit).mul(tenToTheNinth).toString(10)
-
-    const exists = await this.applicationExists(domain)
+    const exists = await this.applicationExists(name)
 
     if (exists) {
-      throw new Error('Application already exists')
+      throw new Error('Project name already exists')
     }
 
     const allowed = await token.allowance(this.account, this.address).toString('10')
 
-    if (allowed >= bigDeposit) {
+    if (allowed >= deposit) {
       try {
-        await token.approve(this.address, bigDeposit)
+        await token.approve(this.address, deposit)
       } catch (error) {
         throw error
       }
     }
 
     try {
-      await this.registry.apply(domain, bigDeposit)
+      await this.registry.apply(name, deposit, {from: this.account})
     } catch (error) {
       throw error
     }
 
     store.dispatch({
-      type: 'REGISTRY_DOMAIN_APPLY',
-      domain
+      type: 'REGISTRY_NAME_APPLY',
+      name
     })
   }
 

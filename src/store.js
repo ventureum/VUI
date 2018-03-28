@@ -24,7 +24,7 @@ function reducer (state = -1, action) {
     case 'TOKEN_APPROVE':
     case 'TOKEN_TRANSFERED':
     case 'REGISTRY_CONTRACT_INIT':
-    case 'REGISTRY_DOMAIN_APPLY':
+    case 'REGISTRY_NAME_APPLY':
     case 'REGISTRY_DOMAIN_CHALLENGE':
     case 'REGISTRY_DOMAIN_VOTE_COMMIT':
     case 'REGISTRY_DOMAIN_VOTE_REVEAL':
@@ -39,7 +39,7 @@ function reducer (state = -1, action) {
     case 'PLCR_WITHDRAW_VOTING_RIGHTS':
     case 'PARAMETERIZER_CONTRACT_INIT':
     case 'PARAMETERIZER_EVENT':
-      return state + 1
+      return action
     default:
       return state
   }

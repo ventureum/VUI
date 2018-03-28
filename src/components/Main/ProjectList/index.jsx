@@ -11,6 +11,7 @@ import VoteReveal from './VoteReveal'
 import Countdown from './Countdown'
 import ProjectProfile from './ProjectProfile'
 import registry from '../../../services/registry'
+import store from '../../../store'
 import InProgress from '../InProgress'
 
 class ProjectList extends Component {
@@ -68,6 +69,13 @@ class ProjectList extends Component {
       inProgress: true
     })
     this.getProjectList()
+
+    store.subscribe(x => {
+      const state = store.getState()
+      if (state.type === 'REGISTRY_EVENT') {
+        this.getProjectList()
+      }
+    })
   }
 
   async getProjectList () {

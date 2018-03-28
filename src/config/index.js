@@ -35,9 +35,17 @@ export const getRegistry = async (account, provider) => {
   return Registry.deployed()
 }
 
+export const getSale = async (account, provider) => {
+  const saleArtifact = await getAbi('Sale')
+  const Sale = contract(saleArtifact)
+  Sale.setProvider(provider || getProvider())
+
+  return Sale.deployed()
+}
+
 export const getToken = async (account) => {
-  const registry = await getRegistry()
-  const tokenAddress = await registry.token.call()
+  const sale = await getSale()
+  const tokenAddress = await sale.token.call()
   const tokenArtifact = await getAbi('HumanStandardToken')
   const Token = contract(tokenArtifact)
   Token.defaults({from: account})
