@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import CSSModules from 'react-css-modules'
 import styles from './styles.css'
-import Application from './Application/index.jsx'
-import ProgramList from './ProgramList/index.jsx'
-import Registry from './Registry/index.jsx'
-import Account from './Account/index.jsx'
-import { Dropdown } from 'semantic-ui-react'
+import Application from './Application'
+import ProjectList from './ProjectList'
+import Registry from './Registry'
+import Account from './Account'
+import VTHFaucet from './VTHFaucet'
+import { Dropdown, Modal } from 'semantic-ui-react'
 
 import commafy from 'commafy'
 import store from '../../store'
@@ -31,13 +32,15 @@ class Main extends Component {
           value: 'projectFounders'
         }
       ],
-      account: null,
       ethBalance: null,
       vthBalance: null,
-      isLoading: true
+      isLoading: true,
+      tokenAmount: null
     }
   }
+
   componentDidMount () {
+
     this.updateAddress()
     this.updateBalance()
     this.setState({
@@ -49,6 +52,7 @@ class Main extends Component {
       this.updateBalance()
     })
   }
+
   async updateAddress () {
     var address = registry.getAccount()
 
@@ -88,7 +92,15 @@ class Main extends Component {
       })
     }
   }
+
   render() {
+    let {
+      vthBalance,
+      ethBalance,
+      address,
+      isLoading
+    } = this.state
+
     return (
       <div className="main column twelve wide">
         <div className="ui grid">
@@ -103,19 +115,19 @@ class Main extends Component {
                 </div>
               </div>
               <div className="item">
-                <span>Network: <strong>Ropsten Testnet</strong></span>
+                <span>Network: <strong>Local Ganache</strong></span>
               </div>
               <div className="menu right">
                 <div className="item">
                   <div className="eth-logo ui image">
                     <img src="https://www.ethereum.org/images/diamond-icon@2x.png" alt=""/>
-                    150 ETH
+                    {ethBalance !== null ? commafy(ethBalance.toFixed(4)) : '-'} ETH
                   </div>
                 </div>
                 <div className="item">
                   <div className="vth-logo ui image">
                     <img src="http://ventureum.io/img/logo.png" alt=""/>
-                    231002 VTH
+                    {vthBalance !== null ? commafy(vthBalance.toFixed(4)) : '-'} VTH{vthBalance !== 0 ? <VTHFaucet address={address} /> : ''}
                   </div>
                 </div>
                 <div className="item">
@@ -126,7 +138,7 @@ class Main extends Component {
           </div>
           <span className="main-wrapper">
             {this.props.mainIndex === 0 && <Application />}
-            {this.props.mainIndex === 1 && <ProgramList addressType={this.state.addressType} list={[]} />}
+            {this.props.mainIndex === 1 && <ProjectList addressType={this.state.addressType} list={[]} />}
             {this.props.mainIndex === 2 && <Registry />}
             {this.props.mainIndex === 3 && <Account />}
           </span>

@@ -5,7 +5,7 @@ import {Button, Dropdown, Radio, Popup } from 'semantic-ui-react'
 
 import Countdown from '../Countdown'
 import registry from '../../../../services/registry'
-import InProgress from './InProgress'
+import InProgress from '../../InProgress'
 import TokenDistribution from './TokenDistribution'
 
 import './styles.css'

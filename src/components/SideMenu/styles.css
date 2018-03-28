@@ -1,28 +1,6 @@
 :root:root:root .side-menu-wrap {
   width: 15em !important;
 }
-:root:root:root .side-menu-wrap .overflow-x,
-:root:root:root .side-menu-wrap .overflow-y {
-  overflow: auto;
-}
-:root:root:root .side-menu-wrap .overflow-x::-webkit-scrollbar,
-:root:root:root .side-menu-wrap .overflow-y::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-:root:root:root .side-menu-wrap .overflow-x::-webkit-scrollbar-track,
-:root:root:root .side-menu-wrap .overflow-y::-webkit-scrollbar-track {
-  background: #2e323a;
-}
-:root:root:root .side-menu-wrap .overflow-x::-webkit-scrollbar-thumb,
-:root:root:root .side-menu-wrap .overflow-y::-webkit-scrollbar-thumb {
-  background-color: #414652;
-  border: 1px solid #414652;
-}
-:root:root:root .side-menu-wrap .overflow-x::-webkit-scrollbar-thumb:hover,
-:root:root:root .side-menu-wrap .overflow-y::-webkit-scrollbar-thumb:hover {
-  background-color: #1a1d23;
-}
 :root:root:root .side-menu {
   background-color: #6a2499;
   display: flex;

@@ -2,23 +2,61 @@ import React, { Component } from 'react'
 import commafy from 'commafy'
 import toastr from 'toastr'
 import moment from 'moment'
-import { Popup } from 'semantic-ui-react'
+import { Popup, Select } from 'semantic-ui-react'
 import registry from '../../../../services/registry'
-import InProgress from './InProgress'
+import InProgress from '../../InProgress'
 import Countdown from '../Countdown'
 
 import './styles.css'
 
-class Challenge extends Component {
+class Delegate extends Component {
   constructor (props) {
     super()
 
     this.state = {
-      applicationExpiry: 1527811200,
+      proxyValue: '',
+      delegateEnd: props.endDate,
       minDeposit: 100,
       currentDeposit: null,
-      inProgress: false
+      inProgress: false,
+      stage: props.stage,
+      proxyList: [
+        {
+          key: '1',
+          value: 'John',
+          text: 'John'
+        }, {
+          key: '2',
+          value: 'Richard',
+          text: 'Richard'
+        }, {
+          key: '3',
+          value: 'Brian',
+          text: 'Brian'
+        },
+      ],
+      proxyInfo: {
+        'John': {
+          name: 'John Smith',
+          ethAddr: '0x20ca9efd76a8738f000013783161872d00008486',
+          lockedVth: 1042
+        },
+        'Richard': {
+          name: 'Richard White',
+          ethAddr: '0xe71d864ce000066bb8d640ad2e03bce75dc80000',
+          lockedVth: 3241
+        }, 
+        'Brian': {
+          name: 'John Lee',
+          ethAddr: '0x4a0000006500816731f2af00001eb43761c88a79',
+          lockedVth: 8012
+        }, 
+      }
     }
+  }
+
+  setValue(e, data) {
+    this.setState({ proxyValue: data.value })
   }
 
   componentDidMount () {
@@ -34,12 +72,12 @@ class Challenge extends Component {
 
   render () {
     const {
-      applicationExpiry,
+      delegateEnd,
       minDeposit,
       inProgress
     } = this.state
 
-    const stageEndMoment = applicationExpiry ? moment.unix(applicationExpiry) : null
+    const stageEndMoment = delegateEnd ? moment.unix(delegateEnd) : null
     const stageEnd = stageEndMoment ? stageEndMoment.format('YYYY-MM-DD HH:mm:ss') : '-'
 
     return (
@@ -47,7 +85,7 @@ class Challenge extends Component {
         <div className='ui grid stackable'>
           <div className='column sixteen wide'>
             <div className='ui large header center aligned'>
-              IN APPLICATION
+              {this.state.stage}
               <Popup
                 trigger={<i className='icon info circle' />}
                 content='VTH holders are encouraged to challenge publisher applications where the token holders believe the Publisher to be fraudulent.'
@@ -67,21 +105,31 @@ class Challenge extends Component {
                 </div>
               </div>
               <div className='ui divider' />
-              <div className='ui field'>
-                <label>Challenge Project</label>
+              <div className="field">
+                <label>My Available Votes to Delegate: <strong>100</strong></label>
               </div>
-              <div className='ui field'>
-                <div className='ui message default'>
-                  <p>Minimum deposit required</p>
-                  <p><strong>{minDeposit ? commafy(minDeposit) : '-'} VTH</strong></p>
+              <div className="inline field">
+                <label>Enter Votes to Delegate: </label>
+                <div className="ui input">
+                  <input type="text" placeholder="10" />
                 </div>
               </div>
+              <div className="inline field">
+                <label>List of Proxies: </label>
+                <Select onChange={this.setValue.bind(this)} value={this.state.proxyValue} placeholder='Select your proxy' options={this.state.proxyList} />
+              </div>
+              {this.state.proxyValue && 
+                <div className="ui field">
+                  <label>Name: {this.state.proxyInfo[this.state.proxyValue].name}</label>
+                  <label>ETH address: {this.state.proxyInfo[this.state.proxyValue].ethAddr}</label>
+                  <label>Locked VTH: {this.state.proxyInfo[this.state.proxyValue].lockedVth}</label>
+                </div>
+              }
               <div className='ui field'>
                 <button
                   onClick={this.onChallenge.bind(this)}
-                  className='ui button purple right labeled icon'>
-                  CHALLENGE
-                  <i className='icon thumbs down' />
+                  className='ui button purple'>
+                  DELEGATE
                 </button>
               </div>
             </form>
@@ -177,4 +225,4 @@ class Challenge extends Component {
   }
 }
 
-export default Challenge
+export default Delegate
