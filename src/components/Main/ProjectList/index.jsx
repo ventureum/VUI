@@ -1,87 +1,111 @@
 import React, { Component } from 'react'
+import Eth from 'ethjs'
 import CSSModules from 'react-css-modules'
 import { Popup, Modal } from 'semantic-ui-react'
 import moment from 'moment'
+import toastr from 'toastr'
 import styles from './styles.css'
 import Delegate from './Delegate'
 import VoteCommit from './VoteCommit'
 import VoteReveal from './VoteReveal'
 import Countdown from './Countdown'
 import ProjectProfile from './ProjectProfile'
+import registry from '../../../services/registry'
+import store from '../../../store'
+import InProgress from '../InProgress'
 
-class ProgramList extends Component {
+class ProjectList extends Component {
   constructor (props) {
     super()
 
     this.state = {
-      programList: [
-        {
-		  projectName: 'DTrust-Demo #0',
-		  stage: 'In Application',
-		  stageEnd: '2018-01-10 00:00:00',
-		  action: 'Challenge',
-		}, {
-		  projectName: 'DTrust-Demo #1',
-		  stage: 'In Registry',
-		  stageEnd: '',
-		  action: '',
-		}, {
-		  projectName: 'DTrust-Demo #2',
-		  stage: 'In Registry',
-		  stageEnd: '',
-		  action: '',
-		}, {
-		  projectName: 'DTrust-Demo #3',
-		  stage: 'In Registry',
-		  stageEnd: '',
-		  action: '',
-		}, {
-		  projectName: 'DTrust-Demo #4',
-		  stage: 'In Registry',
-		  stageEnd: '',
-		  action: '',
-		}, {
-		  projectName: 'DTrust-Demo #5',
-		  stage: 'In Registry',
-		  stageEnd: '',
-		  action: '',
-		}, {
-		  projectName: 'DTrust-Demo #6',
-		  stage: 'In Registry',
-		  stageEnd: '',
-		  action: '',
-		}, {
-		  projectName: 'DTrust-Demo #7',
-		  stage: 'In Registry',
-		  stageEnd: '',
-		  action: '',
-		}, {
-		  projectName: 'DTrust-Demo #8',
-		  stage: 'In Registry',
-		  stageEnd: '',
-		  action: '',
-		}, {
-		  projectName: 'DTrust-Demo #9',
-		  stage: 'In Registry',
-		  stageEnd: '',
-		  action: '',
-		}
-      ],
-      addressType: props.addressType
+      projectList: [],
+      addressType: props.addressType,
+      perPage: 2,
+      currentPage: 1,
+      totalPage: null,
+      inProgress: false
     }
+
+    this.handlePageChange = this.handlePageChange.bind(this)
+    this.nextPage = this.nextPage.bind(this)
+    this.prevPage = this.prevPage.bind(this)
+  }
+
+  nextPage () {
+    if (this.state.currentPage + 1 <= this.state.totalPage) {
+      this.setState({
+        currentPage: this.state.currentPage + 1
+      })
+    }
+  }
+
+  prevPage () {
+    if (this.state.currentPage - 1 >= 1) {
+      this.setState({
+        currentPage: this.state.currentPage - 1
+      })
+    }
+  }
+
+  handlePageChange (e) {
+    var page = e.target.value
+    if (page < 1) {
+      page = 1
+    } else if (page > this.state.totalPage) {
+      page = this.state.totalPage
+    }
+    this.setState({
+      currentPage: page
+    })
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({addressType: nextProps.addressType})
   }
 
+  componentDidMount () {
+    this.setState({
+      inProgress: true
+    })
+    this.getProjectList()
+
+    store.subscribe(x => {
+      const state = store.getState()
+      if (state.type === 'REGISTRY_EVENT') {
+        this.getProjectList()
+      }
+    })
+  }
+
+  async getProjectList () {
+    try {
+      var projectList = await registry.getProjectList()
+      this.setState({
+        inProgress: false,
+        projectList: projectList,
+        totalPage: Math.ceil(projectList.length / this.state.perPage)
+      })
+    } catch (error) {
+      toastr.error(error.message)
+    }
+  }
+
   render() {
+    const {
+      perPage,
+      currentPage,
+      totalPage,
+      projectList,
+      inProgress
+    } = this.state
+
   	var projectElems = []
   	var project
-  	for (var i = 0; i < this.state.programList.length; i++) {
-  	  project = this.state.programList[i]
+  	for (var i = (currentPage - 1) * perPage; i < Math.min(currentPage * perPage, projectList.length); i++) {
+  	  project = projectList[i]
   	  projectElems.push(
-		<div className="rt-tr-group">
+		    <div className="rt-tr-group" key={project.projectName}>
           <div className="rt-tr -odd">
             <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}>
               <Modal size="large" trigger={<a href="#!" className="domain" title="View profile">{project.projectName}</a>}>
@@ -91,10 +115,10 @@ class ProgramList extends Component {
                 </Modal.Content>
               </Modal>
             </div>
-            <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}><span className="">{project.stage}</span></div>
-            <div className="rt-td Number" style={{flex: '150 0 auto', width: '150px'}}>{project.stageEnd}</div>
+            <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}><span className="">{project.stage || 'state'}</span></div>
+            <div className="rt-td Number" style={{flex: '150 0 auto', width: '150px'}}>{moment.unix(project.applicationExpiry).format("YYYY-MM-DD")}</div>
             <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}>
-              {project.action!='' &&
+              {project.action &&
               <Modal trigger={<a className="ui mini button purple" href="#!">{project.action}</a>}>
                 <Modal.Header>{project.stage}</Modal.Header>
                 <Modal.Content>
@@ -139,27 +163,25 @@ class ProgramList extends Component {
 	          <div className="pagination-bottom">
 	            <div className="-pagination">
 	              <div className="-previous">
-	                <button type="button" disabled className="-btn">Previous</button>
+	                <button onClick={this.prevPage} type="button" disabled={currentPage === 1} className="-btn">Previous</button>
 	              </div>
 	              <div className="-center"><span className="-pageInfo">Page&nbsp;
-	                <div className="-pageJump"><input type="number" value="1" /></div>
+	                <div className="-pageJump"><input type="number" value={currentPage} onChange={this.handlePageChange} /></div>
 	  &nbsp;of&nbsp;
-	  <span className="-totalPages">12</span></span>
+	  <span className="-totalPages">{totalPage}</span></span>
 	              </div>
 	              <div className="-next">
-	                <button type="button" className="-btn">Next</button>
+	                <button onClick={this.nextPage} type="button" disabled={currentPage === totalPage} className="-btn">Next</button>
 	              </div>
 	            </div>
-	          </div>
-	          <div className="-loading">
-	            <div className="-loading-inner">Loading...</div>
 	          </div>
 	        </div>
           </div>
         </div>
+        {inProgress ? <InProgress /> : null}
       </div>
     );
   }
 }
 
-export default CSSModules(ProgramList, styles);
+export default CSSModules(ProjectList, styles);

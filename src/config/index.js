@@ -2,7 +2,7 @@ import contract from 'truffle-contract'
 import { getProvider } from '../services/provider'
 
 export const getAbi = async (contract) => {
-  const storageKey = `adchain:abi:${contract}`
+  const storageKey = `ventureum:abi:${contract}`
   const cached = window.sessionStorage.getItem(storageKey)
 
   try {
@@ -13,7 +13,7 @@ export const getAbi = async (contract) => {
     console.error(error)
   }
 
-  const url = 'https://s3-us-west-2.amazonaws.com/registry-contracts'
+  const url = '/contracts'
   const data = await window.fetch(`${url}/${contract}.json`)
   const json = await data.json()
 
@@ -35,9 +35,17 @@ export const getRegistry = async (account, provider) => {
   return Registry.deployed()
 }
 
+export const getSale = async (account, provider) => {
+  const saleArtifact = await getAbi('Sale')
+  const Sale = contract(saleArtifact)
+  Sale.setProvider(provider || getProvider())
+
+  return Sale.deployed()
+}
+
 export const getToken = async (account) => {
-  const registry = await getRegistry()
-  const tokenAddress = await registry.token.call()
+  const sale = await getSale()
+  const tokenAddress = await sale.token.call()
   const tokenArtifact = await getAbi('HumanStandardToken')
   const Token = contract(tokenArtifact)
   Token.defaults({from: account})

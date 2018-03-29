@@ -1,9 +1,9 @@
 import Eth from 'ethjs'
 
 export const getProviderUrl = () => {
-  const net = 'rinkeby'
-  if (net === 'testrpc') {
-    return 'http://localhost:8545'
+  const net = 'ventureum'
+  if (net === 'ventureum') {
+    return 'http://localhost:7545'
   } else {
     return `https://${net}.infura.io:443`
   }
@@ -19,6 +19,7 @@ export const getProvider = () => {
 
 export const getWebsocketProvider = () => {
   // https://github.com/ethereum/web3.js/issues/1119
+  // TODO: check whether WebsocketProvider exists
   if (!window.Web3.providers.WebsocketProvider.prototype.sendAsync) {
     window.Web3.providers.WebsocketProvider.prototype.sendAsync = window.Web3.providers.WebsocketProvider.prototype.send
   }

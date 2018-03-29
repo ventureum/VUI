@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import CSSModules from 'react-css-modules'
+import toastr from 'toastr'
 import { Popup, Checkbox, Modal } from 'semantic-ui-react'
 import styles from './styles.css'
+import registry from '../../../services/registry'
 
 var $ = window.jQuery
 
@@ -22,7 +24,8 @@ const basicState = function () {
     msName: '',
     msDeadline: '',
     msPercent: '',
-    msList: []
+    msList: [],
+    projectName: ''
   }
 }
 
@@ -40,6 +43,18 @@ class Application extends Component {
         })
       }
     }
+
+    this.resetForm = this.resetForm.bind(this)
+    this.submit = this.submit.bind(this)
+  }
+
+  async submit () {
+    if (!this.state.projectName) {
+      toastr.error('Project name is required')
+      return
+    }
+    await registry.apply(this.state.projectName)
+    toastr.success('Success')
   }
 
   onUpload () {
@@ -241,7 +256,7 @@ class Application extends Component {
                 <div className="field">
                   <label>Project Name</label>
                   <div className="ui input">
-                    <input type="text" name="name" required="" />
+                    <input onChange={this.handleChange.bind(this, 'projectName')} value={this.state.projectName} type="text" name="name" required="" />
                   </div>
                 </div>
                 <div className="field">
@@ -586,8 +601,8 @@ class Application extends Component {
         <div className="fixed-footer">
           <div className="ui grid stackable center aligned">
             <div className="row">
-              <div onClick={this.resetForm.bind(this)} className="ui button red">Clear</div>
-              <div className="ui button green">Save</div>
+              <div onClick={this.resetForm} className="ui button red">Clear</div>
+              <div onClick={this.submit} className="ui button green">Save</div>
               <div className="ui button blue">Submit</div>
             </div>
           </div>
