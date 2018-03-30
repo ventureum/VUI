@@ -184,9 +184,9 @@ class RegistryService {
       stage = 'In Registry'
     } else {
       if (projectObj.challengeID) {
-        var commitActive = await this.plcr.commitStageActive.call(projectObj.challengeID)
+        var commitActive = await plcr.commitStageActive(projectObj.challengeID)
         if (!commitActive) {
-          var revealActive = await this.plcr.revealStageActive.call(projectObj.challengeID)
+          var revealActive = await plcr.revealStageActive(projectObj.challengeID)
           if (revealActive) {
             stage = 'In Voting Reveal'
           } else {
@@ -231,6 +231,7 @@ class RegistryService {
         }
       }
       projectObj.stage = await this.getProjectStage(hash, projectObj)
+      projectObj.hash = hash
       projectList.push(projectObj)
     }
     return projectList

@@ -6,6 +6,7 @@ import moment from 'moment'
 import toastr from 'toastr'
 import styles from './styles.css'
 import Delegate from './Delegate'
+import Challenge from './Challenge'
 import VoteCommit from './VoteCommit'
 import VoteReveal from './VoteReveal'
 import Countdown from './Countdown'
@@ -132,6 +133,8 @@ class ProjectList extends Component {
               <Modal trigger={<a className="ui mini button purple" href="#!">{project.action}</a>}>
                 <Modal.Header>{project.stage}</Modal.Header>
                 <Modal.Content>
+                  {project.action == 'challenge' && <Challenge project={project} />}
+                  {project.action == 'commit' && <VoteCommit />}
                 </Modal.Content>
               </Modal>
               }

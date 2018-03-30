@@ -14,11 +14,14 @@ class Challenge extends Component {
     super()
 
     this.state = {
-      applicationExpiry: 1527811200,
+      applicationExpiry: props.project.applicationExpiry,
+      hash: props.project.hash,
       minDeposit: 100,
       currentDeposit: null,
       inProgress: false
     }
+
+    this.onChallenge = this.onChallenge.bind(this)
   }
 
   componentDidMount () {
@@ -78,7 +81,7 @@ class Challenge extends Component {
               </div>
               <div className='ui field'>
                 <button
-                  onClick={this.onChallenge.bind(this)}
+                  onClick={this.onChallenge}
                   className='ui button purple right labeled icon'>
                   CHALLENGE
                   <i className='icon thumbs down' />
@@ -131,12 +134,12 @@ class Challenge extends Component {
   }
 
   async challenge () {
-    const {domain} = this.state
+    const project = this.props.project
 
     let inApplication = null
 
     try {
-      inApplication = await registry.applicationExists(domain)
+      inApplication = await registry.applicationExists(project.projectName)
     } catch (error) {
       toastr.error(error)
     }
@@ -149,9 +152,9 @@ class Challenge extends Component {
       }
 
       try {
-        await registry.challenge(domain)
+        await registry.challenge(project.projectName)
 
-        toastr.success('Successfully challenged domain')
+        toastr.success('Successfully challenged project')
 
         if (this._isMounted) {
           this.setState({
@@ -172,7 +175,7 @@ class Challenge extends Component {
         }
       }
     } else {
-      toastr.error('Domain not in application')
+      toastr.error('Project not in application')
     }
   }
 }
