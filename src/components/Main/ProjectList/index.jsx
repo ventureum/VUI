@@ -81,6 +81,16 @@ class ProjectList extends Component {
   async getProjectList () {
     try {
       var projectList = await registry.getProjectList()
+      var actionMap = {
+        'In Application': 'challenge',
+        'In Voting Commit': 'commit',
+        'In Voting Reveal': 'reveal',
+        'Unresolved': 'refresh status',
+        'In Registry': 'view'
+      }
+      for (let i = 0; i < projectList.length; i++) {
+        projectList[i].action = actionMap[projectList[i].stage]
+      }
       this.setState({
         inProgress: false,
         projectList: projectList,
@@ -115,7 +125,7 @@ class ProjectList extends Component {
                 </Modal.Content>
               </Modal>
             </div>
-            <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}><span className="">{project.stage || 'state'}</span></div>
+            <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}><span className="">{project.stage}</span></div>
             <div className="rt-td Number" style={{flex: '150 0 auto', width: '150px'}}>{moment.unix(project.applicationExpiry).format("YYYY-MM-DD")}</div>
             <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}>
               {project.action &&

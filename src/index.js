@@ -8,6 +8,7 @@ import registry from './services/registry'
 import plcr from './services/plcr'
 import parameterizer from './services/parameterizer'
 import token from './services/token'
+import sale from './services/sale'
 
 async function init () {
   try {
@@ -15,7 +16,8 @@ async function init () {
       registry.init(),
       plcr.init(),
       parameterizer.init(),
-      token.init()
+      token.init(),
+      sale.init()
       ])
   } catch (error) {
     console.error(error)

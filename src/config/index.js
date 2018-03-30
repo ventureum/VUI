@@ -38,6 +38,7 @@ export const getRegistry = async (account, provider) => {
 export const getSale = async (account, provider) => {
   const saleArtifact = await getAbi('Sale')
   const Sale = contract(saleArtifact)
+  Sale.defaults({from: account})
   Sale.setProvider(provider || getProvider())
 
   return Sale.deployed()

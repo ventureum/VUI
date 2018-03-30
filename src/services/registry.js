@@ -166,18 +166,41 @@ class RegistryService {
     }
   }
 
-  async applicationExists (domain) {
-    if (!domain) {
-      throw new Error('Domain is required')
+  async applicationExists (name) {
+    if (!name) {
+      throw new Error('Project name is required')
     }
 
-    domain = domain.toLowerCase()
-
     try {
-      return this.registry.appWasMade(domain)
+      return this.registry.appWasMade(name)
     } catch (error) {
       throw error
     }
+  }
+
+  async getProjectStage (hash, projectObj) {
+    var stage
+    if (projectObj.whitelisted) {
+      stage = 'In Registry'
+    } else {
+      if (projectObj.challengeID) {
+        var commitActive = await this.plcr.commitStageActive.call(projectObj.challengeID)
+        if (!commitActive) {
+          var revealActive = await this.plcr.revealStageActive.call(projectObj.challengeID)
+          if (revealActive) {
+            stage = 'In Voting Reveal'
+          } else {
+            stage = 'Unresolved'
+          }
+        } else {
+          stage = 'In Voting Commit'
+        }
+      } else {
+        stage = 'In Application'
+      }
+    }
+
+    return stage
   }
 
   async getProjectList () {
@@ -207,6 +230,7 @@ class RegistryService {
           projectObj[propertyNameMap[i]] = projectData[i]
         }
       }
+      projectObj.stage = await this.getProjectStage(hash, projectObj)
       projectList.push(projectObj)
     }
     return projectList
