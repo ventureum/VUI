@@ -16,3 +16,5 @@ RUN apt-get install -y python3-setuptools
 RUN easy_install3 pip
 RUN pip install awscli
 
+RUN npm install -g truffle
+RUN npm install -g bn.js
