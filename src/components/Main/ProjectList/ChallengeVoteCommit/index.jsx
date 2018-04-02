@@ -12,17 +12,18 @@ import InProgress from '../../InProgress'
 
 import './styles.css'
 
-class VoteCommit extends Component {
+class ChallengeVoteCommit extends Component {
   constructor (props) {
-    super()
+    super(props)
 
     const salt = randomInt(1e6, 1e8)
 
     this.state = {
       votes: 0,
-      applicationExpiry: null,
-      challengeId: null,
-      commitEndDate: props.endDate,
+      applicationExpiry: props.project.applicationExpiry,
+      challengeId: props.project.challengeId,
+      challenge: null,
+      commitEndDate: null,
       revealEndDate: null,
       didChallenge: null,
       didCommit: null,
@@ -32,14 +33,12 @@ class VoteCommit extends Component {
       enableDownload: false,
       commitDownloaded: false,
       revealReminderDownloaded: false,
-      stage: props.stage,
-      obj: props.obj
+      stage: props.stage
     }
 
-    // this.getListing()
-    // this.getPoll()
-    // this.getChallenge()
-    // this.getCommit()
+    this.getPoll()
+    this.getChallenge()
+    this.getCommit()
 
     this.onDepositKeyUp = this.onDepositKeyUp.bind(this)
     this.onVoteOptionChange = this.onVoteOptionChange.bind(this)
@@ -47,11 +46,6 @@ class VoteCommit extends Component {
     this.onDownload = this.onDownload.bind(this)
     this.onReminderDownload = this.onReminderDownload.bind(this)
     this.enableDownloadCheck = this.enableDownloadCheck.bind(this)
-
-    this.objSelection=[]
-    for(var i = 0; i < this.state.obj.length; i++) {
-      this.objSelection.push({text:this.state.obj[i].objTitle, value:this.state.obj[i].objTitle})
-    }
   }
 
   componentDidMount () {
@@ -70,7 +64,6 @@ class VoteCommit extends Component {
 
   render () {
     const {
-      domain,
       commitEndDate,
       didChallenge,
       didCommit,
@@ -78,10 +71,12 @@ class VoteCommit extends Component {
       salt,
       voteOption,
       challengeId,
+      challenge,
       enableDownload,
       commitDownloaded,
       votes,
-      revealReminderDownloaded
+      revealReminderDownloaded,
+      stage
     } = this.state
 
     const stageEndMoment = commitEndDate ? moment.unix(commitEndDate) : null
@@ -92,25 +87,29 @@ class VoteCommit extends Component {
         <div className='ui grid stackable'>
           <div className='column sixteen wide'>
             <div className='ui large header center aligned'>
-              {this.state.stage}
+              {stage}
               <Popup
                 trigger={<i className='icon info circle' />}
                 content='The first phase of the voting process is the commit phase where the VTH holder stakes a hidden amount of votes. The second phase is the reveal phase where the VTH holder reveals the staked amount of votes to either the SUPPORT or OPPOSE side.'
               />
             </div>
           </div>
-          {didChallenge ? <div className='column sixteen wide center aligned'>
+          {didChallenge 
+          ? 
+          <div className='column sixteen wide center aligned'>
             <div className='ui message warning'>
-              You've <strong>challenged</strong> this domain.
+              You've <strong>challenged</strong> this project.
             </div>
           </div>
-           : null}
-          {didCommit ? <div className='column sixteen wide center aligned'>
+          : null}
+          {didCommit 
+          ?
+          <div className='column sixteen wide center aligned'>
             <div className='ui message warning'>
-              You've <strong>commited</strong> for this domain.
+              You've <strong>commited</strong> for this project.
             </div>
           </div>
-           : null}
+          : null}
           <div className='column sixteen wide center aligned'>
             <div className='ui divider' />
             <div className='column sixteen wide center aligned'>
@@ -119,9 +118,9 @@ class VoteCommit extends Component {
                   Voting commit stage ends
                 </p>
                 <p><strong>{stageEnd}</strong></p>
-                <p>Remaining time: <Countdown
+                <p>Remaining time: {commitEndDate && <Countdown
                                      endDate={stageEndMoment}
-                                     onExpire={this.onCountdownExpire.bind(this)} /></p>
+                                     onExpire={this.onCountdownExpire.bind(this)} />}</p>
               </div>
             </div>
             <div className='ui divider' />
@@ -129,72 +128,101 @@ class VoteCommit extends Component {
               <form
                 onSubmit={this.onFormSubmit}
                 className='ui form center aligned'>
-                <div className="field">
-                  <label>Your votes{this.state.stage === 'Proxy Vote - Commit' && ' Weights'}: <strong>5600000</strong></label>
+                {stage === 'In Voting Commit' && challenge &&
+                <div>
+                  <div className='ui field'>
+                    <p>Challenge ID: <label className='ui label'>{challengeId}</label></p>
+                  </div>
+                  <div className='ui field'>
+                    <p>Challenger: <label className='ui label'>{challenge.challenger}</label></p>
+                  </div>
+                  <div className='ui field'>
+                    <p>Reward Pool: <label className='ui label'>{challenge.rewardPool}</label></p>
+                  </div>
+                  <div className='ui field'>
+                    <p>Stake: <label className='ui label'>{challenge.stake}</label></p>
+                  </div>
+                  <div className='ui field'>
+                    <p>Winning Tokens: <label className='ui label'>{challenge.totalTokens}</label></p>
+                  </div>
+                </div>
+                }
+                <div className='ui field'>
+                  <label>Enter Votes to Commit</label>
+                  <div className='ui input small'>
+                    <input
+                      type='text'
+                      placeholder='100'
+                      onKeyUp={this.onDepositKeyUp}
+                    />
+                  </div>
                 </div>
                 <div className='ui field'>
                   <label>Vote Option</label>
                 </div>
-                {this.state.stage !== 'Put Option' &&
-                 <div className='ui two fields VoteOptions'>
-                   <Dropdown placeholder='Select Objective' fluid selection options={this.objSelection} />
-                   <Button.Group buttons={['1', '2', '3','4','5']} />
-                 </div>
+                {stage === 'In Voting Commit' &&
+                <div className='ui two fields VoteOptions'>
+                  <div className='ui field'>
+                    <Radio
+                      label='SUPPORT'
+                      name='voteOption'
+                      value='1'
+                      checked={voteOption === 1}
+                      onChange={this.onVoteOptionChange}
+                    />
+                  </div>
+                  <div className='ui field'>
+                    <Radio
+                      label='OPPOSE'
+                      name='voteOption'
+                      value='0'
+                      checked={voteOption === 0}
+                      onChange={this.onVoteOptionChange}
+                    />
+                  </div>
+                </div>
                 }
-                {this.state.stage === 'Put Option' &&
-                 <div className='ui field'>
-                   <Radio
-                     label='Exercise'
-                     name='voteOption'
-                     value='0'
-                     checked={this.state.voteOption === 0}
-                     onChange={this.onVoteOptionChange}
-                   />
-                 </div>
-                }
-      {this.state.stage !== 'Put Option' &&
-       <div className='ui field'>
-         <label>Secret Phrase<br /><small>PLEASE SAVE THIS. This random phrase (known as a "salt") will be required to reveal your vote and claim rewards.</small></label>
-         <div className='ui message tiny default SaltField'>
-           {salt}
-         </div>
-       </div>
-      }
-      {this.state.stage !== 'Put Option' &&
-       <div className='ui field'>
-        <label><small>Download commit info required for reveal stage</small></label>
-        <button
-        onClick={this.onDownload}
-        title='Download commit info'
-        className={`ui button ${enableDownload ? '' : 'disabled'} right labeled icon ${commitDownloaded ? 'default' : 'blue'}`}>
-        Download Commit
-        <i className='icon download' />
-        </button>
-        </div>
-      }
-        {commitDownloaded
-       ? <div className='ui field'>
-         <label><small>Download a calendar reminder for revealing vote</small></label>
-         <button
-           onClick={this.onReminderDownload}
-           title='Download commit info'
-           className={`ui mini button right labeled icon ${revealReminderDownloaded ? 'default' : 'blue'}`}>
-           Reveal Reminder
-           <i className='icon download' />
-         </button>
-       </div>
-       : null}
+                <div className='ui field'>
+                  <label>Secret Phrase<br /><small>PLEASE SAVE THIS. This random phrase (known as a "salt") will be required to reveal your vote and claim rewards.</small></label>
+                  <div className='ui message tiny default SaltField'>
+                    {salt}
+                  </div>
+                </div>
+                <div className='ui field'>
+                  <label><small>Download commit info required for reveal stage</small></label>
+                  <button
+                  onClick={this.onDownload}
+                  title='Download commit info'
+                  className={`ui button ${enableDownload ? '' : 'disabled'} right labeled icon ${commitDownloaded ? 'default' : 'blue'}`}>
+                  Download Commit
+                  <i className='icon download' />
+                  </button>
+                </div>
+                {commitDownloaded
+                ? 
+                <div className='ui field'>
+                  <label><small>Download a calendar reminder for revealing vote</small></label>
+                  <button
+                    onClick={this.onReminderDownload}
+                    title='Download commit info'
+                    className={`ui mini button right labeled icon ${revealReminderDownloaded ? 'default' : 'blue'}`}>
+                    Reveal Reminder
+                    <i className='icon download' />
+                  </button>
+                </div>
+                : null}
                 <div className='ui field'>
                   {(voteOption === null || !votes || !commitDownloaded)
-                   ? <button
-                       className='ui button disabled'>
-                     {voteOption === null ? 'Select Vote Option' :  'Submit'}
-                   </button>
-                   : <button
-                       type='submit'
-                       className={`ui button ${voteOption ? 'blue' : 'purple'} right labeled icon`}>
-                     VOTE TO {voteOption ? 'SUPPORT' : 'OPPOSE'} <i className={`icon thumbs ${voteOption ? 'up' : 'down'}`} />
-                   </button>
+                  ? 
+                  <button className='ui button disabled'>
+                    {voteOption === null ? 'Select Vote Option' :  'Submit'}
+                  </button>
+                  : 
+                  <button
+                    type='submit'
+                    className={`ui button ${voteOption ? 'blue' : 'purple'} right labeled icon`}>
+                    VOTE TO {voteOption ? 'SUPPORT' : 'OPPOSE'} <i className={`icon thumbs ${voteOption ? 'up' : 'down'}`} />
+                  </button>
                   }
                 </div>
               </form>
@@ -254,7 +282,7 @@ class VoteCommit extends Component {
     }
 
     const endDateString = moment.unix(commitEndDate).format('YYYY-MM-DD_HH-mm-ss')
-    const projectName = 'test'
+    const projectName = this.props.project.projectName
     const filename = `${projectName}--challenge_id_${challengeId}--commit_end_${endDateString}--commit-vote.json`
     saveFile(json, filename)
 
@@ -273,7 +301,7 @@ class VoteCommit extends Component {
 
     const revealDate = moment.unix(commitEndDate)
     const revealDateString = revealDate.format('YYYY-MM-DD_HH-mm-ss')
-    const projectName = 'test'
+    const projectName = this.props.project.projectName
     const filename = `${projectName}--challenge_id_${challengeId}--reveal_start_${revealDateString}--reminder.ics`
     const title = `Reveal Vote for ${projectName}`
     const url = `${window.location.protocol}//${window.location.host}/project/${projectName}`
@@ -297,31 +325,13 @@ class VoteCommit extends Component {
     this.commit()
   }
 
-  async getListing () {
-    const {domain} = this.state
-    const listing = await registry.getListing(domain)
-
-    const {
-      applicationExpiry,
-      challengeId
-    } = listing
-
-    if (this._isMounted) {
-      this.setState({
-        applicationExpiry,
-        challengeId
-      })
-    }
-  }
-
   async getPoll () {
-    const {domain} = this.state
 
     try {
       const {
         commitEndDate,
         revealEndDate
-      } = await registry.getChallengePoll(domain)
+      } = await registry.getChallengePoll(this.props.project)
 
       if (this._isMounted) {
         this.setState({
@@ -335,14 +345,15 @@ class VoteCommit extends Component {
   }
 
   async getChallenge () {
-    const {domain} = this.state
 
     try {
-      const didChallenge = await registry.didChallenge(domain)
+      const challenge = await registry.getChallenge(this.state.challengeId)
+      const didChallenge = await registry.didChallenge(this.props.project)
 
       if (this._isMounted) {
         this.setState({
-          didChallenge
+          didChallenge,
+          challenge
         })
       }
     } catch (error) {
@@ -351,10 +362,9 @@ class VoteCommit extends Component {
   }
 
   async getCommit () {
-    const {domain} = this.state
 
     try {
-      const didCommit = await registry.didCommit(domain)
+      const didCommit = await registry.didCommit(this.props.project)
 
       if (this._isMounted) {
         this.setState({
@@ -368,11 +378,11 @@ class VoteCommit extends Component {
 
   async commit () {
     const {
-      domain,
       votes,
       salt,
       voteOption
     } = this.state
+    const project = this.props.project
 
     if (voteOption === null) {
       toastr.error('Please select a vote option')
@@ -386,7 +396,7 @@ class VoteCommit extends Component {
     }
 
     try {
-      const commited = await registry.commitVote({domain, votes, voteOption, salt})
+      const commited = await registry.commitVote({project, votes, voteOption, salt})
 
       if (this._isMounted) {
         this.setState({
@@ -422,4 +432,4 @@ class VoteCommit extends Component {
   }
 }
 
-export default VoteCommit
+export default ChallengeVoteCommit

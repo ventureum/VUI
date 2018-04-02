@@ -121,45 +121,33 @@ class RegistryService {
     })
   }
 
-  async challenge (domain) {
-    if (!domain) {
-      throw new Error('Domain is required')
+  async challenge (name) {
+    if (!name) {
+      throw new Error('Project name is required')
     }
-
-    domain = domain.toLowerCase()
 
     try {
       const minDeposit = await this.getMinDeposit()
       const minDepositAdt = minDeposit.mul(tenToTheNinth)
-
       await token.approve(this.address, minDepositAdt)
-      await this.registry.challenge(domain)
+      await this.registry.challenge(name)
     } catch (error) {
       throw error
     }
 
     store.dispatch({
-      type: 'REGISTRY_DOMAIN_CHALLENGE',
-      domain
+      type: 'REGISTRY_PROJECT_CHALLENGE',
+      name
     })
   }
 
-  async didChallenge (domain) {
-    if (!domain) {
-      throw new Error('Domain is required')
-    }
-
-    domain = domain.toLowerCase()
-    let challengeId = null
-
-    try {
-      challengeId = await this.getChallengeId(domain)
-    } catch (error) {
-      throw error
+  async didChallenge (project) {
+    if (!project) {
+      throw new Error('Project is required')
     }
 
     try {
-      const challenge = await this.getChallenge(challengeId)
+      const challenge = await this.getChallenge(project.challengeId)
       return (challenge.challenger === this.account)
     } catch (error) {
       throw error
@@ -183,10 +171,10 @@ class RegistryService {
     if (projectObj.whitelisted) {
       stage = 'In Registry'
     } else {
-      if (projectObj.challengeID) {
-        var commitActive = await plcr.commitStageActive(projectObj.challengeID)
+      if (projectObj.challengeId) {
+        var commitActive = await plcr.commitStageActive(projectObj.challengeId)
         if (!commitActive) {
-          var revealActive = await plcr.revealStageActive(projectObj.challengeID)
+          var revealActive = await plcr.revealStageActive(projectObj.challengeId)
           if (revealActive) {
             stage = 'In Voting Reveal'
           } else {
@@ -208,28 +196,13 @@ class RegistryService {
     var projectList = []
     var next = 0
     var num
-    var propertyNameMap = {
-      '0': 'applicationExpiry',
-      '1': 'whitelisted',
-      '2': 'owner',
-      '3': 'unstakedDeposit',
-      '4': 'challengeID',
-      '5': 'projectName'
-    }
+    var projectObj
     do {
         next = await this.registry.getNextProjectHash.call(next)
         num = new Eth.BN(next.substring(2), 16)
     } while(!num.eq(new Eth.BN('0')) && hashList.push(next))
     for (let hash of hashList) {
-      let projectData = await this.registry.listings.call(hash)
-      let projectObj = {}
-      for (let i = 0; i < projectData.length; i++) {
-        if (projectData[i].constructor.name == 'BigNumber') {
-          projectObj[propertyNameMap[i]] = projectData[i].toNumber()
-        } else {
-          projectObj[propertyNameMap[i]] = projectData[i]
-        }
-      }
+      projectObj = await this.getProjectInfo(hash)
       projectObj.stage = await this.getProjectStage(hash, projectObj)
       projectObj.hash = hash
       projectList.push(projectObj)
@@ -237,26 +210,43 @@ class RegistryService {
     return projectList
   }
 
-  async getListing (domain) {
-    if (!domain) {
-      throw new Error('Domain is required')
+  async getProjectInfo (hash) {
+    if (!hash) {
+      throw new Error('Project hash is required')
     }
 
     try {
-      domain = domain.toLowerCase()
-
-      const hash = sha3(domain)
-      const result = await this.registry.listings.call(hash)
-
-      const map = {
-        applicationExpiry: result[0].toNumber(),
-        isWhitelisted: result[1],
-        ownerAddress: result[2],
-        currentDeposit: result[3].toNumber(),
-        challengeId: result[4].toNumber()
+      var propertyNameMap = {
+        '0': 'applicationExpiry',
+        '1': 'whitelisted',
+        '2': 'owner',
+        '3': 'unstakedDeposit',
+        '4': 'challengeId',
+        '5': 'projectName'
       }
+      var projectData = await this.registry.listings.call(hash)
+      var projectObj = {}
+      for (let i = 0; i < projectData.length; i++) {
+        if (projectData[i].constructor.name == 'BigNumber') {
+          projectObj[propertyNameMap[i]] = projectData[i].toNumber()
+        } else {
+          projectObj[propertyNameMap[i]] = projectData[i]
+        }
+      }
+      return projectObj
+    } catch (error) {
+      throw error
+    }
+  }
 
-      return map
+  getListing (name) {
+    if (!name) {
+      throw new Error('Project name is required')
+    }
+
+    try {
+      const hash = sha3(name)
+      return this.getProjectInfo(hash)
     } catch (error) {
       throw error
     }
@@ -322,19 +312,17 @@ class RegistryService {
     }
   }
 
-  async updateStatus (domain) {
-    if (!domain) {
-      throw new Error('Domain is required')
+  async updateStatus (name) {
+    if (!name) {
+      throw new Error('Project name is required')
     }
 
-    domain = domain.toLowerCase()
-
     try {
-      const result = await this.registry.updateStatus(domain)
+      const result = await this.registry.updateStatus(name)
 
       store.dispatch({
-        type: 'REGISTRY_DOMAIN_UPDATE_STATUS',
-        domain
+        type: 'REGISTRY_PROJECT_UPDATE_STATUS',
+        name
       })
 
       return result
@@ -448,28 +436,19 @@ class RegistryService {
     }
   }
 
-  async commitVote ({domain, votes, voteOption, salt}) {
-    if (!domain) {
-      throw new Error('Domain is required')
+  async commitVote ({project, votes, voteOption, salt}) {
+    if (!project) {
+      throw new Error('Project is required')
     }
 
     // nano VTH to normal VTH
     const bigVotes = big(votes).mul(tenToTheNinth).toString(10)
 
-    domain = domain.toLowerCase()
-    let challengeId = null
-
-    try {
-      challengeId = await this.getChallengeId(domain)
-    } catch (error) {
-      throw error
-    }
-
     try {
       const hash = saltHashVote(voteOption, salt)
 
-      await plcr.commit({pollId: challengeId, hash, tokens: bigVotes})
-      return this.didCommitForPoll(challengeId)
+      await plcr.commit({pollId: project.challengeId, hash, tokens: bigVotes})
+      return this.didCommitForPoll(project.challengeId)
     } catch (error) {
       throw error
     }
@@ -493,16 +472,13 @@ class RegistryService {
     }
   }
 
-  async getChallengePoll (domain) {
-    if (!domain) {
-      throw new Error('Domain is required')
+  async getChallengePoll (project) {
+    if (!project) {
+      throw new Error('Project is required')
     }
 
-    domain = domain.toLowerCase()
-
     try {
-      const challengeId = await this.getChallengeId(domain)
-      return plcr.getPoll(challengeId)
+      return plcr.getPoll(project.challengeId)
     } catch (error) {
       throw error
     }
@@ -539,12 +515,10 @@ class RegistryService {
     }
   }
 
-  async didCommit (domain) {
-    domain = domain.toLowerCase()
+  async didCommit (project) {
 
     try {
-      const challengeId = await this.getChallengeId(domain)
-      return this.didCommitForPoll(challengeId)
+      return this.didCommitForPoll(project.challengeId)
     } catch (error) {
       throw error
     }

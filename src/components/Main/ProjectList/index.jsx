@@ -7,7 +7,7 @@ import toastr from 'toastr'
 import styles from './styles.css'
 import Delegate from './Delegate'
 import Challenge from './Challenge'
-import VoteCommit from './VoteCommit'
+import ChallengeVoteCommit from './ChallengeVoteCommit'
 import VoteReveal from './VoteReveal'
 import Countdown from './Countdown'
 import ProjectProfile from './ProjectProfile'
@@ -31,6 +31,59 @@ class ProjectList extends Component {
     this.handlePageChange = this.handlePageChange.bind(this)
     this.nextPage = this.nextPage.bind(this)
     this.prevPage = this.prevPage.bind(this)
+    this.updateStatus = this.updateStatus.bind(this)
+  }
+
+  async updateStatus (e, project) {
+    e.preventDefault()
+
+    try {
+      await registry.updateStatus(project.projectName)
+    } catch (error) {
+      toastr.error(error.message)
+    }
+
+    this.getData(project)
+  }
+
+  async getData (project) {
+    try {
+      var newProject = {}
+
+      const listing = await registry.getListing(project.projectName)
+
+      const {
+        applicationExpiry,
+        isWhitelisted,
+        challengeId
+      } = listing
+
+      newProject = {
+        applicationExpiry,
+        isWhitelisted,
+        challengeId
+      }
+
+      const challengeOpen = (challengeId === 0 && !isWhitelisted && applicationExpiry)
+      const commitOpen = await registry.commitStageActive(project.projectName)
+      const revealOpen = await registry.revealStageActive(project.projectName)
+
+      if (commitOpen) {
+        newProject.stage = 'In Voting Commit'
+        newProject.action = 'commit'
+      } else if (revealOpen) {
+        newProject.stage = 'In Voting Reveal'
+        newProject.action = 'reveal'
+      } else if (challengeOpen) {
+        newProject.stage = 'In Application'
+        newProject.action = 'challenge'
+      } else if (isWhitelisted) {
+        newProject.stage = 'In Registry'
+        newProject.action = 'view'
+      }
+    } catch (error) {
+      toastr.error(error.message)
+    }
   }
 
   nextPage () {
@@ -129,12 +182,15 @@ class ProjectList extends Component {
             <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}><span className="">{project.stage}</span></div>
             <div className="rt-td Number" style={{flex: '150 0 auto', width: '150px'}}>{moment.unix(project.applicationExpiry).format("YYYY-MM-DD")}</div>
             <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}>
-              {project.action &&
-              <Modal trigger={<a className="ui mini button purple" href="#!">{project.action}</a>}>
+              {project.action === 'refresh status' &&
+              <a onClick={(e) => {this.updateStatus(e, project)}} className="ui mini button purple" href="#!">{project.action}</a>
+              }
+              {project.action !== 'refresh status' &&
+              <Modal size="mini" trigger={<a className="ui mini button purple" href="#!">{project.action}</a>}>
                 <Modal.Header>{project.stage}</Modal.Header>
                 <Modal.Content>
                   {project.action == 'challenge' && <Challenge project={project} />}
-                  {project.action == 'commit' && <VoteCommit />}
+                  {project.action == 'commit' && <ChallengeVoteCommit project={project} stage={project.stage} />}
                 </Modal.Content>
               </Modal>
               }
