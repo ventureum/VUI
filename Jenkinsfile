@@ -14,28 +14,24 @@ pipeline {
       steps {
         dir('depRepo/VTCR') {
             sh 'truffle migrate --reset'
-            sh 'cp -r ./build/contracts ../../contracts'
+            sh 'cp -r ./build/contracts ../../public/contracts'
         }
       }
     }
     stage('Install Dependencies') {
       steps {
-        sh './jenkins/scripts/dep.sh'
-      }
-    }
-    stage('Test') {
-      steps {
-        sh './jenkins/scripts/test.sh'
+        sh 'npm install'
+        sh 'cp ./react-scripts/config/* ./node_modules/react-scripts/config/'
       }
     }
     stage('Build') {
       steps {
-        sh './jenkins/scripts/build.sh'
+        sh 'CI=false npm run build'
       }
     }
     stage('Deliver to S3') {
       steps {
-        sh './jenkins/scripts/deliver.sh'
+        sh 'aws s3 sync --delete ./build  s3://alpha.ventureum.io'
       }
     }
   }
