@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Loader, Modal } from 'semantic-ui-react'
 import InProgress from '../InProgress'
 import registry from '../../../services/registry'
+import sale from '../../../services/sale'
 import toastr from 'toastr'
 
 import './styles.css'
@@ -13,7 +14,8 @@ class VTHFaucet extends Component {
     this.state = {
       address: props.address,
       inProgress: false,
-      modalOpen: false
+      modalOpen: false,
+      tokenAmount: null
     }
 
     this.onRequest = this.onRequest.bind(this)
@@ -24,7 +26,7 @@ class VTHFaucet extends Component {
 
   onTokenAmountKeyUp (event) {
     this.setState({
-      tokenAmount: event.target.value | 0
+      tokenAmount: event.target.value || 0
     })
   }
 
@@ -50,7 +52,7 @@ class VTHFaucet extends Component {
     const {tokenAmount} = this.state
 
     if (!tokenAmount) {
-      toastr.error('Please enter amount of VTH')
+      toastr.error('Please enter amount of ETH to transfer')
       return false
     }
 
@@ -59,7 +61,7 @@ class VTHFaucet extends Component {
     })
 
     try {
-      // await sale.purchaseTokens( {from: address, value: tokenAmount})
+      await sale.purchaseTokens(tokenAmount)
 
       this.handleClose()
       this.setState({
@@ -88,13 +90,11 @@ class VTHFaucet extends Component {
         <Modal.Content>
           <div className="ui grid stackable padded">
             <div className="column five wide">
-              <div className="request-voting-rights-container">
-                <div className="ui grid stackable center aligned">
-                  <div className="column sixteen wide">
-                    <div className="ui input action mini">
-                      <input onKeyUp={this.onTokenAmountKeyUp} type="text" placeholder="100" />
-                      <button onClick={this.onRequest} className="ui button blue tiny">Transfer VTH</button>
-                    </div>
+              <div className="ui grid stackable center aligned">
+                <div className="column sixteen wide">
+                  <div className="ui input action mini">
+                    <input onKeyUp={this.onTokenAmountKeyUp} type="text" placeholder="100" />
+                    <button onClick={this.onRequest} className="ui button blue tiny">Transfer ETH to VTH</button>
                   </div>
                 </div>
               </div>

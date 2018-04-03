@@ -11,7 +11,7 @@ class Countdown extends Component {
     const endDate = props.endDate
     this.state = {
       endDate: endDate || moment(),
-      countdown: this.calculateCountdownStr(endDate),
+      countdown: '',
       isExpired: false,
 
       // expired if no endDate set on init
@@ -93,11 +93,17 @@ class Countdown extends Component {
 
     const dur = moment.duration(diff, 'seconds')
     const seconds = dur.seconds()
+    const minutes = dur.minutes()
     const hours = dur.hours()
     const days = dur.days()
     const months = dur.months()
     const years = dur.years()
-    const countdown = (years ? years + ' years ' : '') + (months ? months + ' months ' : '') + (days ? days + ' days ' : '') + (hours ? pad(hours, 2, 0) + ' hours ' : '') + (seconds ? pad(seconds, 2, 0) + ' seconds ' : '')
+    var countdown = (pad(minutes, 2, 0) + ' minutes ') + (pad(seconds, 2, 0) + ' seconds')
+    if (days) {
+      countdown = (days ? days + ' days ' : '') + (pad(hours, 2, 0) + ' hours ') + countdown
+    } else if (hours) {
+      countdown = (pad(hours, 2, 0) + ' hours ') + countdown
+    }
     return countdown
   }
 
