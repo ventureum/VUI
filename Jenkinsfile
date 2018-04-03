@@ -14,7 +14,7 @@ pipeline {
       steps {
         dir('depRepo/VTCR') {
             sh 'truffle migrate --reset'
-            sh 'cp -r ./build/contracts ../../contracts'
+            sh 'cp -r ./build/contracts ../../public/contracts'
         }
       }
     }
