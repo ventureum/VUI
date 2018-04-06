@@ -136,7 +136,7 @@ class TokenService {
   }
 
   async allowance (owner, spender) {
-    return this.token.allowance.call(owner, spender)
+    return await this.token.allowance.call(owner, spender)
   }
 
   async getBalance () {

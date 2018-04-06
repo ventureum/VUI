@@ -8,7 +8,7 @@ import styles from './styles.css'
 import Delegate from './Delegate'
 import Challenge from './Challenge'
 import ChallengeVoteCommit from './ChallengeVoteCommit'
-import VoteReveal from './VoteReveal'
+import ChallengeVoteReveal from './ChallengeVoteReveal'
 import Countdown from './Countdown'
 import ProjectProfile from './ProjectProfile'
 import registry from '../../../services/registry'
@@ -43,44 +43,17 @@ class ProjectList extends Component {
       toastr.error(error.message)
     }
 
-    this.getData(project)
+    this.updateData(project)
   }
 
-  async getData (project) {
+  async updateData (project) {
     try {
-      var newProject = {}
-
-      const listing = await registry.getListing(project.projectName)
-
-      const {
-        applicationExpiry,
-        isWhitelisted,
-        challengeId
-      } = listing
-
-      newProject = {
-        applicationExpiry,
-        isWhitelisted,
-        challengeId
-      }
-
-      const challengeOpen = (challengeId === 0 && !isWhitelisted && applicationExpiry)
-      const commitOpen = await registry.commitStageActive(project.projectName)
-      const revealOpen = await registry.revealStageActive(project.projectName)
-
-      if (commitOpen) {
-        newProject.stage = 'In Voting Commit'
-        newProject.action = 'commit'
-      } else if (revealOpen) {
-        newProject.stage = 'In Voting Reveal'
-        newProject.action = 'reveal'
-      } else if (challengeOpen) {
-        newProject.stage = 'In Application'
-        newProject.action = 'challenge'
-      } else if (isWhitelisted) {
-        newProject.stage = 'In Registry'
-        newProject.action = 'view'
-      }
+      var newProject = await registry.getProjectInfo(project.hash)
+      var projectList = this.state.projectList
+      projectList[projectList.indexOf(project)] = newProject
+      this.setState({
+        projectList
+      })
     } catch (error) {
       toastr.error(error.message)
     }
@@ -191,6 +164,7 @@ class ProjectList extends Component {
                 <Modal.Content>
                   {project.action == 'challenge' && <Challenge project={project} />}
                   {project.action == 'commit' && <ChallengeVoteCommit project={project} stage={project.stage} />}
+                  {project.action == 'reveal' && <ChallengeVoteReveal project={project} stage={project.stage} />}
                 </Modal.Content>
               </Modal>
               }

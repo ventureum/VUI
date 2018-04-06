@@ -71,7 +71,6 @@ class Main extends Component {
   async updateBalance () {
     try {
       const vthBalance = await token.getBalance()
-
       this.setState({
         vthBalance: (vthBalance | 0)
       })
@@ -129,7 +128,7 @@ class Main extends Component {
                 <div className="item">
                   <div className="vth-logo ui image">
                     <img src="http://ventureum.io/img/logo.png" alt=""/>
-                    {vthBalance !== null ? commafy(vthBalance.toFixed(4)) : '-'} VTH{vthBalance !== null && <VTHFaucet address={address} />}
+                    {vthBalance !== null ? commafy(vthBalance) : '-'} VTH{vthBalance !== null && <VTHFaucet address={address} />}
                   </div>
                 </div>
                 <div className="item">
