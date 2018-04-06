@@ -44,7 +44,7 @@ class SaleService {
   }
 
   async purchaseTokens (tokenAmount) {
-    await this.sale.purchaseTokens({value: big(tokenAmount).mul(tenToTheEighteenth)})
+    await this.sale.purchaseTokens({value: Eth.toWei(tokenAmount.toString(10), 'ether')})
   }
 }
 
