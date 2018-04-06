@@ -5,7 +5,7 @@ import moment from 'moment'
 import styles from './styles.css'
 import Delegate from '../Delegate'
 import ChallengeVoteCommit from '../ChallengeVoteCommit'
-import VoteReveal from '../VoteReveal'
+import ChallengeVoteReveal from '../ChallengeVoteReveal'
 import Countdown from '../Countdown'
 import ProjectInfo from './ProjectInfo'
 import MilestoneInfo from './MilestoneInfo'
@@ -263,7 +263,7 @@ class ProjectProfile extends Component {
                   {milestone.action === 'cost evaluation' && <MilestoneObjCost milestone = {milestone} addressType = {this.state.addressType} endDate={moment(milestone.stageEnd, "YYYY-MM-DD HH:mm:ss").unix()} />}
                   {milestone.action === 'delegate' && <Delegate stage={milestone.stage} endDate={moment(milestone.stageEnd, "YYYY-MM-DD HH:mm:ss").unix()} />}
                   {milestone.action === 'vote' && <ChallengeVoteCommit obj = {milestone.obj} stage={milestone.stage} endDate={moment(milestone.stageEnd, "YYYY-MM-DD HH:mm:ss").unix()} />}
-                  {milestone.action === 'reveal' && <VoteReveal obj = {milestone.obj} stage={milestone.stage} endDate={moment(milestone.stageEnd, "YYYY-MM-DD HH:mm:ss").unix()} />}
+                  {milestone.action === 'reveal' && <ChallengeVoteReveal obj = {milestone.obj} stage={milestone.stage} endDate={moment(milestone.stageEnd, "YYYY-MM-DD HH:mm:ss").unix()} />}
                   {milestone.action === 'withdraw' && 
                    <div className="column five wide">
                      <div className='withdraw-voting-rights-container'>

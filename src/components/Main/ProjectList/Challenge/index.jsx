@@ -27,8 +27,7 @@ class Challenge extends Component {
   componentDidMount () {
     this._isMounted = true
 
-    // this.getMinDeposit()
-    // this.getListing()
+    this.getMinDeposit()
   }
 
   componentWillUnmount () {
@@ -106,23 +105,6 @@ class Challenge extends Component {
     if (this._isMounted) {
       this.setState({
         minDeposit: (await registry.getMinDeposit()).toNumber()
-      })
-    }
-  }
-
-  async getListing () {
-    const {domain} = this.state
-    const listing = await registry.getListing(domain)
-
-    const {
-      applicationExpiry,
-      currentDeposit
-    } = listing
-
-    if (this._isMounted) {
-      this.setState({
-        applicationExpiry,
-        currentDeposit
       })
     }
   }

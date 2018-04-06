@@ -10,43 +10,35 @@ import TokenDistribution from './TokenDistribution'
 
 import './styles.css'
 
-class VoteReveal extends Component {
+class ChallengeVoteReveal extends Component {
   constructor (props) {
-    super()
+    super(props)
 
     this.state = {
-      domain: props.domain,
       account: registry.getAccount(),
-      applicationExpiry: null,
+      applicationExpiry: props.project.applicationExpiry,
       votesFor: 0,
       votesAgainst: 0,
       commitEndDate: null,
-      revealEndDate: props.endDate,
+      revealEndDate: null,
       inProgress: false,
       didChallenge: false,
       didCommit: false,
       didReveal: false,
       salt: null,
       voteOption: null,
-      challengeId: null,
-      stage: props.stage,
-      obj: props.obj
+      challengeId: props.project.challengeId,
+      stage: props.stage
     }
 
     this.onVoteOptionChange = this.onVoteOptionChange.bind(this)
     this.onFormSubmit = this.onFormSubmit.bind(this)
     this.onFileInput = this.onFileInput.bind(this)
 
-    // this.getListing()
-    // this.getPoll()
-    // this.getChallenge()
-    // this.getCommit()
-    // this.getReveal()
-
-    this.objSelection=[]
-    for(var i = 0; i < this.state.obj.length; i++) {
-      this.objSelection.push({text:this.state.obj[i].objTitle, value:this.state.obj[i].objTitle})
-    }
+    this.getPoll()
+    this.getChallenge()
+    this.getCommit()
+    this.getReveal()
   }
 
   componentDidMount () {
@@ -59,7 +51,6 @@ class VoteReveal extends Component {
 
   render () {
     const {
-      domain,
       revealEndDate,
       inProgress,
       didChallenge,
@@ -81,25 +72,25 @@ class VoteReveal extends Component {
               {this.state.stage}
               <Popup
                 trigger={<i className='icon info circle' />}
-                content='The first phase of the voting process is the commit phase where the VTH holder stakes a hidden amount of votes to SUPPORT or OPPOSE the domain application. The second phase is the reveal phase where the VTH holder reveals the staked amount of votes to either the SUPPORT or OPPOSE side.'
+                content='The first phase of the voting process is the commit phase where the VTH holder stakes a hidden amount of votes to SUPPORT or OPPOSE the project application. The second phase is the reveal phase where the VTH holder reveals the staked amount of votes to either the SUPPORT or OPPOSE side.'
               />
             </div>
           </div>
           {didChallenge ? <div className='column sixteen wide center aligned'>
             <div className='ui message warning'>
-              You've <strong>challenged</strong> this domain.
+              You've <strong>challenged</strong> this project.
             </div>
           </div>
            : null}
           {didCommit ? <div className='column sixteen wide center aligned'>
             <div className='ui message warning'>
-              You've <strong>commited</strong> for this domain.
+              You've <strong>commited</strong> for this project.
             </div>
           </div>
            : null}
           {didReveal ? <div className='column sixteen wide center aligned'>
             <div className='ui message warning'>
-              You've <strong>revealed</strong> for this domain.
+              You've <strong>revealed</strong> for this project.
             </div>
           </div>
            : null}
@@ -111,15 +102,13 @@ class VoteReveal extends Component {
                   Reveal stage ends
                 </p>
                 <p><strong>{stageEnd}</strong></p>
-                <p>Remaining time: <Countdown
+                <p>Remaining time: {revealEndDate && <Countdown
                                      endDate={stageEndMoment}
-                                     onExpire={this.onCountdownExpire.bind(this)} /></p>
+                                     onExpire={this.onCountdownExpire.bind(this)} />}</p>
               </div>
             </div>
             <div className='ui divider' />
             <div className='column sixteen wide center aligned'>
-              <h4> Select Milestone Objective </h4>
-              <Dropdown placeholder='Select Objective' fluid selection options={this.objSelection} />
               <form
                 onSubmit={this.onFormSubmit}
                 className='ui form'>
@@ -149,10 +138,40 @@ class VoteReveal extends Component {
                 <div className='ui field'>
                   <label>Vote Option<br /><small>must be what you committed</small></label>
                 </div>
-                <div className='ui grid center aligned row'>
-                  <Button.Group buttons={['1', '2', '3','4','5']} />
-                  <Button primary> Submit </Button>
+                <div className='ui two fields VoteOptions'>
+                  <div className='ui field'>
+                    <Radio
+                      label='SUPPORT'
+                      name='voteOption'
+                      value='1'
+                      checked={voteOption === 1}
+                      onChange={this.onVoteOptionChange}
+                    />
+                  </div>
+                  <div className='ui field'>
+                    <Radio
+                      label='OPPOSE'
+                      name='voteOption'
+                      value='0'
+                      checked={voteOption === 0}
+                      onChange={this.onVoteOptionChange}
+                    />
+                  </div>
                 </div>
+                <div className='ui field'>
+                {voteOption === null
+                  ? <button
+                    className='ui button disabled'>
+                      Select Vote Option
+                  </button>
+                : <button
+                  type='submit'
+                  className={`ui button ${voteOption ? 'blue' : 'purple'} right labeled icon`}>
+                  REVEAL {voteOption ? 'SUPPORT' : 'OPPOSE'} VOTE
+                  <i className={`icon thumbs ${voteOption ? 'up' : 'down'}`} />
+                </button>
+                }
+              </div>
               </form>
             </div>
           </div>
@@ -168,32 +187,15 @@ class VoteReveal extends Component {
     })
   }
 
-  async getListing () {
-    const {domain} = this.state
-    const listing = await registry.getListing(domain)
-
-    const {
-      applicationExpiry,
-      challengeId
-    } = listing
-
-    if (this._isMounted) {
-      this.setState({
-        applicationExpiry,
-        challengeId
-      })
-    }
-  }
-
   async getCommit () {
-    const {domain, account} = this.state
+    const {account} = this.state
 
     if (!account) {
       return false
     }
 
     try {
-      const didCommit = await registry.didCommit(domain)
+      const didCommit = await registry.didCommit(this.props.project)
 
       this.setState({
         didCommit: didCommit
@@ -204,14 +206,14 @@ class VoteReveal extends Component {
   }
 
   async getReveal () {
-    const {domain, account} = this.state
+    const {account} = this.state
 
     if (!account) {
       return false
     }
 
     try {
-      const didReveal = await registry.didReveal(domain)
+      const didReveal = await registry.didReveal(this.props.project)
 
       if (this._isMounted) {
         this.setState({
@@ -224,7 +226,6 @@ class VoteReveal extends Component {
   }
 
   async getPoll () {
-    const {domain} = this.state
 
     try {
       const {
@@ -232,7 +233,7 @@ class VoteReveal extends Component {
         votesAgainst,
         commitEndDate,
         revealEndDate
-      } = await registry.getChallengePoll(domain)
+      } = await registry.getChallengePoll(this.props.project)
 
       if (this._isMounted) {
         this.setState({
@@ -248,14 +249,14 @@ class VoteReveal extends Component {
   }
 
   async getChallenge () {
-    const {domain, account} = this.state
+    const {account} = this.state
 
     if (!account) {
       return false
     }
 
     try {
-      const didChallenge = await registry.didChallenge(domain)
+      const didChallenge = await registry.didChallenge(this.props.project)
 
       if (this._isMounted) {
         this.setState({
@@ -274,7 +275,7 @@ class VoteReveal extends Component {
   }
 
   async reveal () {
-    const {domain, salt, voteOption} = this.state
+    const {salt, voteOption} = this.state
 
     if (!salt) {
       toastr.error('Please enter salt value')
@@ -293,7 +294,8 @@ class VoteReveal extends Component {
     }
 
     try {
-      const revealed = await registry.revealVote({domain, voteOption, salt})
+      const project = this.props.project
+      const revealed = await registry.revealVote({project, voteOption, salt})
       this.setState({
         inProgress: false
       })
@@ -359,4 +361,4 @@ class VoteReveal extends Component {
   }
 }
 
-export default VoteReveal
+export default ChallengeVoteReveal

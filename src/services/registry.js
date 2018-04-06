@@ -191,26 +191,7 @@ class RegistryService {
     return stage
   }
 
-  async getProjectList () {
-    var hashList = []
-    var projectList = []
-    var next = 0
-    var num
-    var projectObj
-    do {
-        next = await this.registry.getNextProjectHash.call(next)
-        num = new Eth.BN(next.substring(2), 16)
-    } while(!num.eq(new Eth.BN('0')) && hashList.push(next))
-    for (let hash of hashList) {
-      projectObj = await this.getProjectInfo(hash)
-      projectObj.stage = await this.getProjectStage(hash, projectObj)
-      projectObj.hash = hash
-      projectList.push(projectObj)
-    }
-    return projectList
-  }
-
-  async getProjectInfo (hash) {
+  async getProjectData (hash) {
     if (!hash) {
       throw new Error('Project hash is required')
     }
@@ -239,6 +220,30 @@ class RegistryService {
     }
   }
 
+  async getProjectInfo (hash) {
+    var projectObj
+    projectObj = await this.getProjectData(hash)
+    projectObj.stage = await this.getProjectStage(hash, projectObj)
+    projectObj.hash = hash
+    return projectObj
+  }
+
+  async getProjectList () {
+    var hashList = []
+    var projectList = []
+    var next = 0
+    var num
+    var projectObj
+    do {
+        next = await this.registry.getNextProjectHash.call(next)
+        num = new Eth.BN(next.substring(2), 16)
+    } while(!num.eq(new Eth.BN('0')) && hashList.push(next))
+    for (let hash of hashList) {
+      projectList.push(await this.getProjectInfo(hash))
+    }
+    return projectList
+  }
+
   getListing (name) {
     if (!name) {
       throw new Error('Project name is required')
@@ -246,7 +251,7 @@ class RegistryService {
 
     try {
       const hash = sha3(name)
-      return this.getProjectInfo(hash)
+      return this.getProjectData(hash)
     } catch (error) {
       throw error
     }
@@ -386,20 +391,7 @@ class RegistryService {
     }
   }
 
-  async commitStageActive (domain) {
-    if (!domain) {
-      throw new Error('Domain is required')
-    }
-
-    domain = domain.toLowerCase()
-    let pollId = null
-
-    try {
-      pollId = await this.getChallengeId(domain)
-    } catch (error) {
-      throw error
-    }
-
+  async commitStageActive (pollId) {
     if (!pollId) {
       return false
     }
@@ -411,20 +403,7 @@ class RegistryService {
     }
   }
 
-  async revealStageActive (domain) {
-    if (!domain) {
-      throw new Error('Domain is required')
-    }
-
-    domain = domain.toLowerCase()
-    let pollId = null
-
-    try {
-      pollId = await this.getChallengeId(domain)
-    } catch (error) {
-      throw error
-    }
-
+  async revealStageActive (pollId) {
     if (!pollId) {
       return false
     }
@@ -454,15 +433,8 @@ class RegistryService {
     }
   }
 
-  async revealVote ({domain, voteOption, salt}) {
-    domain = domain.toLowerCase()
-    let challengeId = null
-
-    try {
-      challengeId = await this.getChallengeId(domain)
-    } catch (error) {
-      throw error
-    }
+  async revealVote ({project, voteOption, salt}) {
+    let challengeId = project.challengeId
 
     try {
       await plcr.reveal({pollId: challengeId, voteOption, salt})
@@ -545,8 +517,7 @@ class RegistryService {
     }
   }
 
-  async didReveal (domain) {
-    domain = domain.toLowerCase()
+  async didReveal (project) {
 
     const voter = this.account
 
@@ -555,7 +526,7 @@ class RegistryService {
     }
 
     try {
-      const challengeId = await this.getChallengeId(domain)
+      const challengeId = project.challengeId
 
       if (!challengeId) {
         return false
