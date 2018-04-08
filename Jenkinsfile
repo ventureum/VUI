@@ -26,11 +26,7 @@ pipeline {
     }
     stage('Build') {
       steps {
-<<<<<<< HEAD
-        sh 'npm run build'
-=======
         sh 'CI=false npm run build'
->>>>>>> upstream/master
       }
     }
     stage('Deliver to S3') {
