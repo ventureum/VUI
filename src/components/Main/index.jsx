@@ -7,6 +7,7 @@ import Registry from './Registry'
 import Account from './Account'
 import VTHFaucet from './VTHFaucet'
 import { Dropdown, Modal } from 'semantic-ui-react'
+import toastr from 'toastr'
 
 import commafy from 'commafy'
 import store from '../../store'
@@ -75,6 +76,7 @@ class Main extends Component {
         vthBalance: (vthBalance | 0)
       })
     } catch (error) {
+      toastr.error(error)
       this.setState({
         vthBalance: null
       })
@@ -127,7 +129,7 @@ class Main extends Component {
                 <div className="item">
                   <div className="vth-logo ui image">
                     <img src="http://ventureum.io/img/logo.png" alt=""/>
-                    {vthBalance !== null ? commafy(vthBalance.toFixed(4)) : '-'} VTH{vthBalance !== 0 ? <VTHFaucet address={address} /> : ''}
+                    {vthBalance !== null ? commafy(vthBalance.toFixed(4)) : '-'} VTH{vthBalance !== null && <VTHFaucet address={address} />}
                   </div>
                 </div>
                 <div className="item">

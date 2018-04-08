@@ -602,8 +602,8 @@ class Application extends Component {
           <div className="ui grid stackable center aligned">
             <div className="row">
               <div onClick={this.resetForm} className="ui button red">Clear</div>
-              <div onClick={this.submit} className="ui button green">Save</div>
-              <div className="ui button blue">Submit</div>
+              {/*<div className="ui button green">Save</div>*/}
+              <div onClick={this.submit} className="ui button blue">Submit</div>
             </div>
           </div>
         </div>
