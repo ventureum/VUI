@@ -88,7 +88,7 @@ class RegistryService {
     return this.account
   }
 
-  async apply (name, deposit = 500000) {
+  async apply (name, deposit = 50000) {
     if (!name) {
       throw new Error('Project name is required')
     }
