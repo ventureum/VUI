@@ -101,7 +101,7 @@ class RegistryService {
 
     const allowed = await token.allowance(this.account, this.address).toString('10')
 
-    if (allowed >= deposit) {
+    if (allowed < deposit) {
       try {
         await token.approve(this.address, deposit)
       } catch (error) {
