@@ -99,8 +99,8 @@ class RegistryService {
       throw new Error('Project name already exists')
     }
 
-    const allowed = (await token.allowance(this.account, this.address)).toString('10')
-
+    deposit = big(deposit).mul(tenToTheEighteenth).toString(10)
+    const allowed = (await token.allowance(this.account, this.address)).toString(10)
     if (allowed < deposit) {
       try {
         await token.approve(this.address, deposit)
