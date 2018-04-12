@@ -127,9 +127,9 @@ class RegistryService {
     }
 
     try {
-      const minDeposit = await this.getMinDeposit()
-      const minDepositAdt = minDeposit.mul(tenToTheNinth)
-      await token.approve(this.address, minDepositAdt)
+      let  minDeposit = await this.getMinDeposit()
+      minDeposit = minDeposit.mul(tenToTheEighteenth)
+      await token.approve(this.address, minDeposit)
       await this.registry.challenge(name)
     } catch (error) {
       throw error
@@ -353,8 +353,7 @@ class RegistryService {
   }
 
   async getMinDeposit () {
-    const min = await this.getParameter('minDeposit')
-    return min.div(tenToTheNinth)
+    return await this.getParameter('minDeposit')
   }
 
   async getCurrentBlockNumber () {
