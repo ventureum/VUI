@@ -2,12 +2,16 @@ import React, { Component } from 'react'
 import commafy from 'commafy'
 import toastr from 'toastr'
 import moment from 'moment'
+import Eth from 'ethjs'
 import { Popup } from 'semantic-ui-react'
 import registry from '../../../../services/registry'
 import InProgress from '../../InProgress'
 import Countdown from '../Countdown'
 
 import './styles.css'
+
+const big = (number) => new Eth.BN(number.toString(10))
+const tenToTheEighteenth = big(10).pow(big(18))
 
 class Challenge extends Component {
   constructor (props) {
@@ -27,7 +31,7 @@ class Challenge extends Component {
   componentDidMount () {
     this._isMounted = true
 
-    // this.getMinDeposit()
+    this.getMinDeposit()
     // this.getListing()
   }
 
@@ -105,7 +109,7 @@ class Challenge extends Component {
   async getMinDeposit () {
     if (this._isMounted) {
       this.setState({
-        minDeposit: (await registry.getMinDeposit()).toNumber()
+        minDeposit: (await registry.getMinDeposit()).div(tenToTheEighteenth).toNumber()
       })
     }
   }
