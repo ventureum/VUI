@@ -331,7 +331,7 @@ class ChallengeVoteCommit extends Component {
       const {
         commitEndDate,
         revealEndDate
-      } = await registry.getChallengePoll(this.props.project)
+      } = await registry.getChallengePoll(this.props.project.projectName)
 
       if (this._isMounted) {
         this.setState({
@@ -348,7 +348,7 @@ class ChallengeVoteCommit extends Component {
 
     try {
       const challenge = await registry.getChallenge(this.state.challengeId)
-      const didChallenge = await registry.didChallenge(this.props.project)
+      const didChallenge = await registry.didChallenge(this.props.project.projectName)
 
       if (this._isMounted) {
         this.setState({
@@ -364,7 +364,7 @@ class ChallengeVoteCommit extends Component {
   async getCommit () {
 
     try {
-      const didCommit = await registry.didCommit(this.props.project)
+      const didCommit = await registry.didCommit(this.props.project.projectName)
 
       if (this._isMounted) {
         this.setState({
@@ -396,7 +396,8 @@ class ChallengeVoteCommit extends Component {
     }
 
     try {
-      const commited = await registry.commitVote({project, votes, voteOption, salt})
+      const projectName = project.projectName;
+      const commited = await registry.commitVote({projectName, votes, voteOption, salt})
 
       if (this._isMounted) {
         this.setState({

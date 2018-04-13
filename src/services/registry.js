@@ -141,13 +141,22 @@ class RegistryService {
     })
   }
 
-  async didChallenge (project) {
-    if (!project) {
-      throw new Error('Project is required')
+  async didChallenge (domain) {
+    if (!domain) {
+      throw new Error('Domain is required')
+    }
+
+    domain = domain.toLowerCase()
+    let challengeId = null
+
+    try {
+      challengeId = await this.getChallengeId(domain)
+    } catch (error) {
+      throw error
     }
 
     try {
-      const challenge = await this.getChallenge(project.challengeId)
+      const challenge = await this.getChallenge(challengeId)
       return (challenge.challenger === this.account)
     } catch (error) {
       throw error
@@ -435,19 +444,28 @@ class RegistryService {
     }
   }
 
-  async commitVote ({project, votes, voteOption, salt}) {
-    if (!project) {
-      throw new Error('Project is required')
+  async commitVote ({domain, votes, voteOption, salt}) {
+    if (!domain) {
+      throw new Error('Domain is required')
     }
 
-    // nano VTH to normal VTH
-    const bigVotes = big(votes).mul(tenToTheNinth).toString(10)
+    // atto VTH to VTH
+    const bigVotes = big(votes).mul(tenToTheEighteenth).toString(10)
+
+    domain = domain.toLowerCase()
+    let challengeId = null
+
+    try {
+      challengeId = await this.getChallengeId(domain)
+    } catch (error) {
+      throw error
+    }
 
     try {
       const hash = saltHashVote(voteOption, salt)
 
-      await plcr.commit({pollId: project.challengeId, hash, tokens: bigVotes})
-      return this.didCommitForPoll(project.challengeId)
+      await plcr.commit({pollId: challengeId, hash, tokens: bigVotes})
+      return this.didCommitForPoll(challengeId)
     } catch (error) {
       throw error
     }
@@ -471,13 +489,16 @@ class RegistryService {
     }
   }
 
-  async getChallengePoll (project) {
-    if (!project) {
-      throw new Error('Project is required')
+  async getChallengePoll (domain) {
+    if (!domain) {
+      throw new Error('Domain is required')
     }
 
+    domain = domain.toLowerCase()
+
     try {
-      return plcr.getPoll(project.challengeId)
+      const challengeId = await this.getChallengeId(domain)
+      return plcr.getPoll(challengeId)
     } catch (error) {
       throw error
     }
@@ -514,10 +535,12 @@ class RegistryService {
     }
   }
 
-  async didCommit (project) {
+  async didCommit (domain) {
+    domain = domain.toLowerCase()
 
     try {
-      return this.didCommitForPoll(project.challengeId)
+      const challengeId = await this.getChallengeId(domain)
+      return this.didCommitForPoll(challengeId)
     } catch (error) {
       throw error
     }
