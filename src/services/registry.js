@@ -444,19 +444,18 @@ class RegistryService {
     }
   }
 
-  async commitVote ({domain, votes, voteOption, salt}) {
-    if (!domain) {
-      throw new Error('Domain is required')
+  async commitVote ({projectName, votes, voteOption, salt}) {
+    if (!projectName) {
+      throw new Error('projectName is required')
     }
 
     // atto VTH to VTH
     const bigVotes = big(votes).mul(tenToTheEighteenth).toString(10)
 
-    domain = domain.toLowerCase()
     let challengeId = null
 
     try {
-      challengeId = await this.getChallengeId(domain)
+      challengeId = await this.getChallengeId(projectName)
     } catch (error) {
       throw error
     }
@@ -471,12 +470,11 @@ class RegistryService {
     }
   }
 
-  async revealVote ({domain, voteOption, salt}) {
-    domain = domain.toLowerCase()
+  async revealVote ({projectName, voteOption, salt}) {
     let challengeId = null
 
     try {
-      challengeId = await this.getChallengeId(domain)
+      challengeId = await this.getChallengeId(projectName)
     } catch (error) {
       throw error
     }
