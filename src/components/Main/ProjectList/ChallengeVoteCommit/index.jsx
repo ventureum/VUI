@@ -19,6 +19,7 @@ class ChallengeVoteCommit extends Component {
     const salt = randomInt(1e6, 1e8)
 
     this.state = {
+      projectName: props.project.projectName,
       votes: 0,
       applicationExpiry: props.project.applicationExpiry,
       challengeId: props.project.challengeId,
@@ -331,7 +332,7 @@ class ChallengeVoteCommit extends Component {
       const {
         commitEndDate,
         revealEndDate
-      } = await registry.getChallengePoll(this.props.project)
+      } = await registry.getChallengePoll(this.state.projectName)
 
       if (this._isMounted) {
         this.setState({
@@ -348,7 +349,7 @@ class ChallengeVoteCommit extends Component {
 
     try {
       const challenge = await registry.getChallenge(this.state.challengeId)
-      const didChallenge = await registry.didChallenge(this.props.project)
+      const didChallenge = await registry.didChallenge(this.state.projectName)
 
       if (this._isMounted) {
         this.setState({
@@ -364,7 +365,7 @@ class ChallengeVoteCommit extends Component {
   async getCommit () {
 
     try {
-      const didCommit = await registry.didCommit(this.props.project)
+      const didCommit = await registry.didCommit(this.state.projectName)
 
       if (this._isMounted) {
         this.setState({
@@ -378,11 +379,11 @@ class ChallengeVoteCommit extends Component {
 
   async commit () {
     const {
+      projectName,
       votes,
       salt,
       voteOption
     } = this.state
-    const project = this.props.project
 
     if (voteOption === null) {
       toastr.error('Please select a vote option')
@@ -396,7 +397,7 @@ class ChallengeVoteCommit extends Component {
     }
 
     try {
-      const commited = await registry.commitVote({project, votes, voteOption, salt})
+      const commited = await registry.commitVote({projectName, votes, voteOption, salt})
 
       if (this._isMounted) {
         this.setState({

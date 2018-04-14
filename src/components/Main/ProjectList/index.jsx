@@ -8,6 +8,7 @@ import styles from './styles.css'
 import Delegate from './Delegate'
 import Challenge from './Challenge'
 import ChallengeVoteCommit from './ChallengeVoteCommit'
+import ChallengeVoteReveal from './ChallengeVoteReveal'
 import VoteReveal from './VoteReveal'
 import Countdown from './Countdown'
 import ProjectProfile from './ProjectProfile'
@@ -191,6 +192,7 @@ class ProjectList extends Component {
                 <Modal.Content>
                   {project.action == 'challenge' && <Challenge project={project} />}
                   {project.action == 'commit' && <ChallengeVoteCommit project={project} stage={project.stage} />}
+                  {project.action == 'reveal' && <ChallengeVoteReveal project={project} stage={project.stage} />}
                 </Modal.Content>
               </Modal>
               }
