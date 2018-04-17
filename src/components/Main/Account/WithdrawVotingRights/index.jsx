@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Loader, Popup } from 'semantic-ui-react'
+import { Popup } from 'semantic-ui-react'
 import store from '../../../../store'
 import registry from '../../../../services/registry'
 import toastr from 'toastr'
@@ -65,7 +65,7 @@ class WithdrawVotingRights extends Component {
 
   async withdrawTokens () {
     const {availableTokens} = this.state
-    if (commafy(availableTokens) == 0) {
+    if (commafy(availableTokens) === 0) {
       toastr.error('No available tokens')
       return
     }
@@ -92,7 +92,6 @@ class WithdrawVotingRights extends Component {
 
   render () {
     const {
-      account,
       inProgress,
       availableTokens,
       lockedTokens
@@ -102,7 +101,8 @@ class WithdrawVotingRights extends Component {
       <div className='withdraw-voting-rights-container'>
         <div className='ui grid stackable center aligned'>
           <div className='column sixteen wide'>
-            <p>Withdraw Voting Rights
+            <p>
+              Withdraw Voting Rights
               <Popup
                 trigger={<i className='icon info circle' />}
                 content='Withdraw vToken held by the PLCR contract. VToken is locked up during voting and unlocked after the reveal stage. When it is unlocked you may withdraw the vToken to your account at any time.'
@@ -122,4 +122,4 @@ class WithdrawVotingRights extends Component {
   }
 }
 
-export default CSSModules(WithdrawVotingRights, styles);
+export default CSSModules(WithdrawVotingRights, styles)

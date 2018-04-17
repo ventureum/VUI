@@ -1,16 +1,12 @@
 import React, { Component } from 'react'
-import Eth from 'ethjs'
 import CSSModules from 'react-css-modules'
-import { Popup, Modal } from 'semantic-ui-react'
+import { Modal } from 'semantic-ui-react'
 import moment from 'moment'
 import toastr from 'toastr'
 import styles from './styles.css'
-import Delegate from './Delegate'
 import Challenge from './Challenge'
 import ChallengeVoteCommit from './ChallengeVoteCommit'
 import ChallengeVoteReveal from './ChallengeVoteReveal'
-import VoteReveal from './VoteReveal'
-import Countdown from './Countdown'
 import ProjectProfile from './ProjectProfile'
 import registry from '../../../services/registry'
 import store from '../../../store'
@@ -115,7 +111,7 @@ class ProjectList extends Component {
     })
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     this.setState({addressType: nextProps.addressType})
   }
 
@@ -156,7 +152,7 @@ class ProjectList extends Component {
     }
   }
 
-  render() {
+  render () {
     const {
       perPage,
       currentPage,
@@ -165,94 +161,97 @@ class ProjectList extends Component {
       inProgress
     } = this.state
 
-  	var projectElems = []
-  	var project
-  	for (var i = (currentPage - 1) * perPage; i < Math.min(currentPage * perPage, projectList.length); i++) {
-  	  project = projectList[i]
-  	  projectElems.push(
-		    <div className="rt-tr-group" key={project.projectName}>
-          <div className="rt-tr -odd">
-            <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}>
-              <Modal size="large" trigger={<a href="#!" className="domain" title="View profile">{project.projectName}</a>}>
+    var projectElems = []
+    var project
+    for (var i = (currentPage - 1) * perPage; i < Math.min(currentPage * perPage, projectList.length); i++) {
+      project = projectList[i]
+      projectElems.push(
+        <div className='rt-tr-group' key={project.projectName}>
+          <div className='rt-tr -odd'>
+            <div className='rt-td' style={{flex: '200 0 auto', width: '200px'}}>
+              <Modal size='large' trigger={<a href='#!' className='domain' title='View profile'>{project.projectName}</a>}>
                 <Modal.Header>{project.projectName}</Modal.Header>
                 <Modal.Content>
-                  <ProjectProfile addressType = {this.state.addressType} projectName = {project.projectName} />
+                  <ProjectProfile addressType={this.state.addressType} projectName={project.projectName} />
                 </Modal.Content>
               </Modal>
             </div>
-            <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}><span className="">{project.stage}</span></div>
-            <div className="rt-td Number" style={{flex: '150 0 auto', width: '150px'}}>{moment.unix(project.applicationExpiry).format("YYYY-MM-DD")}</div>
-            <div className="rt-td" style={{flex: '200 0 auto', width: '200px'}}>
+            <div className='rt-td' style={{flex: '200 0 auto', width: '200px'}}><span className=''>{project.stage}</span></div>
+            <div className='rt-td Number' style={{flex: '150 0 auto', width: '150px'}}>{moment.unix(project.applicationExpiry).format('YYYY-MM-DD')}</div>
+            <div className='rt-td' style={{flex: '200 0 auto', width: '200px'}}>
               {project.action === 'refresh status' &&
-              <a onClick={(e) => {this.updateStatus(e, project)}} className="ui mini button purple" href="#!">{project.action}</a>
+                <a onClick={(e) => { this.updateStatus(e, project) }} className='ui mini button purple' href='#!'>{project.action}</a>
               }
               {project.action !== 'refresh status' &&
-              <Modal size="mini" trigger={<a className="ui mini button purple" href="#!">{project.action}</a>}>
-                <Modal.Header>{project.stage}</Modal.Header>
-                <Modal.Content>
-                  {project.action == 'challenge' && <Challenge project={project} />}
-                  {project.action == 'commit' && <ChallengeVoteCommit project={project} stage={project.stage} />}
-                  {project.action == 'reveal' && <ChallengeVoteReveal project={project} stage={project.stage} />}
-                </Modal.Content>
-              </Modal>
+                <Modal size='mini' trigger={<a className='ui mini button purple' href='#!'>{project.action}</a>}>
+                  <Modal.Header>{project.stage}</Modal.Header>
+                  <Modal.Content>
+                    {project.action === 'challenge' && <Challenge project={project} />}
+                    {project.action === 'commit' && <ChallengeVoteCommit project={project} stage={project.stage} />}
+                    {project.action === 'reveal' && <ChallengeVoteReveal project={project} stage={project.stage} />}
+                  </Modal.Content>
+                </Modal>
               }
             </div>
           </div>
         </div>
-  	  )
+      )
     }
     return (
-      <div className="program-list">
-        <div className="ui grid stackable padded">
-          <div className="column sixteen wide">
-            <div className="ReactTable ui table">
-	          <div className="rt-table">
-	            <div className="rt-thead -header" style={{minWidth: '600px'}}>
-	              <div className="rt-tr">
-	                <div className=" rt-resizable-header -cursor-pointer rt-th" style={{flex: '200 0 auto', width: '200px'}}>
-	                  <div className="rt-resizable-header-content">Project Name</div>
-	                  <div className="rt-resizer"></div>
-	                </div>
-	                <div className=" rt-resizable-header -cursor-pointer rt-th" style={{flex: '200 0 auto', width: '200px'}}>
-	                  <div className="rt-resizable-header-content">Stage</div>
-	                  <div className="rt-resizer"></div>
-	                </div>
-	                <div className="Number rt-resizable-header -cursor-pointer rt-th" style={{flex: '150 0 auto', minWidth: '150px'}}>
-	                  <div className="rt-resizable-header-content">Stage Ends</div>
-	                  <div className="rt-resizer"></div>
-	                </div>
-                    <div className=" rt-resizable-header -cursor-pointer rt-th" style={{flex: '200 0 auto', width: '200px'}}>
-                      <div className="rt-resizable-header-content">Action</div>
-                      <div className="rt-resizer"></div>
+      <div className='program-list'>
+        <div className='ui grid stackable padded'>
+          <div className='column sixteen wide'>
+            <div className='ReactTable ui table'>
+              <div className='rt-table'>
+                <div className='rt-thead -header' style={{minWidth: '600px'}}>
+                  <div className='rt-tr'>
+                    <div className=' rt-resizable-header -cursor-pointer rt-th' style={{flex: '200 0 auto', width: '200px'}}>
+                      <div className='rt-resizable-header-content'>Project Name</div>
+                      <div className='rt-resizer' />
                     </div>
-	              </div>
-	            </div>
-	            <div className="rt-tbody" style={{minHeight: '400px'}}>
-	              {projectElems}
-	            </div>
-	          </div>
-	          <div className="pagination-bottom">
-	            <div className="-pagination">
-	              <div className="-previous">
-	                <button onClick={this.prevPage} type="button" disabled={currentPage === 1} className="-btn">Previous</button>
-	              </div>
-	              <div className="-center"><span className="-pageInfo">Page&nbsp;
-	                <div className="-pageJump"><input type="number" value={currentPage} onChange={this.handlePageChange} /></div>
-	  &nbsp;of&nbsp;
-	  <span className="-totalPages">{totalPage}</span></span>
-	              </div>
-	              <div className="-next">
-	                <button onClick={this.nextPage} type="button" disabled={currentPage === totalPage} className="-btn">Next</button>
-	              </div>
-	            </div>
-	          </div>
-	        </div>
+                    <div className=' rt-resizable-header -cursor-pointer rt-th' style={{flex: '200 0 auto', width: '200px'}}>
+                      <div className='rt-resizable-header-content'>Stage</div>
+                      <div className='rt-resizer' />
+                    </div>
+                    <div className='Number rt-resizable-header -cursor-pointer rt-th' style={{flex: '150 0 auto', minWidth: '150px'}}>
+                      <div className='rt-resizable-header-content'>Stage Ends</div>
+                      <div className='rt-resizer' />
+                    </div>
+                    <div className=' rt-resizable-header -cursor-pointer rt-th' style={{flex: '200 0 auto', width: '200px'}}>
+                      <div className='rt-resizable-header-content'>Action</div>
+                      <div className='rt-resizer' />
+                    </div>
+                  </div>
+                </div>
+                <div className='rt-tbody' style={{minHeight: '400px'}}>
+                  {projectElems}
+                </div>
+              </div>
+              <div className='pagination-bottom'>
+                <div className='-pagination'>
+                  <div className='-previous'>
+                    <button onClick={this.prevPage} type='button' disabled={currentPage === 1} className='-btn'>Previous</button>
+                  </div>
+                  <div className='-center'>
+                    <span className='-pageInfo'>Page&nbsp;</span>
+                    <div className='-pageJump'>
+                      <input type='number' value={currentPage} onChange={this.handlePageChange} />
+                    </div>
+                    &nbsp;of&nbsp;
+                    <span className='-totalPages'>{totalPage}</span>
+                  </div>
+                  <div className='-next'>
+                    <button onClick={this.nextPage} type='button' disabled={currentPage === totalPage} className='-btn'>Next</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         {inProgress ? <InProgress /> : null}
       </div>
-    );
+    )
   }
 }
 
-export default CSSModules(ProjectList, styles);
+export default CSSModules(ProjectList, styles)

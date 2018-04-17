@@ -96,8 +96,6 @@ class Countdown extends Component {
     const minutes = dur.minutes()
     const hours = dur.hours()
     const days = dur.days()
-    const months = dur.months()
-    const years = dur.years()
     var countdown = (pad(minutes, 2, 0) + ' minutes ') + (pad(seconds, 2, 0) + ' seconds')
     if (days) {
       countdown = (days ? days + ' days ' : '') + (pad(hours, 2, 0) + ' hours ') + countdown
@@ -108,7 +106,7 @@ class Countdown extends Component {
   }
 
   tick () {
-    const {endDate, onExpireCalled} = this.state
+    const {endDate} = this.state
     var countdown = this.calculateCountdownStr(endDate)
     if (!endDate) {
       if (this._isMounted) {

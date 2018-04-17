@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import commafy from 'commafy'
 import toastr from 'toastr'
 import moment from 'moment'
 import { Popup, Select } from 'semantic-ui-react'
@@ -33,7 +32,7 @@ class Delegate extends Component {
           key: '3',
           value: 'Brian',
           text: 'Brian'
-        },
+        }
       ],
       proxyInfo: {
         'John': {
@@ -45,17 +44,17 @@ class Delegate extends Component {
           name: 'Richard White',
           ethAddr: '0xe71d864ce000066bb8d640ad2e03bce75dc80000',
           lockedVth: 3241
-        }, 
+        },
         'Brian': {
           name: 'John Lee',
           ethAddr: '0x4a0000006500816731f2af00001eb43761c88a79',
           lockedVth: 8012
-        }, 
+        }
       }
     }
   }
 
-  setValue(e, data) {
+  setValue (e, data) {
     this.setState({ proxyValue: data.value })
   }
 
@@ -73,7 +72,6 @@ class Delegate extends Component {
   render () {
     const {
       delegateEnd,
-      minDeposit,
       inProgress
     } = this.state
 
@@ -105,21 +103,21 @@ class Delegate extends Component {
                 </div>
               </div>
               <div className='ui divider' />
-              <div className="field">
+              <div className='field'>
                 <label>My Available Votes to Delegate: <strong>100</strong></label>
               </div>
-              <div className="inline field">
+              <div className='inline field'>
                 <label>Enter Votes to Delegate: </label>
-                <div className="ui input">
-                  <input type="text" placeholder="10" />
+                <div className='ui input'>
+                  <input type='text' placeholder='10' />
                 </div>
               </div>
-              <div className="inline field">
+              <div className='inline field'>
                 <label>List of Proxies: </label>
                 <Select onChange={this.setValue.bind(this)} value={this.state.proxyValue} placeholder='Select your proxy' options={this.state.proxyList} />
               </div>
-              {this.state.proxyValue && 
-                <div className="ui field">
+              {this.state.proxyValue &&
+                <div className='ui field'>
                   <label>Name: {this.state.proxyInfo[this.state.proxyValue].name}</label>
                   <label>ETH address: {this.state.proxyInfo[this.state.proxyValue].ethAddr}</label>
                   <label>Locked VTH: {this.state.proxyInfo[this.state.proxyValue].lockedVth}</label>

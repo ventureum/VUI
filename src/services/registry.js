@@ -10,7 +10,7 @@ import plcr from './plcr'
 import parameterizer from './parameterizer'
 import saltHashVote from '../utils/saltHashVote'
 import { getRegistry } from '../config'
-import { getProvider, getWebsocketProvider } from './provider'
+import { getProvider } from './provider'
 
 // TODO: check number param
 const big = (number) => new Eth.BN(number.toString(10))
@@ -101,6 +101,7 @@ class RegistryService {
 
     deposit = big(deposit).mul(tenToTheEighteenth).toString(10)
     const allowed = (await token.allowance(this.account, this.address)).toString(10)
+
     if (allowed < deposit) {
       try {
         await token.approve(this.address, deposit)
@@ -127,7 +128,7 @@ class RegistryService {
     }
 
     try {
-      let  minDeposit = await this.getMinDeposit()
+      let minDeposit = await this.getMinDeposit()
       minDeposit = minDeposit.mul(tenToTheEighteenth)
       await token.approve(this.address, minDeposit)
       await this.registry.challenge(name)
@@ -207,9 +208,9 @@ class RegistryService {
     var num
     var projectObj
     do {
-        next = await this.registry.getNextProjectHash.call(next)
-        num = new Eth.BN(next.substring(2), 16)
-    } while(!num.eq(new Eth.BN('0')) && hashList.push(next))
+      next = await this.registry.getNextProjectHash.call(next)
+      num = new Eth.BN(next.substring(2), 16)
+    } while (!num.eq(new Eth.BN('0')) && hashList.push(next))
     for (let hash of hashList) {
       projectObj = await this.getProjectInfo(hash)
       projectObj.stage = await this.getProjectStage(hash, projectObj)
@@ -236,7 +237,7 @@ class RegistryService {
       var projectData = await this.registry.listings.call(hash)
       var projectObj = {}
       for (let i = 0; i < projectData.length; i++) {
-        if (projectData[i].constructor.name == 'BigNumber') {
+        if (projectData[i].constructor.name === 'BigNumber') {
           projectObj[propertyNameMap[i]] = projectData[i].toNumber()
         } else {
           projectObj[propertyNameMap[i]] = projectData[i]
@@ -362,7 +363,7 @@ class RegistryService {
   }
 
   async getMinDeposit () {
-    return await this.getParameter('minDeposit')
+    return this.getParameter('minDeposit')
   }
 
   async getCurrentBlockNumber () {

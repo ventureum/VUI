@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
 import toastr from 'toastr'
 import moment from 'moment'
-import {Button, Dropdown, Radio, Popup } from 'semantic-ui-react'
+import { Radio, Popup } from 'semantic-ui-react'
 
 import Countdown from '../Countdown'
 import registry from '../../../../services/registry'
 import InProgress from '../../InProgress'
-import TokenDistribution from './TokenDistribution'
 
 import './styles.css'
 
@@ -57,10 +56,9 @@ class ChallengeVoteReveal extends Component {
       didCommit,
       didReveal,
       voteOption,
-      challengeId,
       salt
     } = this.state
-    
+
     const stageEndMoment = revealEndDate ? moment.unix(revealEndDate) : null
     const stageEnd = stageEndMoment ? stageEndMoment.format('YYYY-MM-DD HH:mm:ss') : '-'
 
@@ -76,24 +74,30 @@ class ChallengeVoteReveal extends Component {
               />
             </div>
           </div>
-          {didChallenge ? <div className='column sixteen wide center aligned'>
-            <div className='ui message warning'>
-              You've <strong>challenged</strong> this project.
+          {didChallenge
+            ? <div className='column sixteen wide center aligned'>
+              <div className='ui message warning'>
+                You've <strong>challenged</strong> this project.
+              </div>
             </div>
-          </div>
-           : null}
-          {didCommit ? <div className='column sixteen wide center aligned'>
-            <div className='ui message warning'>
-              You've <strong>commited</strong> for this project.
+            : null
+          }
+          {didCommit
+            ? <div className='column sixteen wide center aligned'>
+              <div className='ui message warning'>
+                You've <strong>commited</strong> for this project.
+              </div>
             </div>
-          </div>
-           : null}
-          {didReveal ? <div className='column sixteen wide center aligned'>
-            <div className='ui message warning'>
-              You've <strong>revealed</strong> for this project.
+            : null
+          }
+          {didReveal
+            ? <div className='column sixteen wide center aligned'>
+              <div className='ui message warning'>
+                You've <strong>revealed</strong> for this project.
+              </div>
             </div>
-          </div>
-           : null}
+            : null
+          }
           <div className='column sixteen wide center aligned'>
             <div className='ui divider' />
             <div className='column sixteen wide center aligned'>
@@ -103,8 +107,8 @@ class ChallengeVoteReveal extends Component {
                 </p>
                 <p><strong>{stageEnd}</strong></p>
                 <p>Remaining time: {revealEndDate && <Countdown
-                                     endDate={stageEndMoment}
-                                     onExpire={this.onCountdownExpire.bind(this)} />}</p>
+                  endDate={stageEndMoment}
+                  onExpire={this.onCountdownExpire.bind(this)} />}</p>
               </div>
             </div>
             <div className='ui divider' />
@@ -159,19 +163,19 @@ class ChallengeVoteReveal extends Component {
                   </div>
                 </div>
                 <div className='ui field'>
-                {voteOption === null
-                  ? <button
-                    className='ui button disabled'>
-                      Select Vote Option
-                  </button>
-                : <button
-                  type='submit'
-                  className={`ui button ${voteOption ? 'blue' : 'purple'} right labeled icon`}>
-                  REVEAL {voteOption ? 'SUPPORT' : 'OPPOSE'} VOTE
-                  <i className={`icon thumbs ${voteOption ? 'up' : 'down'}`} />
-                </button>
-                }
-              </div>
+                  {voteOption === null
+                    ? <button
+                      className='ui button disabled'>
+                        Select Vote Option
+                    </button>
+                    : <button
+                      type='submit'
+                      className={`ui button ${voteOption ? 'blue' : 'purple'} right labeled icon`}>
+                      REVEAL {voteOption ? 'SUPPORT' : 'OPPOSE'} VOTE
+                      <i className={`icon thumbs ${voteOption ? 'up' : 'down'}`} />
+                    </button>
+                  }
+                </div>
               </form>
             </div>
           </div>
@@ -226,7 +230,6 @@ class ChallengeVoteReveal extends Component {
   }
 
   async getPoll () {
-
     try {
       const {
         votesFor,
@@ -294,7 +297,7 @@ class ChallengeVoteReveal extends Component {
     }
 
     try {
-      const projectName = this.props.project.projectName;
+      const projectName = this.props.project.projectName
       const revealed = await registry.revealVote({projectName, voteOption, salt})
       this.setState({
         inProgress: false

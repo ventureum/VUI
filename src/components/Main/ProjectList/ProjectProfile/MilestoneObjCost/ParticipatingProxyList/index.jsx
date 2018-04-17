@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import CSSModules from 'react-css-modules'
-import { Table, Menu, Icon, Label } from 'semantic-ui-react'
+import { Table, Menu, Icon } from 'semantic-ui-react'
 
 class ParticipatingProxyList extends Component {
   constructor (props) {
@@ -9,38 +9,37 @@ class ParticipatingProxyList extends Component {
       proxyList: props.proxyList,
       currentRewards: props.currentRewards,
       rewardSet: props.rewardSet,
-      addressType: props.addressType,
+      addressType: props.addressType
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     this.setState({addressType: nextProps.addressType})
   }
-  
+
   render () {
-    var proxyElems = []
     var totalVotes = 0
-    for (var i = 0; i < this.state.proxyList.length; i++ ) {
+    for (let i = 0; i < this.state.proxyList.length; i++) {
       totalVotes += this.state.proxyList[i].votes
     }
     var rows = []
-    for (var i = 0; i < this.state.proxyList.length; i++ ) {
+    for (let i = 0; i < this.state.proxyList.length; i++) {
       let proxy = this.state.proxyList[i]
       rows.push(
         <Table.Row>
           <Table.Cell>{proxy.address}</Table.Cell>
           <Table.Cell>{proxy.votes}</Table.Cell>
-          <Table.Cell>{"$"+(this.state.currentRewards * proxy.votes / totalVotes).toFixed(0)}</Table.Cell>
+          <Table.Cell>{'$' + (this.state.currentRewards * proxy.votes / totalVotes).toFixed(0)}</Table.Cell>
         </Table.Row>
       )
     }
     return (
       <div>
-        <h4>Current Reward: {"$"+this.state.currentRewards} {!this.state.rewardSet ?
-                                                             <span style={{color:"grey"}}> (Reward will be increased to {"$"+this.state.currentRewards*1.15} in the next block)</span>
-                                                           : <span style={{color:"grey"}}> (Reward has been permanently set to  {"$"+this.state.currentRewards})</span>}
+        <h4>Current Reward: {'$' + this.state.currentRewards} {!this.state.rewardSet
+          ? <span style={{color: 'grey'}}> (Reward will be increased to {'$' + this.state.currentRewards * 1.15} in the next block)</span>
+          : <span style={{color: 'grey'}}> (Reward has been permanently set to  {'$' + this.state.currentRewards})</span>}
         </h4>
-        {this.state.addressType === "proxies" && <h4>Your Votes: 5600000</h4>}
+        {this.state.addressType === 'proxies' && <h4>Your Votes: 5600000</h4>}
         <Table celled>
           <Table.Header>
             <Table.Row>
@@ -72,7 +71,7 @@ class ParticipatingProxyList extends Component {
         </Table>
       </div>
     )
-      }
+  }
 }
 
-export default CSSModules(ParticipatingProxyList);
+export default CSSModules(ParticipatingProxyList)
