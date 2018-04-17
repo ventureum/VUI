@@ -5,13 +5,13 @@ import Main from './components/Main/index.jsx'
 import './App.css'
 
 class App extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       mainIndex: this.calculateIndex(window.location.pathname.substring(1) + window.location.search)
     }
   }
-  calculateIndex(val) {
+  calculateIndex (val) {
     if (val === 'apply') {
       return 0
     } else if (val === 'projects') {
@@ -28,14 +28,14 @@ class App extends Component {
       mainIndex: this.calculateIndex(val)
     })
   }
-  render() {
+  render () {
     return (
-      <div className="ui grid stackable">
-        <SideMenu mainIndex={this.state.mainIndex} handleUrlChange={this.handleUrlChange.bind(this)}></SideMenu>
-        <Main mainIndex={this.state.mainIndex}></Main>
+      <div className='ui grid stackable'>
+        <SideMenu mainIndex={this.state.mainIndex} handleUrlChange={this.handleUrlChange.bind(this)} />
+        <Main mainIndex={this.state.mainIndex} />
       </div>
-    );
+    )
   }
 }
 
-export default App;
+export default App

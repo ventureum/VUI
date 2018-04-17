@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import { Loader, Modal } from 'semantic-ui-react'
+import { Modal } from 'semantic-ui-react'
 import InProgress from '../InProgress'
-import registry from '../../../services/registry'
 import sale from '../../../services/sale'
 import toastr from 'toastr'
 
@@ -85,16 +84,16 @@ class VTHFaucet extends Component {
     } = this.state
 
     return (
-      <Modal onClose={this.handleClose} open={modalOpen} size="mini" trigger={<a onClick={this.handleOpen} href="#!">&nbsp;(VTH Faucet)</a>}>
+      <Modal onClose={this.handleClose} open={modalOpen} size='mini' trigger={<a onClick={this.handleOpen} href='#!'>&nbsp;(VTH Faucet)</a>}>
         <Modal.Header>VTH Faucet</Modal.Header>
         <Modal.Content>
-          <div className="ui grid stackable padded">
-            <div className="column five wide">
-              <div className="ui grid stackable center aligned">
-                <div className="column sixteen wide">
-                  <div className="ui input action mini">
-                    <input onKeyUp={this.onTokenAmountKeyUp} type="text" placeholder="100" />
-                    <button onClick={this.onRequest} className="ui button blue tiny">Transfer ETH to VTH</button>
+          <div className='ui grid stackable padded'>
+            <div className='column five wide'>
+              <div className='ui grid stackable center aligned'>
+                <div className='column sixteen wide'>
+                  <div className='ui input action mini'>
+                    <input onKeyUp={this.onTokenAmountKeyUp} type='text' placeholder='100' />
+                    <button onClick={this.onRequest} className='ui button blue tiny'>Transfer ETH to VTH</button>
                   </div>
                 </div>
               </div>

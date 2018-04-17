@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Loader, Popup } from 'semantic-ui-react'
+import { Popup } from 'semantic-ui-react'
 import store from '../../../../store'
 import registry from '../../../../services/registry'
 import toastr from 'toastr'
@@ -25,7 +25,7 @@ class RequestVotingRights extends Component {
 
   componentDidMount () {
     this._isMounted = true
-    
+
     this.getAvailableVotes()
 
     store.subscribe(x => {
@@ -110,9 +110,9 @@ class RequestVotingRights extends Component {
     } = this.state
 
     return (
-      <div className="request-voting-rights-container">
-        <div className="ui grid stackable center aligned">
-          <div className="column sixteen wide">
+      <div className='request-voting-rights-container'>
+        <div className='ui grid stackable center aligned'>
+          <div className='column sixteen wide'>
             <p>
               Request Voting Rights
               <Popup
@@ -122,9 +122,9 @@ class RequestVotingRights extends Component {
             </p>
             <div><small>Total current voting rights: <strong>{availableVotes}</strong></small></div>
             <div><small>Enter amount of VTH to convert to votes</small></div>
-            <div className="ui input action mini">
-              <input onKeyUp={this.onVotesKeyUp} type="text" placeholder="100" id="request-voting-rights-container-input" />
-              <button onClick={this.onRequest} className="ui button blue tiny">Request Voting Rights</button>
+            <div className='ui input action mini'>
+              <input onKeyUp={this.onVotesKeyUp} type='text' placeholder='100' id='request-voting-rights-container-input' />
+              <button onClick={this.onRequest} className='ui button blue tiny'>Request Voting Rights</button>
             </div>
           </div>
         </div>
@@ -134,4 +134,4 @@ class RequestVotingRights extends Component {
   }
 }
 
-export default CSSModules(RequestVotingRights, styles);
+export default CSSModules(RequestVotingRights, styles)

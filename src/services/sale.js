@@ -4,7 +4,6 @@ import { getSale } from '../config'
 import store from '../store'
 
 const big = (number) => new Eth.BN(number.toString(10))
-const tenToTheNinth = big(10).pow(big(9))
 const tenToTheEighteenth = big(10).pow(big(18))
 
 class SaleService {

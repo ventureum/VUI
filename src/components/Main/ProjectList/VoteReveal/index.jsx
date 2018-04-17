@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
 import toastr from 'toastr'
 import moment from 'moment'
-import {Button, Dropdown, Radio, Popup } from 'semantic-ui-react'
+import { Button, Dropdown, Popup } from 'semantic-ui-react'
 
 import Countdown from '../Countdown'
 import registry from '../../../../services/registry'
 import InProgress from '../../InProgress'
-import TokenDistribution from './TokenDistribution'
 
 import './styles.css'
 
@@ -43,9 +42,9 @@ class VoteReveal extends Component {
     // this.getCommit()
     // this.getReveal()
 
-    this.objSelection=[]
-    for(var i = 0; i < this.state.obj.length; i++) {
-      this.objSelection.push({text:this.state.obj[i].objTitle, value:this.state.obj[i].objTitle})
+    this.objSelection = []
+    for (var i = 0; i < this.state.obj.length; i++) {
+      this.objSelection.push({text: this.state.obj[i].objTitle, value: this.state.obj[i].objTitle})
     }
   }
 
@@ -59,14 +58,11 @@ class VoteReveal extends Component {
 
   render () {
     const {
-      domain,
       revealEndDate,
       inProgress,
       didChallenge,
       didCommit,
       didReveal,
-      voteOption,
-      challengeId,
       salt
     } = this.state
 
@@ -90,19 +86,19 @@ class VoteReveal extends Component {
               You've <strong>challenged</strong> this domain.
             </div>
           </div>
-           : null}
+            : null}
           {didCommit ? <div className='column sixteen wide center aligned'>
             <div className='ui message warning'>
               You've <strong>commited</strong> for this domain.
             </div>
           </div>
-           : null}
+            : null}
           {didReveal ? <div className='column sixteen wide center aligned'>
             <div className='ui message warning'>
               You've <strong>revealed</strong> for this domain.
             </div>
           </div>
-           : null}
+            : null}
           <div className='column sixteen wide center aligned'>
             <div className='ui divider' />
             <div className='column sixteen wide center aligned'>
@@ -112,8 +108,8 @@ class VoteReveal extends Component {
                 </p>
                 <p><strong>{stageEnd}</strong></p>
                 <p>Remaining time: <Countdown
-                                     endDate={stageEndMoment}
-                                     onExpire={this.onCountdownExpire.bind(this)} /></p>
+                  endDate={stageEndMoment}
+                  onExpire={this.onCountdownExpire.bind(this)} /></p>
               </div>
             </div>
             <div className='ui divider' />
@@ -150,7 +146,7 @@ class VoteReveal extends Component {
                   <label>Vote Option<br /><small>must be what you committed</small></label>
                 </div>
                 <div className='ui grid center aligned row'>
-                  <Button.Group buttons={['1', '2', '3','4','5']} />
+                  <Button.Group buttons={['1', '2', '3', '4', '5']} />
                   <Button primary> Submit </Button>
                 </div>
               </form>

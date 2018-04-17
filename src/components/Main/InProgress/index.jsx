@@ -12,10 +12,10 @@ class InProgress extends Component {
   render () {
     return (
       <div className='in-progress overflow-y ui active transition visible inverted dimmer'>
-        <Loader ui inverted text loader content="Request in progress" />
+        <Loader ui inverted text loader content='Request in progress' />
       </div>
     )
   }
 }
 
-export default CSSModules(InProgress, styles);
+export default CSSModules(InProgress, styles)
