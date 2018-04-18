@@ -14,13 +14,21 @@ class VTHFaucet extends Component {
       address: props.address,
       inProgress: false,
       modalOpen: false,
-      tokenAmount: null
+      tokenAmount: null,
+      vthPrice: null
     }
 
+    this.getPrice()
     this.onRequest = this.onRequest.bind(this)
     this.handleClose = this.handleClose.bind(this)
     this.handleOpen = this.handleOpen.bind(this)
     this.onTokenAmountKeyUp = this.onTokenAmountKeyUp.bind(this)
+  }
+
+  async getPrice () {
+    this.setState({
+      vthPrice: (await sale.getPrice()).toNumber()
+    })
   }
 
   onTokenAmountKeyUp (event) {
@@ -48,10 +56,10 @@ class VTHFaucet extends Component {
   }
 
   async requestToken () {
-    const {tokenAmount} = this.state
+    const {tokenAmount, vthPrice} = this.state
 
     if (!tokenAmount) {
-      toastr.error('Please enter amount of ETH to transfer')
+      toastr.error('Please enter amount of VTH to transfer')
       return false
     }
 
@@ -60,8 +68,7 @@ class VTHFaucet extends Component {
     })
 
     try {
-      console.log(tokenAmount)
-      await sale.purchaseTokens(tokenAmount)
+      await sale.purchaseTokens(tokenAmount / vthPrice)
 
       this.handleClose()
       this.setState({
@@ -94,7 +101,7 @@ class VTHFaucet extends Component {
                 <div className='column sixteen wide'>
                   <div className='ui input action mini'>
                     <input onKeyUp={this.onTokenAmountKeyUp} type='text' placeholder='100' />
-                    <button onClick={this.onRequest} className='ui button blue tiny'>Transfer ETH to VTH</button>
+                    <button onClick={this.onRequest} className='ui button blue tiny'>Transfer VTH</button>
                   </div>
                 </div>
               </div>

@@ -42,6 +42,10 @@ class SaleService {
   async purchaseTokens (tokenAmount) {
     await this.sale.purchaseTokens({value: Eth.toWei(tokenAmount, 'ether')})
   }
+
+  async getPrice () {
+    return this.sale.price.call()
+  }
 }
 
 export default new SaleService()
