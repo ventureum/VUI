@@ -3,6 +3,7 @@ import CSSModules from 'react-css-modules'
 import registry from '../../../services/registry'
 import RequestVotingRights from './RequestVotingRights'
 import WithdrawVotingRights from './WithdrawVotingRights'
+import ChallengeClaimReward from './ChallengeClaimReward'
 
 import styles from './styles.css'
 
@@ -29,6 +30,9 @@ class Account extends Component {
           </div>
           <div className='column five wide'>
             <WithdrawVotingRights account={account} />
+          </div>
+          <div className='column five wide'>
+            <ChallengeClaimReward />
           </div>
         </div>
       </div>
