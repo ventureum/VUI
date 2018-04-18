@@ -3,9 +3,6 @@ import { getProvider } from './provider'
 import { getSale } from '../config'
 import store from '../store'
 
-const big = (number) => new Eth.BN(number.toString(10))
-const tenToTheEighteenth = big(10).pow(big(18))
-
 class SaleService {
   constructor () {
     this.address = null
@@ -43,7 +40,7 @@ class SaleService {
   }
 
   async purchaseTokens (tokenAmount) {
-    await this.sale.purchaseTokens({value: big(tokenAmount).mul(tenToTheEighteenth)})
+    await this.sale.purchaseTokens({value: Eth.toWei(tokenAmount, 'ether')})
   }
 }
 

@@ -60,6 +60,7 @@ class VTHFaucet extends Component {
     })
 
     try {
+      console.log(tokenAmount)
       await sale.purchaseTokens(tokenAmount)
 
       this.handleClose()
