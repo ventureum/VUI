@@ -6,7 +6,7 @@ import ProjectList from './ProjectList'
 import Registry from './Registry'
 import Account from './Account'
 import VTHFaucet from './VTHFaucet'
-import { Dropdown } from 'semantic-ui-react'
+import { Dropdown, Popup } from 'semantic-ui-react'
 import toastr from 'toastr'
 
 import commafy from 'commafy'
@@ -126,7 +126,11 @@ class Main extends Component {
                 </div>
                 <div className='item'>
                   <div className='vth-logo ui image'>
-                    <img src='http://ventureum.io/img/logo.png' alt='' />
+                    <Popup
+                      hoverable='true'
+                      trigger={<img src='http://ventureum.io/img/logo.png' alt='' />}
+                      content={'VTH Token Address: ' + token.address}
+                    />
                     {vthBalance !== null ? commafy(vthBalance.toFixed(4)) : '-'} VTH{vthBalance !== null && <VTHFaucet address={address} />}
                   </div>
                 </div>
