@@ -72,7 +72,7 @@ class Main extends Component {
       const vthBalance = await token.getBalance()
 
       this.setState({
-        vthBalance: (vthBalance | 0)
+        vthBalance: (vthBalance || 0)
       })
     } catch (error) {
       toastr.error(error)
