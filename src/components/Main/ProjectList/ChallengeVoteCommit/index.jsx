@@ -95,21 +95,19 @@ class ChallengeVoteCommit extends Component {
               />
             </div>
           </div>
-          {didChallenge
-            ? <div className='column sixteen wide center aligned'>
+          {didChallenge &&
+            <div className='column sixteen wide center aligned'>
               <div className='ui message warning'>
                 You've <strong>challenged</strong> this project.
               </div>
             </div>
-            : null
           }
-          {didCommit
-            ? <div className='column sixteen wide center aligned'>
+          {didCommit &&
+            <div className='column sixteen wide center aligned'>
               <div className='ui message warning'>
                 You've <strong>commited</strong> for this project.
               </div>
             </div>
-            : null
           }
           <div className='column sixteen wide center aligned'>
             <div className='ui divider' />
@@ -148,82 +146,86 @@ class ChallengeVoteCommit extends Component {
                   </div>
                 </div>
                 }
-                <div className='ui field'>
-                  <label>Enter Votes to Commit</label>
-                  <div className='ui input small'>
-                    <input
-                      type='text'
-                      placeholder='100'
-                      onKeyUp={this.onDepositKeyUp}
-                    />
+                { !didCommit &&
+                  <div>
+                    <div className='ui field'>
+                      <label>Enter Votes to Commit</label>
+                      <div className='ui input small'>
+                        <input
+                          type='text'
+                          placeholder='100'
+                          onKeyUp={this.onDepositKeyUp}
+                        />
+                      </div>
+                    </div>
+                    <div className='ui field'>
+                      <label>Vote Option</label>
+                    </div>
+                    {stage === 'In Voting Commit' &&
+                    <div className='ui two fields VoteOptions'>
+                      <div className='ui field'>
+                        <Radio
+                          label='SUPPORT'
+                          name='voteOption'
+                          value='1'
+                          checked={voteOption === 1}
+                          onChange={this.onVoteOptionChange}
+                        />
+                      </div>
+                      <div className='ui field'>
+                        <Radio
+                          label='OPPOSE'
+                          name='voteOption'
+                          value='0'
+                          checked={voteOption === 0}
+                          onChange={this.onVoteOptionChange}
+                        />
+                      </div>
+                    </div>
+                    }
+                    <div className='ui field'>
+                      <label>Secret Phrase<br /><small>PLEASE SAVE THIS. This random phrase (known as a "salt") will be required to reveal your vote and claim rewards.</small></label>
+                      <div className='ui message tiny default SaltField'>
+                        {salt}
+                      </div>
+                    </div>
+                    <div className='ui field'>
+                      <label><small>Download commit info required for reveal stage</small></label>
+                      <button
+                        onClick={this.onDownload}
+                        title='Download commit info'
+                        className={`ui button ${enableDownload ? '' : 'disabled'} right labeled icon ${commitDownloaded ? 'default' : 'blue'}`}>
+                        Download Commit
+                        <i className='icon download' />
+                      </button>
+                    </div>
+                    {commitDownloaded
+                      ? <div className='ui field'>
+                        <label><small>Download a calendar reminder for revealing vote</small></label>
+                        <button
+                          onClick={this.onReminderDownload}
+                          title='Download commit info'
+                          className={`ui mini button right labeled icon ${revealReminderDownloaded ? 'default' : 'blue'}`}>
+                          Reveal Reminder
+                          <i className='icon download' />
+                        </button>
+                      </div>
+                      : null
+                    }
+                    <div className='ui field'>
+                      {(voteOption === null || !votes || !commitDownloaded)
+                        ? <button className='ui button disabled'>
+                          {voteOption === null ? 'Select Vote Option' : 'Submit'}
+                        </button>
+                        : <button
+                          type='submit'
+                          className={`ui button ${voteOption ? 'blue' : 'purple'} right labeled icon`}>
+                          VOTE TO {voteOption ? 'SUPPORT' : 'OPPOSE'} <i className={`icon thumbs ${voteOption ? 'up' : 'down'}`} />
+                        </button>
+                      }
+                    </div>
                   </div>
-                </div>
-                <div className='ui field'>
-                  <label>Vote Option</label>
-                </div>
-                {stage === 'In Voting Commit' &&
-                <div className='ui two fields VoteOptions'>
-                  <div className='ui field'>
-                    <Radio
-                      label='SUPPORT'
-                      name='voteOption'
-                      value='1'
-                      checked={voteOption === 1}
-                      onChange={this.onVoteOptionChange}
-                    />
-                  </div>
-                  <div className='ui field'>
-                    <Radio
-                      label='OPPOSE'
-                      name='voteOption'
-                      value='0'
-                      checked={voteOption === 0}
-                      onChange={this.onVoteOptionChange}
-                    />
-                  </div>
-                </div>
                 }
-                <div className='ui field'>
-                  <label>Secret Phrase<br /><small>PLEASE SAVE THIS. This random phrase (known as a "salt") will be required to reveal your vote and claim rewards.</small></label>
-                  <div className='ui message tiny default SaltField'>
-                    {salt}
-                  </div>
-                </div>
-                <div className='ui field'>
-                  <label><small>Download commit info required for reveal stage</small></label>
-                  <button
-                    onClick={this.onDownload}
-                    title='Download commit info'
-                    className={`ui button ${enableDownload ? '' : 'disabled'} right labeled icon ${commitDownloaded ? 'default' : 'blue'}`}>
-                    Download Commit
-                    <i className='icon download' />
-                  </button>
-                </div>
-                {commitDownloaded
-                  ? <div className='ui field'>
-                    <label><small>Download a calendar reminder for revealing vote</small></label>
-                    <button
-                      onClick={this.onReminderDownload}
-                      title='Download commit info'
-                      className={`ui mini button right labeled icon ${revealReminderDownloaded ? 'default' : 'blue'}`}>
-                      Reveal Reminder
-                      <i className='icon download' />
-                    </button>
-                  </div>
-                  : null
-                }
-                <div className='ui field'>
-                  {(voteOption === null || !votes || !commitDownloaded)
-                    ? <button className='ui button disabled'>
-                      {voteOption === null ? 'Select Vote Option' : 'Submit'}
-                    </button>
-                    : <button
-                      type='submit'
-                      className={`ui button ${voteOption ? 'blue' : 'purple'} right labeled icon`}>
-                      VOTE TO {voteOption ? 'SUPPORT' : 'OPPOSE'} <i className={`icon thumbs ${voteOption ? 'up' : 'down'}`} />
-                    </button>
-                  }
-                </div>
               </form>
             </div>
           </div>
