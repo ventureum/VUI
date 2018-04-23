@@ -185,7 +185,7 @@ class ProjectList extends Component {
               <Modal size='large' trigger={<a href='#!' className='domain' title='View profile'>{project.projectName}</a>}>
                 <Modal.Header>{project.projectName}</Modal.Header>
                 <Modal.Content>
-                  <ProjectProfile addressType={this.state.addressType} projectName={project.projectName} />
+                  <ProjectProfile projectName={project.projectName} />
                 </Modal.Content>
               </Modal>
             </div>

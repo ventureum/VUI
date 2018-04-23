@@ -114,7 +114,7 @@
 :root:root .program-list .ReactTable .pagination-bottom .-pagination .-center .-pageInfo * {
   display: inline-block;
 }
-:root:root .program-list .ReactTable .pagination-bottom .-pagination .-center .-pageInfo .-pageJump input {
+:root:root .program-list .ReactTable .pagination-bottom .-pagination .-center .-pageJump input {
   width: 70px;
   text-align: center;
 }
