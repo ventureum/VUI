@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
 import CSSModules from 'react-css-modules'
-import styles from './styles.css'
-import JSONFormatter from 'json-formatter-js'
 import saveFile from '../../../../utils/saveFile'
+import { Grid, Table, Menu, Icon, Button } from 'semantic-ui-react'
+import { Scrollbars } from 'react-custom-scrollbars'
+import { Base64 } from 'js-base64'
+import ReactJson from 'react-json-view'
+import toastr from 'toastr'
 
-var $ = window.jQuery
 var basePath = 'https://15mw7pha3h.execute-api.us-west-1.amazonaws.com/alpha'
 
 class ProjectProfile extends Component {
@@ -13,102 +14,99 @@ class ProjectProfile extends Component {
     super(props)
     this.state = {
       projectName: props.projectName,
-      projectInfo: null,
-      perPage: 10,
-      currentPage: 1,
-      totalPage: 1
+      projectData: null
     }
 
     this.onDownload = this.onDownload.bind(this)
-    this.getProjectInfo()
+    this.getProjectData = this.getProjectData.bind(this)
   }
 
-  getProjectInfo () {
-    $.getJSON(basePath + '/application/' + this.state.projectName, (data) => {
-      this.setState({
-        projectInfo: data
-      })
-      if (data) {
-        var jsonTree = (new JSONFormatter(this.state.projectInfo)).render()
-        var elem = ReactDOM.findDOMNode(this)
-        elem.querySelector('.json-tree-content').append(jsonTree)
+  componentDidMount () {
+    this.getProjectData()
+  }
+
+  async getProjectData () {
+    try {
+      let response = await fetch(basePath + '/project/' + this.state.projectName) // eslint-disable-line
+      let body = await response.json()
+      if (response.status === 200) {
+        this.setState({
+          projectData: JSON.parse(Base64.decode(body.data))
+        })
       }
-    })
+    } catch (error) {
+      toastr.error('Failure:' + error)
+    }
   }
 
   onDownload (event) {
     event.preventDefault()
-    saveFile(JSON.stringify(this.state.projectInfo), this.state.projectName + '.json')
+    saveFile(JSON.stringify(this.state.projectData), this.state.projectName + '.json')
   }
 
   render () {
     const {
-      currentPage,
-      totalPage
+      projectData
     } = this.state
 
     return (
-      <div class='project-profile'>
-        <div className='json-tree'>
-          <div className='json-tree-content' />
-          <div className='ui field'>
-            <button onClick={this.onDownload} className='ui button purple'>
-              Download
-            </button>
-          </div>
-        </div>
-        <div className='milestones'>
-          <div className='ui grid stackable padded'>
-            <div className='column sixteen wide'>
-              <div className='ReactTable ui table'>
-                <div className='rt-table'>
-                  <div className='rt-thead -header' style={{minWidth: '600px'}}>
-                    <div className='rt-tr'>
-                      <div className=' rt-resizable-header -cursor-pointer rt-th' style={{flex: '200 0 auto', width: '200px'}}>
-                        <div className='rt-resizable-header-content'>Milestone Name</div>
-                        <div className='rt-resizer' />
-                      </div>
-                      <div className=' rt-resizable-header -cursor-pointer rt-th' style={{flex: '200 0 auto', width: '200px'}}>
-                        <div className='rt-resizable-header-content'>Description</div>
-                        <div className='rt-resizer' />
-                      </div>
-                      <div className='Number rt-resizable-header -cursor-pointer rt-th' style={{flex: '150 0 auto', minWidth: '150px'}}>
-                        <div className='rt-resizable-header-content'>Stage Ends</div>
-                        <div className='rt-resizer' />
-                      </div>
-                      <div className=' rt-resizable-header -cursor-pointer rt-th' style={{flex: '200 0 auto', width: '200px'}}>
-                        <div className='rt-resizable-header-content'>Action</div>
-                        <div className='rt-resizer' />
-                      </div>
-                    </div>
-                  </div>
-                  <div className='rt-tbody'>
-                  </div>
-                </div>
-                <div className='pagination-bottom'>
-                  <div className='-pagination'>
-                    <div className='-previous'>
-                      <button onClick={this.prevPage} type='button' disabled={currentPage === 1} className='-btn'>Previous</button>
-                    </div>
-                    <div className='-center'>
-                      <span className='-pageInfo'>Page&nbsp;</span>
-                      <div className='-pageJump'>
-                        <input type='number' value={currentPage} onChange={this.handlePageChange} />
-                      </div>
-                      &nbsp;of&nbsp;
-                      <span className='-totalPages'>{totalPage}</span>
-                    </div>
-                    <div className='-next'>
-                      <button onClick={this.nextPage} type='button' disabled={currentPage === totalPage} className='-btn'>Next</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+      <div>
+        <Grid>
+          <Grid.Column width={6}>
+            {projectData &&
+            <Scrollbars style={{ height: 300 }}>
+              <ReactJson src={projectData} displayDataTypes={false} displayObjectSize={false} enableClipboard={false} />
+            </Scrollbars>
+            }
+            <div className='ui field'>
+              <Button onClick={this.onDownload} color={'purple'}>
+                Download
+              </Button>
             </div>
-          </div>
-        </div>
+          </Grid.Column>
+          <Grid.Column width={9}>
+            <Table celled>
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell>Milestone</Table.HeaderCell>
+                  <Table.HeaderCell>Stage</Table.HeaderCell>
+                  <Table.HeaderCell>Stage Ends</Table.HeaderCell>
+                  <Table.HeaderCell>Action</Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell>Milestone #1</Table.Cell>
+                  <Table.Cell>Proxy Voting</Table.Cell>
+                  <Table.Cell>2018-7-1</Table.Cell>
+                  <Table.Cell>Vote</Table.Cell>
+                </Table.Row>
+              </Table.Body>
+
+              <Table.Footer>
+                <Table.Row>
+                  <Table.HeaderCell colSpan='4'>
+                    <Menu floated='right' pagination>
+                      <Menu.Item as='a' icon>
+                        <Icon name='chevron left' />
+                      </Menu.Item>
+                      <Menu.Item as='a'>1</Menu.Item>
+                      <Menu.Item as='a'>2</Menu.Item>
+                      <Menu.Item as='a'>3</Menu.Item>
+                      <Menu.Item as='a'>4</Menu.Item>
+                      <Menu.Item as='a' icon>
+                        <Icon name='chevron right' />
+                      </Menu.Item>
+                    </Menu>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Footer>
+            </Table>
+          </Grid.Column>
+        </Grid>
       </div>
     )
   }
 }
-export default CSSModules(ProjectProfile, styles)
+export default CSSModules(ProjectProfile)
