@@ -1,21 +1,30 @@
-:root:root .milestone-list {
+:root:root .project-profile {
   position: relative;
+  overflow: auto;
 }
-:root:root .milestone-list .withdraw-voting-rights-container {
-  background: rgba(255,255,255,0.9);
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 1px 1px #b7b7b7;
+:root:root .project-profile .json-formatter-row .json-formatter-string {
+  white-space: inherit;
 }
-:root:root .milestone-list .ReactTable {
+:root:root .project-profile .json-tree {
+  width: 50%;
+  float: left;
+}
+:root:root .project-profile .json-tree button {
+  margin-top: 20px;
+}
+:root:root .project-profile .milestones {
+  width: 50%;
+  float: left;
+}
+:root:root .project-profile .milestones .ReactTable {
   background: #fff;
   box-shadow: 0 1px 1px #b7b7b7;
   border: none;
   border-radius: 0;
   padding: 1em;
-  min-height: 370px;
+  padding-bottom: 70px;
 }
-:root:root .milestone-list .ReactTable input {
+:root:root .project-profile .milestones .ReactTable input {
   border: 1px solid rgba(0,0,0,0.1);
   background: #fff;
   padding: 5px 7px;
@@ -25,62 +34,62 @@
   color: inherit;
   outline: none;
 }
-:root:root .milestone-list .ReactTable .rt-tr {
+:root:root .project-profile .milestones .ReactTable .rt-tr {
   display: inline-flex;
   flex: 1 0 auto;
   width: 100%;
 }
-:root:root .milestone-list .ReactTable .rt-td {
+:root:root .project-profile .milestones .ReactTable .rt-td {
   padding: 7px 5px;
 }
-:root:root .milestone-list .ReactTable .rt-table {
+:root:root .project-profile .milestones .ReactTable .rt-table {
   overflow: auto;
 }
-:root:root .milestone-list .ReactTable .rt-table::-webkit-scrollbar {
+:root:root .project-profile .milestones .ReactTable .rt-table::-webkit-scrollbar {
   width: 5px;
   height: 5px;
 }
-:root:root .milestone-list .ReactTable .rt-table::-webkit-scrollbar-track {
+:root:root .project-profile .milestones .ReactTable .rt-table::-webkit-scrollbar-track {
   background: #fff;
 }
-:root:root .milestone-list .ReactTable .rt-table::-webkit-scrollbar-thumb {
+:root:root .project-profile .milestones .ReactTable .rt-table::-webkit-scrollbar-thumb {
   background-color: #ccc;
   border: 1px solid #ccc;
 }
-:root:root .milestone-list .ReactTable .rt-table::-webkit-scrollbar-thumb:hover {
+:root:root .project-profile .milestones .ReactTable .rt-table::-webkit-scrollbar-thumb:hover {
   background-color: #aaa;
 }
-:root:root .milestone-list .ReactTable .rt-thead.-header {
+:root:root .project-profile .milestones .ReactTable .rt-thead.-header {
   background: none;
   box-shadow: none;
   border: none;
   border-bottom: 1px solid #f5f5f5;
 }
-:root:root .milestone-list .ReactTable .rt-thead .rt-th,
-:root:root .milestone-list .ReactTable .rt-thead .rt-td {
+:root:root .project-profile .milestones .ReactTable .rt-thead .rt-th,
+:root:root .project-profile .milestones .ReactTable .rt-thead .rt-td {
   font-weight: bold;
   border-right: none;
   text-align: left;
   padding: 7px 5px;
 }
-:root:root .milestone-list .ReactTable .rt-tbody .rt-tr-group {
+:root:root .project-profile .milestones .ReactTable .rt-tbody .rt-tr-group {
   border-bottom: 1px solid #f5f5f5;
 }
-:root:root .milestone-list .ReactTable .rt-tbody .rt-td {
+:root:root .project-profile .milestones .ReactTable .rt-tbody .rt-td {
   border-right: none;
 }
-:root:root .milestone-list .ReactTable .ui.button {
+:root:root .project-profile .milestones .ReactTable .ui.button {
   font-size: 0.7em;
   text-transform: uppercase;
   min-width: 100px;
 }
-:root:root .milestone-list .ReactTable .pagination-bottom {
+:root:root .project-profile .milestones .ReactTable .pagination-bottom {
   position: absolute;
   bottom: 20px;
   left: 20px;
   right: 20px;
 }
-:root:root .milestone-list .ReactTable .pagination-bottom .-pagination {
+:root:root .project-profile .milestones .ReactTable .pagination-bottom .-pagination {
   z-index: 1;
   font-size: 0.8em;
   display: flex;
@@ -91,12 +100,12 @@
   box-shadow: 0 0 15px 0 rgba(0,0,0,0.1);
   border-top: 2px solid rgba(0,0,0,0.1);
 }
-:root:root .milestone-list .ReactTable .pagination-bottom .-pagination .-previous,
-:root:root .milestone-list .ReactTable .pagination-bottom .-pagination .-next {
+:root:root .project-profile .milestones .ReactTable .pagination-bottom .-pagination .-previous,
+:root:root .project-profile .milestones .ReactTable .pagination-bottom .-pagination .-next {
   flex: 1 1 0%;
   text-align: center;
 }
-:root:root .milestone-list .ReactTable .pagination-bottom .-pagination .-center {
+:root:root .project-profile .milestones .ReactTable .pagination-bottom .-pagination .-center {
   flex: 1.5 1 0%;
   text-align: center;
   display: flex;
@@ -105,20 +114,21 @@
   align-items: center;
   justify-content: space-around;
 }
-:root:root .milestone-list .ReactTable .pagination-bottom .-pagination .-center .-pageInfo {
+:root:root .project-profile .milestones .ReactTable .pagination-bottom .-pagination .-center .-pageInfo {
   color: #a2a2a2;
   display: inline-block;
   margin: 3px 10px;
   white-space: nowrap;
 }
-:root:root .milestone-list .ReactTable .pagination-bottom .-pagination .-center .-pageInfo * {
+:root:root .project-profile .milestones .ReactTable .pagination-bottom .-pagination .-center .-pageInfo * {
   display: inline-block;
 }
-:root:root .milestone-list .ReactTable .pagination-bottom .-pagination .-center .-pageInfo .-pageJump input {
-  width: 70px;
+:root:root .project-profile .milestones .ReactTable .pagination-bottom .-pagination .-center .-pageJump input {
+  width: 70%;
+  max-width: 70px;
   text-align: center;
 }
-:root:root .milestone-list .ReactTable .pagination-bottom .-pagination .-btn {
+:root:root .project-profile .milestones .ReactTable .pagination-bottom .-pagination .-btn {
   padding: 0.2em;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -133,11 +143,11 @@
   cursor: pointer;
   outline: none;
 }
-:root:root .milestone-list .ReactTable .pagination-bottom .-pagination .-btn[disabled] {
+:root:root .project-profile .milestones .ReactTable .pagination-bottom .-pagination .-btn[disabled] {
   opacity: 0.5;
   cursor: default;
 }
-:root:root .milestone-list .ReactTable .-loading {
+:root:root .project-profile .milestones .ReactTable .-loading {
   display: block;
   position: absolute;
   left: 0;

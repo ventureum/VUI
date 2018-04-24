@@ -12,6 +12,8 @@ import registry from '../../../services/registry'
 import store from '../../../store'
 import InProgress from '../InProgress'
 
+var $ = window.jQuery
+
 class ProjectList extends Component {
   constructor (props) {
     super()
@@ -19,12 +21,13 @@ class ProjectList extends Component {
     this.state = {
       projectList: [],
       addressType: props.addressType,
-      perPage: 2,
+      perPage: 10,
       currentPage: 1,
       totalPage: null,
       inProgress: false
     }
 
+    this.updatePerPage = this.updatePerPage.bind(this)
     this.handlePageChange = this.handlePageChange.bind(this)
     this.nextPage = this.nextPage.bind(this)
     this.prevPage = this.prevPage.bind(this)
@@ -129,6 +132,15 @@ class ProjectList extends Component {
     })
   }
 
+  updatePerPage () {
+    var newPerPage
+    newPerPage = Math.floor(($(window).height() - $('.top-bar').height() - 160) / $('.rt-tr-group').height()) || 10
+    this.setState({
+      perPage: newPerPage,
+      totalPage: Math.ceil(this.state.projectList.length / newPerPage)
+    })
+  }
+
   async getProjectList () {
     try {
       var projectList = await registry.getProjectList()
@@ -147,6 +159,7 @@ class ProjectList extends Component {
         projectList: projectList,
         totalPage: Math.ceil(projectList.length / this.state.perPage)
       })
+      setTimeout(this.updatePerPage, 0)
     } catch (error) {
       toastr.error(error.message)
     }
@@ -172,7 +185,7 @@ class ProjectList extends Component {
               <Modal size='large' trigger={<a href='#!' className='domain' title='View profile'>{project.projectName}</a>}>
                 <Modal.Header>{project.projectName}</Modal.Header>
                 <Modal.Content>
-                  <ProjectProfile addressType={this.state.addressType} projectName={project.projectName} />
+                  <ProjectProfile projectName={project.projectName} />
                 </Modal.Content>
               </Modal>
             </div>
@@ -223,7 +236,7 @@ class ProjectList extends Component {
                     </div>
                   </div>
                 </div>
-                <div className='rt-tbody' style={{minHeight: '400px'}}>
+                <div className='rt-tbody'>
                   {projectElems}
                 </div>
               </div>
