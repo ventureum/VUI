@@ -22,6 +22,7 @@ pipeline {
       steps {
         sh 'npm install'
         sh 'cp ./react-scripts/config/* ./node_modules/react-scripts/config/'
+        sh 'cp ./react-css-modules/dist/extendReactClass.js ./node_modules/react-css-modules/dist/'
       }
     }
     stage('Build') {
