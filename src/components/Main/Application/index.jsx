@@ -7,6 +7,7 @@ import Form from 'react-jsonschema-form'
 import { Grid, Container } from 'semantic-ui-react'
 import '../../../bootstrap/css/bootstrap-iso.css'
 import { Base64 } from 'js-base64'
+import JsonSchema from './schema.json'
 
 class Application extends Component {
   constructor () {
@@ -14,38 +15,9 @@ class Application extends Component {
 
     this.state = {
       form: true,
-      schema: {
-        'title': 'Ventureum Token Curated Registry Application',
-        'type': 'object',
-        'required': [
-          'projectName'
-        ],
-        'properties': {
-          'projectName': {
-            'type': 'string',
-            'title': 'Project Name'
-          },
-          'projectMission': {
-            'type': 'string',
-            'title': 'Project Mission'
-          },
-          'projectDescription': {
-            'type': 'string',
-            'title': 'Project Description'
-          }
-        }
-      },
-      uiSchema: {
-        projectName: {
-          'ui:autofocus': true,
-          'ui:emptyValue': ''
-        }
-      },
-      formData: {
-        'projectName': '',
-        'projectMission': '',
-        'projectDescription': ''
-      },
+      schema: JsonSchema.schema,
+      uiSchema: JsonSchema.uiSchema,
+      formData: JsonSchema.formData,
       liveValidate: true
     }
 
@@ -84,6 +56,13 @@ class Application extends Component {
     this.setState({ formData })
   }
 
+  validate ({ projectName }, errors) {
+    if (!/^\w+$/.test(projectName)) {
+      errors.projectName.addError('Project Name can only contain letters and numbers');
+    }
+    return errors;
+  }
+
   render () {
     return (
       <div className='application'>
@@ -96,7 +75,9 @@ class Application extends Component {
                 formData={this.state.formData}
                 onChange={this.onChange}
                 onSubmit={this.onSubmit}
-                onError={console.log('errors')}
+                validate={this.validate}
+                showErrorList={false}
+                liveValidate={true}
               />
             </div>
           </Container>
