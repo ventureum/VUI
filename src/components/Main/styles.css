@@ -34,8 +34,6 @@
 :root:root:root .main .top-bar .top.menu .vth-logo img {
   margin-right: 5px;
 }
-:root:root:root .main .top-bar .top.menu .addr:hover,
-:root:root:root .main .top-bar .top.menu .eth-logo:hover,
 :root:root:root .main .top-bar .top.menu .vth-logo:hover {
   cursor: pointer;
 }
