@@ -1,0 +1,232 @@
+{
+  "schema":{
+    "definitions": {
+      "legalEntity": {
+        "type": "object",
+        "properties": {
+          "primaryEntity": {
+            "type": "string",
+            "title": "Primary Entity"
+          },
+          "location": {
+            "type": "string",
+            "title": "Location of the Entity"
+          },
+          "ownershipStructure": {
+            "type": "string",
+            "title": "OwnerShip Structure of the Entity"
+          }
+        }
+      },
+      "milestone": {
+        "type": "object",
+        "title": "Milestone",
+        "properties": {
+          "name": {
+            "type": "string",
+            "title":"Name"
+          },
+          "deadline": {
+            "type": "string",
+            "title":"Deadline",
+            "format": "date-time"
+          },
+          "percentageOfFundsLocked": {
+            "type": "number",
+            "title":"Percentage of Funds Locked"
+          },
+          "objectives": {
+            "type": "array",
+            "title":"Objectives",
+            "items": {
+              "type": "string",
+              "title": "Objective",
+              "default": ""
+            },
+            "minItems": 0,
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    "title": "Ventureum Token Curated Registry Application",
+    "type": "object",
+    "required": [],
+    "properties": {
+      "projectName": {
+        "type": "string",
+        "title": "Project Name"
+      },
+      "projectOverview": {
+        "type": "object",
+        "title": "Project Overview",
+        "properties": {
+          "projectMission": {
+            "type": "string",
+            "title": "Project Mission"
+          },
+          "projectDescription": {
+            "type": "string",
+            "title": "Project Description"
+          }
+        }
+      },
+      "corporateLegalStructure": {
+        "title":"Corporate Legal Structure",
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/legalEntity"
+        },
+        "minItems": 0
+      },
+      "boardMembers": {
+        "type": "array",
+        "title": "Board Members",
+        "items": {
+          "type": "string",
+          "title": "Name",
+          "default": ""
+        },
+        "uniqueItems": true,
+        "minItems": 0
+      },
+      "managementTeamMembers": {
+        "type": "object",
+        "title": "Management Team Members",
+        "properties": {
+          "": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "title": "Name",
+              "default": ""
+            },
+            "minItems": 0
+          },
+          "operatingCommittees": {
+            "type": "string",
+            "title": "Operating Committees (Audit Committee, Compensation Committee, etc.)"
+          },
+          "legalCounselContact": {
+            "type": "string",
+            "title": "Legal Counsel Contact"
+          }
+        }
+      },
+      "projectAssets": {
+        "type": "object",
+        "title": "Project Assets",
+        "properties": {
+          "website": {
+            "type": "string",
+            "title": "Website"
+          },
+          "tokenSaleSite": {
+            "type": "string",
+            "title": "Token Sale Site"
+          },
+          "gitHub": {
+            "type": "string",
+            "title": "GitHub"
+          },
+          "socialMediaPages": {
+            "type": "string",
+            "title": "Social Media Pages"
+          },
+          "facebook": {
+            "type": "string",
+            "title": "Facebook"
+          },
+          "twitter": {
+            "type": "string",
+            "title": "Twitter"
+          },
+          "telegram": {
+            "type": "string",
+            "title": "Telegram"
+          },
+          "reddit": {
+            "type": "string",
+            "title": "Reddit"
+          },
+          "slack": {
+            "type": "string",
+            "title": "Slack"
+          }
+        }
+      },
+      "tokenSaleDetails": {
+        "type": "object",
+        "title": "Token Sale Details",
+        "properties": {
+          "dateOfTokenSaleOrDistribution": {
+            "type": "object",
+            "title": "Date of Token Sale or Distribution",
+            "properties": {
+              "StartTime": {
+                "type": "string",
+                "title": "Start Time",
+                "format": "date-time"
+              },
+              "EndTime": {
+                "type": "string",
+                "title": "End Time",
+                "format": "date-time"
+              }
+            }
+          },
+          "totalAnticipatedFundingRaisedbyFundingType": {
+            "type": "string",
+            "title": "Total Anticipated Funding Raised by Funding Type"
+          },
+          "tokensAuthorizedandOutstandingbyClass": {
+            "type": "string",
+            "title": "Tokens Authorized and Outstanding by Class"
+          }
+        }
+      },
+      "roadmapDefinition": {
+        "type": "array",
+        "title": "Roadmap Definition",
+        "items": {
+          "$ref": "#/definitions/milestone"
+        },
+        "minItems": 0,
+        "uniqueItems": true
+      }
+    }
+  },
+  "uiSchema":{
+    "corporateLegalStructure": {
+      "ui:options": {
+        "orderable": false
+      }
+    },
+    "coardMembers": {
+      "ui:options": {
+        "orderable": false
+      }
+    },
+    "managementTeamMembers": {
+      "": {
+        "ui:options": {
+          "orderable": false
+        }
+      }
+    },
+    "tokenSaleDetails": {
+      "totalAnticipatedFundingRaisedbyFundingType": {
+        "ui:widget": "textarea",
+        "ui:options": {
+          "rows": 10
+        }
+      },
+      "tokensAuthorizedandOutstandingbyClass": {
+        "ui:widget": "textarea",
+        "ui:options": {
+          "rows": 10
+        }
+      }
+    }
+  }
+}
