@@ -20,6 +20,7 @@ class Main extends Component {
 
     this.state = {
       address: null,
+      network: null,
       ethBalance: null,
       vthBalance: null,
       isLoading: true,
@@ -29,6 +30,7 @@ class Main extends Component {
 
   componentDidMount () {
     this.updateAddress()
+    this.updateNetwork()
     this.updateBalance()
     this.setState({
       isLoading: false
@@ -36,7 +38,16 @@ class Main extends Component {
 
     store.subscribe(x => {
       this.updateAddress()
+      this.updateNetwork()
       this.updateBalance()
+    })
+  }
+
+  async updateNetwork () {
+    var network = await registry.getNetwork()
+
+    this.setState({
+      network
     })
   }
 
@@ -85,7 +96,8 @@ class Main extends Component {
     let {
       vthBalance,
       ethBalance,
-      address
+      address,
+      network
     } = this.state
 
     return (
@@ -102,7 +114,7 @@ class Main extends Component {
                 </div>
               </div>
               <div className='item'>
-                <span>Network: <strong>Local Ganache</strong></span>
+                <span>Network: <strong>{network && network.type.replace(/\b\w/g, l => l.toUpperCase())}</strong></span>
               </div>
               <div className='menu right'>
                 <div className='item'>
