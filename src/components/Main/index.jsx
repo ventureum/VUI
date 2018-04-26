@@ -6,7 +6,7 @@ import ProjectList from './ProjectList'
 import Registry from './Registry'
 import Account from './Account'
 import VTHFaucet from './VTHFaucet'
-import { Dropdown, Popup } from 'semantic-ui-react'
+import { Popup } from 'semantic-ui-react'
 import toastr from 'toastr'
 
 import commafy from 'commafy'
@@ -20,19 +20,7 @@ class Main extends Component {
 
     this.state = {
       address: null,
-      addressType: 'investors',
-      addressTypeOptions: [
-        {
-          text: '0x88cebf69c703b239e8e333273836a4bcfa94a415 (Investor)',
-          value: 'investors'
-        }, {
-          text: '0x7b458ff830040ec6fda7ec4ab96634ba67a93ddf (Regulator)',
-          value: 'proxies'
-        }, {
-          text: '0xe4b8ba1957b16a1f6c5663917c0fb067f7fa0e5b (Project Founder)',
-          value: 'projectFounders'
-        }
-      ],
+      network: null,
       ethBalance: null,
       vthBalance: null,
       isLoading: true,
@@ -42,6 +30,7 @@ class Main extends Component {
 
   componentDidMount () {
     this.updateAddress()
+    this.updateNetwork()
     this.updateBalance()
     this.setState({
       isLoading: false
@@ -49,7 +38,16 @@ class Main extends Component {
 
     store.subscribe(x => {
       this.updateAddress()
+      this.updateNetwork()
       this.updateBalance()
+    })
+  }
+
+  async updateNetwork () {
+    var network = await registry.getNetwork()
+
+    this.setState({
+      network
     })
   }
 
@@ -98,7 +96,8 @@ class Main extends Component {
     let {
       vthBalance,
       ethBalance,
-      address
+      address,
+      network
     } = this.state
 
     return (
@@ -111,11 +110,11 @@ class Main extends Component {
                   <div className='avatar'>
                     <img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAtUlEQVRYR2O8Z9r2nwEL2Jg/FZsw1cT8J2ZjNYtx1EHQcBkNIUKJbeiE0KFtplhzmUx9ICFPUiT/pHE99lw26iBouIyGEKEENvRDCJcPz757RsjzKPLGQlIkqWfElctGHQQNgdEQIpSghk4I4cpNpOYaUs3BGUKkGkRqrsTlsVEHwUJyNIRgIUFqWsSZhkZbjISqjtEQGg0htKKcak1YXAbhqjpwpcVRB8FCbDSECLUAh3wIAQCl1e/d0wBVcwAAAABJRU5ErkJggg==' alt='' />
                   </div>
-                  <Dropdown value={this.addressType} onChange={this.changeAddressType.bind(this)} inline options={this.state.addressTypeOptions} defaultValue={this.state.addressTypeOptions[0].value} />
+                  {address}
                 </div>
               </div>
               <div className='item'>
-                <span>Network: <strong>Local Ganache</strong></span>
+                <span>Network: <strong>{network && network.type.replace(/\b\w/g, l => l.toUpperCase())}</strong></span>
               </div>
               <div className='menu right'>
                 <div className='item'>

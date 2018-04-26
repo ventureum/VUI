@@ -752,7 +752,7 @@ class RegistryService {
     return result.div(tenToTheEighteenth)
   }
 
-  getNetwork () {
+  async getNetwork () {
     return detectNetwork(this.provider)
   }
 }
