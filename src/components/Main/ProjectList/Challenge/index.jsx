@@ -20,7 +20,7 @@ class Challenge extends Component {
     this.state = {
       applicationExpiry: props.project.applicationExpiry,
       hash: props.project.hash,
-      minDeposit: 100,
+      minDeposit: null,
       currentDeposit: null,
       inProgress: false
     }
@@ -109,7 +109,7 @@ class Challenge extends Component {
   async getMinDeposit () {
     if (this._isMounted) {
       this.setState({
-        minDeposit: (await registry.getMinDeposit()).div(tenToTheEighteenth).toNumber()
+        minDeposit: await registry.getMinDeposit() || 0
       })
     }
   }

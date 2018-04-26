@@ -42,48 +42,6 @@ class ProjectList extends Component {
     } catch (error) {
       toastr.error(error.message)
     }
-
-    this.getData(project)
-  }
-
-  async getData (project) {
-    try {
-      var newProject = {}
-
-      const listing = await registry.getListing(project.projectName)
-
-      const {
-        applicationExpiry,
-        isWhitelisted,
-        challengeId
-      } = listing
-
-      newProject = {
-        applicationExpiry,
-        isWhitelisted,
-        challengeId
-      }
-
-      const challengeOpen = (challengeId === 0 && !isWhitelisted && applicationExpiry)
-      const commitOpen = await registry.commitStageActive(project.projectName)
-      const revealOpen = await registry.revealStageActive(project.projectName)
-
-      if (commitOpen) {
-        newProject.stage = 'In Voting Commit'
-        newProject.action = 'commit'
-      } else if (revealOpen) {
-        newProject.stage = 'In Voting Reveal'
-        newProject.action = 'reveal'
-      } else if (challengeOpen) {
-        newProject.stage = 'In Application'
-        newProject.action = 'challenge'
-      } else if (isWhitelisted) {
-        newProject.stage = 'In Registry'
-        newProject.action = 'view'
-      }
-    } catch (error) {
-      toastr.error(error.message)
-    }
   }
 
   nextPage () {
@@ -126,7 +84,7 @@ class ProjectList extends Component {
 
     store.subscribe(x => {
       const state = store.getState()
-      if (state.type === 'REGISTRY_EVENT') {
+      if (state.type === 'REGISTRY_EVENT' || state.type === 'REGISTRY_PROJECT_UPDATE_STATUS') {
         this.getProjectList()
       }
     })
@@ -141,18 +99,34 @@ class ProjectList extends Component {
     })
   }
 
+  actionNeedModal (project) {
+    var actionsNeedModal = ['challenge', 'commit', 'reveal', 'view']
+    if (actionsNeedModal.indexOf(project.action) >= 0) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  getProjectAction (projectObj) {
+    var actionMap = {
+      'In Application': 'challenge',
+      'In Voting Commit': 'commit',
+      'In Voting Reveal': 'reveal',
+      'Pending to Whitelist': 'whitelist',
+      'Pending to Resolve': 'resolve challenge',
+      'Unresolved': 'refresh status',
+      'In Registry': 'view'
+    }
+    return actionMap[projectObj.stage]
+  }
+
   async getProjectList () {
     try {
       var projectList = await registry.getProjectList()
-      var actionMap = {
-        'In Application': 'challenge',
-        'In Voting Commit': 'commit',
-        'In Voting Reveal': 'reveal',
-        'Unresolved': 'refresh status',
-        'In Registry': 'view'
-      }
+      
       for (let i = 0; i < projectList.length; i++) {
-        projectList[i].action = actionMap[projectList[i].stage]
+        projectList[i].action = this.getProjectAction(projectList[i])
       }
       this.setState({
         inProgress: false,
@@ -192,16 +166,17 @@ class ProjectList extends Component {
             <div className='rt-td' style={{flex: '200 0 auto', width: '200px'}}><span className=''>{project.stage}</span></div>
             <div className='rt-td Number' style={{flex: '150 0 auto', width: '150px'}}>{moment.unix(project.applicationExpiry).format('YYYY-MM-DD')}</div>
             <div className='rt-td' style={{flex: '200 0 auto', width: '200px'}}>
-              {project.action === 'refresh status' &&
+              {!this.actionNeedModal(project) &&
                 <a onClick={(e) => { this.updateStatus(e, project) }} className='ui mini button purple' href='#!'>{project.action}</a>
               }
-              {project.action !== 'refresh status' &&
-                <Modal size='mini' trigger={<a className='ui mini button purple' href='#!'>{project.action}</a>}>
+              {this.actionNeedModal(project) &&
+                <Modal size={project.action === 'view' ? 'large' : 'mini'} trigger={<a className='ui mini button purple' href='#!'>{project.action}</a>}>
                   <Modal.Header>{project.stage}</Modal.Header>
                   <Modal.Content>
                     {project.action === 'challenge' && <Challenge project={project} />}
                     {project.action === 'commit' && <ChallengeVoteCommit project={project} stage={project.stage} />}
                     {project.action === 'reveal' && <ChallengeVoteReveal project={project} stage={project.stage} />}
+                    {project.action === 'view' && <ProjectProfile projectName={project.projectName} />}
                   </Modal.Content>
                 </Modal>
               }
