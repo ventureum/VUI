@@ -88,6 +88,14 @@ class RegistryService {
     return this.account
   }
 
+  // needBalance must be a JS number, not a BigNumber object
+  async checkBalance (needBalance) {
+    var vthBalance = await token.getBalance() || 0
+    if (vthBalance < needBalance) {
+      throw new Error('Insufficient VTH balance')
+    }
+  }
+  
   async apply (name, deposit = 50000) {
     if (!name) {
       throw new Error('Project name is required')
@@ -98,6 +106,8 @@ class RegistryService {
     if (exists) {
       throw new Error('Project name already exists')
     }
+
+    await this.checkBalance(deposit)
 
     deposit = big(deposit).mul(tenToTheEighteenth).toString(10)
     const allowed = (await token.allowance(this.account, this.address)).toString(10)
@@ -129,7 +139,8 @@ class RegistryService {
 
     try {
       let minDeposit = await this.getMinDeposit()
-      minDeposit = minDeposit.mul(tenToTheEighteenth)
+      await this.checkBalance(minDeposit)
+      minDeposit = (new Eth.BN(minDeposit)).mul(tenToTheEighteenth).toString(10)
       await token.approve(this.address, minDeposit)
       await this.registry.challenge(name)
     } catch (error) {
@@ -376,7 +387,7 @@ class RegistryService {
   }
 
   async getMinDeposit () {
-    return this.getParameter('minDeposit')
+    return (await this.getParameter('minDeposit')).div(tenToTheEighteenth).toNumber()
   }
 
   async getCurrentBlockNumber () {
@@ -462,6 +473,8 @@ class RegistryService {
     if (!projectName) {
       throw new Error('projectName is required')
     }
+
+    await this.checkBalance(votes)
 
     // atto VTH to VTH
     const bigVotes = big(votes).mul(tenToTheEighteenth).toString(10)

@@ -15,7 +15,7 @@ class Delegate extends Component {
     this.state = {
       proxyValue: '',
       delegateEnd: props.endDate,
-      minDeposit: 100,
+      minDeposit: null,
       currentDeposit: null,
       inProgress: false,
       stage: props.stage,
@@ -148,7 +148,7 @@ class Delegate extends Component {
   async getMinDeposit () {
     if (this._isMounted) {
       this.setState({
-        minDeposit: (await registry.getMinDeposit()).toNumber()
+        minDeposit: await registry.getMinDeposit() || 0
       })
     }
   }
