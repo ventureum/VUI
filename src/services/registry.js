@@ -188,7 +188,17 @@ class RegistryService {
           if (revealActive) {
             stage = 'In Voting Reveal'
           } else {
-            stage = 'Unresolved'
+            var canWhitelist = await this.registry.canBeWhitelisted(projectObj.projectName)
+            if (canWhitelist) {
+              stage = 'Pending to Whitelist'
+            } else {
+              var canResolve = await this.registry.challengeCanBeResolved(projectObj.projectName)
+              if (canResolve) {
+                stage = 'Pending to Resolve'
+              } else {
+                stage = 'Unresolved'
+              }
+            }
           }
         } else {
           stage = 'In Voting Commit'
@@ -249,14 +259,17 @@ class RegistryService {
     }
   }
 
-  getListing (name) {
+  async getListing (name) {
     if (!name) {
       throw new Error('Project name is required')
     }
 
     try {
       const hash = sha3(name)
-      return this.getProjectInfo(hash)
+      var projectObj = this.getProjectInfo(hash)
+      projectObj.stage = await this.getProjectStage(hash, projectObj)
+      projectObj.hash = hash
+      return projectObj
     } catch (error) {
       throw error
     }
