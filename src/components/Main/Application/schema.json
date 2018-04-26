@@ -215,7 +215,15 @@
       }
     },
     "tokenSaleDetails": {
-      "totalAnticipatedFundingRaisedbyFundingType": {
+      "dateOfTokenSaleOrDistribution": {
+        "StartTime": {
+          "ui:widget": "alt-datetime"
+        },
+        "EndTime": {
+          "ui:widget": "alt-datetime"
+        }
+      },
+      "TotalAnticipatedFundingRaisedbyFundingType": {
         "ui:widget": "textarea",
         "ui:options": {
           "rows": 10
@@ -227,6 +235,14 @@
           "rows": 10
         }
       }
+    },
+    "roadmapDefinition": {
+      "items": {
+        "deadline": {
+          "ui:widget": "alt-datetime"
+        }
+      }
     }
   }
 }
+
