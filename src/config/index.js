@@ -1,6 +1,25 @@
 import contract from 'truffle-contract'
 import { getProvider } from '../services/provider'
 
+var createErrorHandler = function (name) {
+  return function (err) {
+    console.error(err)
+    throw new Error('contract ' + name + ' cannot be found, make sure you are using the correct network.')
+  }
+}
+
+// refer to https://github.com/trufflesuite/truffle-contract/issues/88
+// can't catch error from `.at()`, use `then()` to check if we get the instance
+var createEmptyChecker = function (name) {
+  return function (inst) {
+    if (!inst) {
+      throw new Error('contract ' + name + ' cannot be found, make sure you are using the correct network.')
+    } else {
+      return Promise.resolve(inst)
+    }
+  }
+}
+
 export const getAbi = async (contract) => {
   const storageKey = `ventureum:abi:${contract}`
   const cached = window.sessionStorage.getItem(storageKey)
@@ -32,7 +51,7 @@ export const getRegistry = async (account, provider) => {
   Registry.defaults({from: account})
   Registry.setProvider(provider || getProvider())
 
-  return Registry.deployed()
+  return Registry.deployed().catch(createErrorHandler('Registry'))
 }
 
 export const getSale = async (account, provider) => {
@@ -41,7 +60,7 @@ export const getSale = async (account, provider) => {
   Sale.defaults({from: account})
   Sale.setProvider(provider || getProvider())
 
-  return Sale.deployed()
+  return Sale.deployed().catch(createErrorHandler('Sale'))
 }
 
 export const getToken = async (account) => {
@@ -52,7 +71,7 @@ export const getToken = async (account) => {
   Token.defaults({from: account})
   Token.setProvider(getProvider())
 
-  return Token.at(tokenAddress)
+  return Token.at(tokenAddress).then(createEmptyChecker('Token'))
 }
 
 export const getPLCR = async (account) => {
@@ -63,7 +82,7 @@ export const getPLCR = async (account) => {
   PLCRVoting.defaults({from: account})
   PLCRVoting.setProvider(getProvider())
 
-  return PLCRVoting.at(plcrAddress)
+  return PLCRVoting.at(plcrAddress).then(createEmptyChecker('PLCR'))
 }
 
 export const getParameterizer = async (account) => {
@@ -74,7 +93,7 @@ export const getParameterizer = async (account) => {
   Parameterizer.defaults({from: account})
   Parameterizer.setProvider(getProvider())
 
-  return Parameterizer.at(pAddress)
+  return Parameterizer.at(pAddress).then(createEmptyChecker('Parameterizer'))
 }
 
 // sendTransaction

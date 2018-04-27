@@ -9,6 +9,7 @@ import plcr from './services/plcr'
 import parameterizer from './services/parameterizer'
 import token from './services/token'
 import sale from './services/sale'
+import toastr from 'toastr'
 
 async function init () {
   try {
@@ -20,7 +21,7 @@ async function init () {
       sale.init()
     ])
   } catch (error) {
-    console.error(error)
+    toastr.error(error)
   }
   ReactDOM.render(<App />, document.getElementById('root'))
   registerServiceWorker()
