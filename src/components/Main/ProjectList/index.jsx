@@ -128,6 +128,7 @@ class ProjectList extends Component {
       for (let i = 0; i < projectList.length; i++) {
         projectList[i].action = this.getProjectAction(projectList[i])
       }
+      console.log(projectList)
       this.setState({
         inProgress: false,
         projectList: projectList,

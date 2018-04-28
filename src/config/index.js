@@ -8,18 +8,6 @@ var createErrorHandler = function (name) {
   }
 }
 
-// refer to https://github.com/trufflesuite/truffle-contract/issues/88
-// can't catch error from `.at()`, use `then()` to check if we get the instance
-var createEmptyChecker = function (name) {
-  return function (inst) {
-    if (!inst) {
-      throw new Error('contract ' + name + ' cannot be found, make sure you are using the correct network.')
-    } else {
-      return Promise.resolve(inst)
-    }
-  }
-}
-
 export const getAbi = async (contract) => {
   const storageKey = `ventureum:abi:${contract}`
   const cached = window.sessionStorage.getItem(storageKey)
@@ -71,7 +59,7 @@ export const getToken = async (account) => {
   Token.defaults({from: account})
   Token.setProvider(getProvider())
 
-  return Token.at(tokenAddress).then(createEmptyChecker('Token'))
+  return Token.at(tokenAddress)
 }
 
 export const getPLCR = async (account) => {
@@ -82,7 +70,7 @@ export const getPLCR = async (account) => {
   PLCRVoting.defaults({from: account})
   PLCRVoting.setProvider(getProvider())
 
-  return PLCRVoting.at(plcrAddress).then(createEmptyChecker('PLCR'))
+  return PLCRVoting.at(plcrAddress)
 }
 
 export const getParameterizer = async (account) => {
@@ -93,7 +81,7 @@ export const getParameterizer = async (account) => {
   Parameterizer.defaults({from: account})
   Parameterizer.setProvider(getProvider())
 
-  return Parameterizer.at(pAddress).then(createEmptyChecker('Parameterizer'))
+  return Parameterizer.at(pAddress)
 }
 
 // sendTransaction

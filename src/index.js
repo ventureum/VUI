@@ -20,10 +20,12 @@ async function init () {
       parameterizer.init(),
       sale.init()
     ])
+    ReactDOM.render(<App />, document.getElementById('root'))
   } catch (error) {
     toastr.error(error)
+    ReactDOM.render(<App fatalError={error.message} />, document.getElementById('root'))
   }
-  ReactDOM.render(<App />, document.getElementById('root'))
+  
   registerServiceWorker()
 }
 

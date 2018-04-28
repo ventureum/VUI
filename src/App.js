@@ -32,7 +32,7 @@ class App extends Component {
     return (
       <div className='ui grid stackable'>
         <SideMenu mainIndex={this.state.mainIndex} handleUrlChange={this.handleUrlChange.bind(this)} />
-        <Main mainIndex={this.state.mainIndex} />
+        <Main fatalError={this.props.fatalError} mainIndex={this.state.mainIndex} />
       </div>
     )
   }
