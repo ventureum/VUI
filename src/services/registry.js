@@ -139,6 +139,10 @@ class RegistryService {
     }
 
     try {
+      let projectObj = await this.getListing(name)
+      if (this.isExpired(projectObj.applicationExpiry)) {
+        throw new Error('Cannot challenge after application period')
+      }
       let minDeposit = await this.getMinDeposit()
       await this.checkBalance(minDeposit)
       minDeposit = (new Eth.BN(minDeposit)).mul(tenToTheEighteenth).toString(10)
