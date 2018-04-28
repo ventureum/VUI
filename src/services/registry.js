@@ -11,6 +11,7 @@ import parameterizer from './parameterizer'
 import saltHashVote from '../utils/saltHashVote'
 import { getRegistry } from '../config'
 import { getProvider } from './provider'
+import moment from 'moment';
 
 // TODO: check number param
 const big = (number) => new Eth.BN(number.toString(10))
@@ -188,38 +189,25 @@ class RegistryService {
   }
 
   async getProjectStage (hash, projectObj) {
-    var stage
     if (projectObj.whitelisted) {
-      stage = 'In Registry'
-    } else {
-      if (projectObj.challengeId) {
-        var commitActive = await plcr.commitStageActive(projectObj.challengeId)
-        if (!commitActive) {
-          var revealActive = await plcr.revealStageActive(projectObj.challengeId)
-          if (revealActive) {
-            stage = 'In Voting Reveal'
-          } else {
-            var canWhitelist = await this.registry.canBeWhitelisted(projectObj.projectName)
-            if (canWhitelist) {
-              stage = 'Pending to Whitelist'
-            } else {
-              var canResolve = await this.registry.challengeCanBeResolved(projectObj.projectName)
-              if (canResolve) {
-                stage = 'Pending to Resolve'
-              } else {
-                stage = 'Unresolved'
-              }
-            }
-          }
-        } else {
-          stage = 'In Voting Commit'
-        }
-      } else {
-        stage = 'In Application'
+      return 'In Registry'
+    } else if (await this.registry.canBeWhitelisted(projectObj.projectName)) {
+      // can be whitelisted
+      return 'Pending to Whitelist'
+    } else if (projectObj.challengeId) {
+      if (await plcr.commitStageActive(projectObj.challengeId)) {
+        return 'In Voting Commit'
+      } else if (await plcr.revealStageActive(projectObj.challengeId)) {
+        return 'In Voting Reveal'
+      } else if (await this.registry.challengeCanBeResolved(projectObj.projectName)) {
+        return 'Pending to Resolve'
       }
     }
+    if (!(this.isExpired(projectObj.applicationExpiry))) {
+      return 'In Application'
+    }
 
-    return stage
+    throw new Error(' Cannot identify project stage for project ' + projectObj.projectName)
   }
 
   async getProjectList () {
@@ -270,6 +258,13 @@ class RegistryService {
     }
   }
 
+  // check if an application has expired
+  isExpired (timestamp) {
+    let t = moment.unix(timestamp)
+    let now = moment()
+    return now >= t
+  }
+
   async getListing (name) {
     if (!name) {
       throw new Error('Project name is required')
@@ -277,7 +272,7 @@ class RegistryService {
 
     try {
       const hash = sha3(name)
-      var projectObj = this.getProjectInfo(hash)
+      var projectObj = await this.getProjectInfo(hash)
       projectObj.stage = await this.getProjectStage(hash, projectObj)
       projectObj.hash = hash
       return projectObj
