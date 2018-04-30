@@ -13,7 +13,7 @@ pipeline {
     stage('Migrate Contracts') {
       steps {
         dir('depRepo/VTCR') {
-            sh 'truffle migrate --reset'
+            sh 'truffle migrate --network geth --reset'
             sh 'cp -r ./build/contracts ../../public/contracts'
         }
       }
@@ -32,7 +32,7 @@ pipeline {
     }
     stage('Deliver to S3') {
       steps {
-        sh 'aws s3 sync --delete ./build  s3://alpha.ventureum.io'
+        sh 'aws s3 sync --delete ./build  s3://dev.ventureum.io'
       }
     }
   }
