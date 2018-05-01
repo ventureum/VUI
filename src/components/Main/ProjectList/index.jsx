@@ -129,7 +129,6 @@ class ProjectList extends Component {
       for (let i = 0; i < projectList.length; i++) {
         projectList[i].action = this.getProjectAction(projectList[i])
       }
-      console.log(projectList)
       this.setState({
         inProgress: false,
         projectList: projectList,
@@ -177,7 +176,7 @@ class ProjectList extends Component {
                     {project.action === 'challenge' && <Challenge project={project} />}
                     {project.action === 'commit' && <ChallengeVoteCommit project={project} stage={project.stage} />}
                     {project.action === 'reveal' && <ChallengeVoteReveal project={project} stage={project.stage} />}
-                    {project.action === 'view' && <ProjectProfile projectName={project.projectName} />}
+                    {project.action === 'view' && <ProjectProfile project={project} />}
                   </Modal.Content>
                 </Modal>
               }
