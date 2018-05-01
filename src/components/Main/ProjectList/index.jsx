@@ -39,6 +39,7 @@ class ProjectList extends Component {
 
     try {
       await registry.updateStatus(project.projectName)
+      toastr.success('Transaction successfully sent')
     } catch (error) {
       toastr.error(error.message)
     }
