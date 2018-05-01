@@ -150,9 +150,8 @@ class ProjectList extends Component {
     } = this.state
 
     var projectElems = []
-    var project
     for (var i = (currentPage - 1) * perPage; i < Math.min(currentPage * perPage, projectList.length); i++) {
-      project = projectList[i]
+      let project = projectList[i]
       projectElems.push(
         <div className='rt-tr-group' key={project.projectName}>
           <div className='rt-tr -odd'>
