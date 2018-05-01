@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import CSSModules from 'react-css-modules'
 import saveFile from '../../../../utils/saveFile'
-import { Grid, Table, Menu, Icon, Button } from 'semantic-ui-react'
+import { Grid, Table, Menu, Icon, Button, Segment } from 'semantic-ui-react'
 import { Scrollbars } from 'react-custom-scrollbars'
 import { Base64 } from 'js-base64'
 import ReactJson from 'react-json-view'
 import toastr from 'toastr'
+import moment from 'moment'
 
 var basePath = 'https://15mw7pha3h.execute-api.us-west-1.amazonaws.com/alpha'
 
@@ -13,7 +14,7 @@ class ProjectProfile extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      projectName: props.projectName,
+      project: props.project,
       projectData: null
     }
 
@@ -27,7 +28,7 @@ class ProjectProfile extends Component {
 
   async getProjectData () {
     try {
-      let response = await fetch(basePath + '/project/' + this.state.projectName) // eslint-disable-line
+      let response = await fetch(basePath + '/project/' + this.state.project.projectName) // eslint-disable-line
       let body = await response.json()
       if (response.status === 200) {
         this.setState({
@@ -46,6 +47,7 @@ class ProjectProfile extends Component {
 
   render () {
     const {
+      project,
       projectData
     } = this.state
 
@@ -65,6 +67,9 @@ class ProjectProfile extends Component {
             </div>
           </Grid.Column>
           <Grid.Column width={9}>
+            <Segment>
+              <strong>Application Expiry: </strong>{moment.unix(project.applicationExpiry).format('YYYY-MM-DD HH:mm:ss')}
+            </Segment>
             <Table celled>
               <Table.Header>
                 <Table.Row>

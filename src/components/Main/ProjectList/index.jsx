@@ -39,6 +39,7 @@ class ProjectList extends Component {
 
     try {
       await registry.updateStatus(project.projectName)
+      toastr.success('Transaction successfully sent')
     } catch (error) {
       toastr.error(error.message)
     }
@@ -159,7 +160,7 @@ class ProjectList extends Component {
               <Modal size='large' trigger={<a href='#!' className='domain' title='View profile'>{project.projectName}</a>}>
                 <Modal.Header>{project.projectName}</Modal.Header>
                 <Modal.Content>
-                  <ProjectProfile projectName={project.projectName} />
+                  <ProjectProfile project={project}/>
                 </Modal.Content>
               </Modal>
             </div>
