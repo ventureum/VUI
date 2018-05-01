@@ -701,17 +701,17 @@ class RegistryService {
 
   async getTotalVotingRights () {
     const tokens = await plcr.getTokenBalance()
-    return big(tokens).div(tenToTheNinth)
+    return big(tokens).div(tenToTheEighteenth)
   }
 
   async getAvailableTokensToWithdraw () {
     const tokens = await plcr.getAvailableTokensToWithdraw()
-    return big(tokens).div(tenToTheNinth)
+    return big(tokens).div(tenToTheEighteenth)
   }
 
   async getLockedTokens () {
     const tokens = await plcr.getLockedTokens()
-    return big(tokens).div(tenToTheNinth)
+    return big(tokens).div(tenToTheEighteenth)
   }
 
   async withdrawVotingRights (tokens) {
@@ -719,7 +719,7 @@ class RegistryService {
       throw new Error('Number of tokens required')
     }
 
-    tokens = big(tokens).mul(tenToTheNinth).toString(10)
+    tokens = big(tokens).mul(tenToTheEighteenth).toString(10)
 
     await plcr.withdrawVotingRights(tokens)
 

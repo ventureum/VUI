@@ -45,7 +45,7 @@ class WithdrawVotingRights extends Component {
     }
 
     try {
-      const availableTokens = await registry.getAvailableTokensToWithdraw()
+      const availableTokens = (await registry.getAvailableTokensToWithdraw()).toNumber()
       const lockedTokens = (await registry.getLockedTokens()).toNumber()
 
       this.setState({
