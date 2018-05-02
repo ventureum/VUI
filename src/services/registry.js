@@ -11,7 +11,7 @@ import parameterizer from './parameterizer'
 import saltHashVote from '../utils/saltHashVote'
 import { getRegistry } from '../config'
 import { getProvider } from './provider'
-import moment from 'moment';
+import moment from 'moment'
 
 // TODO: check number param
 const big = (number) => new Eth.BN(number.toString(10))
