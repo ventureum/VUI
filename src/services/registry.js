@@ -96,8 +96,8 @@ class RegistryService {
       throw new Error('Insufficient VTH balance')
     }
   }
-  
-  async apply (name, deposit) {
+
+  async apply (name) {
     if (!name) {
       throw new Error('Project name is required')
     }
@@ -108,12 +108,8 @@ class RegistryService {
       throw new Error('Project name already exists')
     }
 
-    if (!deposit) {
-      deposit = await this.getMinDeposit()
-    }
-
+    var deposit = await this.getMinDeposit()
     await this.checkBalance(deposit)
-
     deposit = big(deposit).mul(tenToTheEighteenth).toString(10)
     const allowed = (await token.allowance(this.account, this.address)).toString(10)
     if (allowed < deposit) {
