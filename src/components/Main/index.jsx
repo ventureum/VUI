@@ -94,6 +94,14 @@ class Main extends Component {
     }
   }
 
+  // JS function toFixed() will round 4.999999999 to 5
+  // which will confuse user if they have 4.99999999 vth and apply need 5
+  // thus use this function to keep accuracy
+  toFixed (num, fixed) {
+    var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?')
+    return num.toString().match(re)[0]
+  }
+
   render () {
     let {
       vthBalance,
@@ -131,7 +139,7 @@ class Main extends Component {
                   <div className='item'>
                     <div className='eth-logo ui image'>
                       <img src='https://www.ethereum.org/images/diamond-icon@2x.png' alt='' />
-                      {ethBalance !== null ? commafy(ethBalance.toFixed(4)) : '-'} ETH
+                      {ethBalance !== null ? commafy(this.toFixed(ethBalance, 4)) : '-'} ETH
                     </div>
                   </div>
                   <div className='item'>
@@ -141,7 +149,7 @@ class Main extends Component {
                         trigger={<img src='http://ventureum.io/img/logo.png' alt='' />}
                         content={'VTH Token Address: ' + token.address}
                       />
-                      {vthBalance !== null ? commafy(vthBalance.toFixed(4)) : '-'} VTH{vthBalance !== null && <VTHFaucet address={address} />}
+                      {vthBalance !== null ? commafy(this.toFixed(vthBalance, 4)) : '-'} VTH{vthBalance !== null && <VTHFaucet address={address} />}
                     </div>
                   </div>
                   <div className='item'>

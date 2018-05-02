@@ -97,7 +97,7 @@ class RegistryService {
     }
   }
   
-  async apply (name, deposit = 50000) {
+  async apply (name, deposit) {
     if (!name) {
       throw new Error('Project name is required')
     }
@@ -108,11 +108,14 @@ class RegistryService {
       throw new Error('Project name already exists')
     }
 
+    if (!deposit) {
+      deposit = await this.getMinDeposit()
+    }
+
     await this.checkBalance(deposit)
 
     deposit = big(deposit).mul(tenToTheEighteenth).toString(10)
     const allowed = (await token.allowance(this.account, this.address)).toString(10)
-
     if (allowed < deposit) {
       try {
         await token.approve(this.address, deposit)
