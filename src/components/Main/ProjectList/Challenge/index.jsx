@@ -107,9 +107,11 @@ class Challenge extends Component {
   }
 
   async getMinDeposit () {
+    const minDeposit = await registry.getMinDeposit()
+
     if (this._isMounted) {
       this.setState({
-        minDeposit: await registry.getMinDeposit() || 0
+        minDeposit: minDeposit || 0
       })
     }
   }

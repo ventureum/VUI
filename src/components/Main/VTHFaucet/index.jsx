@@ -18,17 +18,34 @@ class VTHFaucet extends Component {
       vthPrice: null
     }
 
-    this.getPrice()
     this.onRequest = this.onRequest.bind(this)
     this.handleClose = this.handleClose.bind(this)
     this.handleOpen = this.handleOpen.bind(this)
     this.onTokenAmountKeyUp = this.onTokenAmountKeyUp.bind(this)
   }
 
+  componentDidMount () {
+    this._isMounted = true
+
+    this.getPrice()
+  }
+
+  componentWillUnmount () {
+    this._isMounted = false
+  }
+
   async getPrice () {
-    this.setState({
-      vthPrice: (await sale.getPrice()).toNumber()
-    })
+    try {
+      const vthPrice = await sale.getPrice()
+
+      if (this._isMounted) {
+        this.setState({
+          vthPrice: vthPrice.toNumber()
+        })
+      }
+    } catch (error) {
+      toastr.error(error.message)
+    }
   }
 
   onTokenAmountKeyUp (event) {

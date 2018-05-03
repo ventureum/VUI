@@ -4,7 +4,7 @@ import toastr from 'toastr'
 import styles from './styles.css'
 import registry from '../../../services/registry'
 import Form from 'react-jsonschema-form'
-import { Grid, Container } from 'semantic-ui-react'
+import { Grid, Container, Segment } from 'semantic-ui-react'
 import '../../../bootstrap/css/bootstrap-iso.css'
 import { Base64 } from 'js-base64'
 import JsonSchema from './schema.json'
@@ -18,11 +18,32 @@ class Application extends Component {
       schema: JsonSchema.schema,
       uiSchema: JsonSchema.uiSchema,
       formData: JsonSchema.formData,
-      liveValidate: true
+      liveValidate: true,
+      minDeposit: null
     }
 
     this.onChange = this.onChange.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
+  }
+
+  componentDidMount () {
+    this._isMounted = true
+
+    this.getMinDeposit()
+  }
+
+  componentWillUnmount () {
+    this._isMounted = false
+  }
+
+  async getMinDeposit () {
+    const minDeposit = await registry.getMinDeposit()
+
+    if (this._isMounted) {
+      this.setState({
+        minDeposit: minDeposit || 0
+      })
+    }
   }
 
   async onSubmit () {
@@ -64,15 +85,25 @@ class Application extends Component {
   }
 
   render () {
+    const {
+      schema,
+      uiSchema,
+      formData,
+      minDeposit
+    } = this.state
+
     return (
       <div className='application'>
         <Grid stretched>
           <Container fluid>
+            <Segment>
+              <strong> Non-refundable Application Fees: </strong>{minDeposit} VTH
+            </Segment>
             <div className='bootstrap-iso'>
               <Form
-                schema={this.state.schema}
-                uiSchema={this.state.uiSchema}
-                formData={this.state.formData}
+                schema={schema}
+                uiSchema={uiSchema}
+                formData={formData}
                 onChange={this.onChange}
                 onSubmit={this.onSubmit}
                 validate={this.validate}

@@ -33,15 +33,15 @@ class ChallengeVoteReveal extends Component {
     this.onVoteOptionChange = this.onVoteOptionChange.bind(this)
     this.onFormSubmit = this.onFormSubmit.bind(this)
     this.onFileInput = this.onFileInput.bind(this)
+  }
+
+  componentDidMount () {
+    this._isMounted = true
 
     this.getPoll()
     this.getChallenge()
     this.getCommit()
     this.getReveal()
-  }
-
-  componentDidMount () {
-    this._isMounted = true
   }
 
   componentWillUnmount () {

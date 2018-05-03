@@ -293,7 +293,7 @@ class RegistryService {
       const challenge = await this.registry.challenges.call(challengeId)
       const map = {
         // (remaining) pool of tokens distributed amongst winning voters
-        rewardPool: challenge[0] ? challenge[0].toNumber() : 0,
+        rewardPool: challenge[0] ? challenge[0].div(tenToTheEighteenth).toNumber() : 0,
         // owner of challenge
         challenger: challenge[1],
         // indication of if challenge is resolved

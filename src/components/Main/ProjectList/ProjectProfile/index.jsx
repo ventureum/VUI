@@ -51,6 +51,23 @@ class ProjectProfile extends Component {
       projectData
     } = this.state
 
+    var milestoneRows = []
+    if (projectData) {
+      var milestoneData = projectData.application.roadmapDefinition
+      if (milestoneData) {
+        for (let i = 0; i < milestoneData.length; i++) {
+          milestoneRows.push(
+            <Table.Row>
+              <Table.Cell>{milestoneData[i].name}</Table.Cell>
+              <Table.Cell>Inactive</Table.Cell>
+              <Table.Cell>{moment(milestoneData[i].deadline).format('YYYY-MM-DD HH:mm:ss')}</Table.Cell>
+              <Table.Cell></Table.Cell>
+            </Table.Row>
+          )
+        }
+      }
+    }
+
     return (
       <div>
         <Grid>
@@ -81,12 +98,7 @@ class ProjectProfile extends Component {
               </Table.Header>
 
               <Table.Body>
-                <Table.Row>
-                  <Table.Cell>Milestone #1</Table.Cell>
-                  <Table.Cell>Proxy Voting</Table.Cell>
-                  <Table.Cell>2018-7-1</Table.Cell>
-                  <Table.Cell>Vote</Table.Cell>
-                </Table.Row>
+                {milestoneRows}
               </Table.Body>
 
               <Table.Footer>
