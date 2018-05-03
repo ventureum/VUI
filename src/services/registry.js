@@ -11,7 +11,7 @@ import parameterizer from './parameterizer'
 import saltHashVote from '../utils/saltHashVote'
 import { getRegistry } from '../config'
 import { getProvider } from './provider'
-import moment from 'moment';
+import moment from 'moment'
 
 // TODO: check number param
 const big = (number) => new Eth.BN(number.toString(10))
@@ -96,8 +96,8 @@ class RegistryService {
       throw new Error('Insufficient VTH balance')
     }
   }
-  
-  async apply (name, deposit = 50000) {
+
+  async apply (name) {
     if (!name) {
       throw new Error('Project name is required')
     }
@@ -108,11 +108,10 @@ class RegistryService {
       throw new Error('Project name already exists')
     }
 
+    var deposit = await this.getMinDeposit()
     await this.checkBalance(deposit)
-
     deposit = big(deposit).mul(tenToTheEighteenth).toString(10)
     const allowed = (await token.allowance(this.account, this.address)).toString(10)
-
     if (allowed < deposit) {
       try {
         await token.approve(this.address, deposit)
