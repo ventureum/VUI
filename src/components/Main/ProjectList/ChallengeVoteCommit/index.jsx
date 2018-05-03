@@ -3,11 +3,13 @@ import toastr from 'toastr'
 import moment from 'moment'
 import { Radio, Popup } from 'semantic-ui-react'
 import randomInt from 'random-int'
+import commafy from 'commafy'
 
 import saveFile from '../../../../utils/saveFile'
 import generateReminder from '../../../../utils/generateReminder'
 import Countdown from '../Countdown'
 import registry from '../../../../services/registry'
+import sale from '../../../../services/sale'
 import InProgress from '../../InProgress'
 
 import './styles.css'
@@ -37,10 +39,6 @@ class ChallengeVoteCommit extends Component {
       stage: props.stage
     }
 
-    this.getPoll()
-    this.getChallenge()
-    this.getCommit()
-
     this.onDepositKeyUp = this.onDepositKeyUp.bind(this)
     this.onVoteOptionChange = this.onVoteOptionChange.bind(this)
     this.onFormSubmit = this.onFormSubmit.bind(this)
@@ -51,6 +49,10 @@ class ChallengeVoteCommit extends Component {
 
   componentDidMount () {
     this._isMounted = true
+
+    this.getPoll()
+    this.getChallenge()
+    this.getCommit()
   }
 
   componentWillUnmount () {
@@ -61,6 +63,14 @@ class ChallengeVoteCommit extends Component {
     setTimeout(() => {
       this.enableDownloadCheck()
     }, 0)
+  }
+
+  // JS function toFixed() will round 4.999999999 to 5
+  // which will confuse user if they have 4.99999999 vth and apply need 5
+  // thus use this function to keep accuracy
+  toFixed (num, fixed) {
+    var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?')
+    return num.toString().match(re)[0]
   }
 
   render () {
@@ -136,13 +146,7 @@ class ChallengeVoteCommit extends Component {
                     <p>Challenger: <label className='ui label'>{challenge.challenger}</label></p>
                   </div>
                   <div className='ui field'>
-                    <p>Reward Pool: <label className='ui label'>{challenge.rewardPool}</label></p>
-                  </div>
-                  <div className='ui field'>
-                    <p>Stake: <label className='ui label'>{challenge.stake}</label></p>
-                  </div>
-                  <div className='ui field'>
-                    <p>Winning Tokens: <label className='ui label'>{challenge.totalTokens}</label></p>
+                    <p>Reward Pool: <label className='ui label'>{commafy(this.toFixed(challenge.rewardPool, 4))} VTH</label></p>
                   </div>
                 </div>
                 }
