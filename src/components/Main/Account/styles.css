@@ -1,3 +1,7 @@
 :root:root .account {
   width: 100%;
 }
+:root:root .account .ui.grid {
+  margin-left: 0;
+  margin-right: 0;
+}
