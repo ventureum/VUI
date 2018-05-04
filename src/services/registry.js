@@ -1,5 +1,4 @@
 import Eth from 'ethjs'
-import sha3 from 'solidity-sha3'
 import { promisify as pify } from 'bluebird'
 import keyMirror from 'key-mirror'
 import detectNetwork from 'web3-detect-network'
@@ -274,7 +273,7 @@ class RegistryService {
     }
 
     try {
-      const hash = sha3(name)
+      const hash = window.web3.sha3(name)
       var projectObj = await this.getProjectInfo(hash)
       projectObj.stage = await this.getProjectStage(hash, projectObj)
       projectObj.hash = hash
