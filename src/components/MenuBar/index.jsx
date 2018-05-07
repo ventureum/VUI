@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Menu, Image} from 'semantic-ui-react'
+import { Menu, Image } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import CSSModules from 'react-css-modules'
 import VTHFaucet from '../Main/VTHFaucet'
@@ -8,6 +8,8 @@ import token from '../../services/token'
 import store from '../../store'
 import toastr from 'toastr'
 import commafy from 'commafy'
+import { BigNumber } from 'bignumber.js'
+import { toStandardUnit } from '../../utils/utils'
 
 class SideMenu extends Component {
   constructor (props) {
@@ -68,7 +70,7 @@ class SideMenu extends Component {
       const vthBalance = await token.getBalance()
 
       this.setState({
-        vthBalance: (vthBalance || 0)
+        vthBalance: (vthBalance || new BigNumber(0))
       })
     } catch (error) {
       toastr.error(error)
@@ -79,9 +81,8 @@ class SideMenu extends Component {
 
     try {
       const ethBalance = await registry.getEthBalance()
-
       this.setState({
-        ethBalance: ethBalance.toNumber()
+        ethBalance: (ethBalance || new BigNumber(0))
       })
     } catch (error) {
       this.setState({
@@ -96,10 +97,10 @@ class SideMenu extends Component {
 
   render () {
     const { vthBalance,
-            ethBalance,
-            address,
-            network,
-            activeItem
+      ethBalance,
+      address,
+      network,
+      activeItem
     } = this.state
 
     return (
@@ -143,7 +144,7 @@ class SideMenu extends Component {
         >
           Account Dashboard
         </Menu.Item>
-        
+
         <div className='item'>
           <div className='addr'>
             <span> Address: {address} </span>
@@ -156,12 +157,12 @@ class SideMenu extends Component {
 
         <div className='item'>
           <Image src='images/eth_icon_32x32.png' />
-          {ethBalance !== null ? commafy(ethBalance.toFixed(4)) : '-'} ETH
+          {ethBalance !== null ? commafy(toStandardUnit(ethBalance).toNumber().toFixed(4)) : '-'} ETH
         </div>
 
         <div className='item'>
           <Image src='images/vth_icon_32x32.png' />
-          {vthBalance !== null ? commafy(vthBalance.toFixed(4)) : '-'} VTH{vthBalance !== null && <VTHFaucet address={address} />}
+          {vthBalance !== null ? commafy(toStandardUnit(vthBalance).toNumber().toFixed(4)) : '-'} VTH{vthBalance !== null && <VTHFaucet address={address} />}
         </div>
 
       </Menu>

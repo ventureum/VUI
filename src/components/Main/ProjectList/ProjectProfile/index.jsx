@@ -61,7 +61,7 @@ class ProjectProfile extends Component {
               <Table.Cell>{milestoneData[i].name}</Table.Cell>
               <Table.Cell>Inactive</Table.Cell>
               <Table.Cell>{moment(milestoneData[i].deadline).format('YYYY-MM-DD HH:mm:ss')}</Table.Cell>
-              <Table.Cell></Table.Cell>
+              <Table.Cell />
             </Table.Row>
           )
         }

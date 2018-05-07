@@ -2,16 +2,13 @@ import React, { Component } from 'react'
 import commafy from 'commafy'
 import toastr from 'toastr'
 import moment from 'moment'
-import Eth from 'ethjs'
 import { Popup } from 'semantic-ui-react'
 import registry from '../../../../services/registry'
 import InProgress from '../../InProgress'
 import Countdown from '../Countdown'
-
+import { BigNumber } from 'bignumber.js'
+import { toStandardUnit } from '../../../../utils/utils'
 import './styles.css'
-
-const big = (number) => new Eth.BN(number.toString(10))
-const tenToTheEighteenth = big(10).pow(big(18))
 
 class Challenge extends Component {
   constructor (props) {
@@ -32,7 +29,6 @@ class Challenge extends Component {
     this._isMounted = true
 
     this.getMinDeposit()
-    // this.getListing()
   }
 
   componentWillUnmount () {
@@ -80,7 +76,7 @@ class Challenge extends Component {
               <div className='ui field'>
                 <div className='ui message default'>
                   <p>Minimum deposit required</p>
-                  <p><strong>{minDeposit ? commafy(minDeposit) : '-'} VTH</strong></p>
+                  <p><strong>{minDeposit ? commafy(toStandardUnit(minDeposit).toNumber()) : '-'} VTH</strong></p>
                 </div>
               </div>
               <div className='ui field'>
@@ -111,7 +107,7 @@ class Challenge extends Component {
 
     if (this._isMounted) {
       this.setState({
-        minDeposit: minDeposit || 0
+        minDeposit: minDeposit || new BigNumber(0)
       })
     }
   }

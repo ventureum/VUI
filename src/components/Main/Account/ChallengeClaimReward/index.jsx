@@ -3,6 +3,7 @@ import CSSModules from 'react-css-modules'
 import PropTypes from 'prop-types'
 import toastr from 'toastr'
 import { Popup } from 'semantic-ui-react'
+import { BigNumber } from 'bignumber.js'
 import registry from '../../../../services/registry'
 import InProgress from '../../InProgress'
 import styles from './styles.css'
@@ -168,7 +169,7 @@ class ChallengeClaimReward extends Component {
       return false
     }
 
-    const alreadyClaimed = await registry.didClaimForPoll(claimChallengeId)
+    const alreadyClaimed = await registry.didClaimForPoll(new BigNumber(claimChallengeId))
 
     if (alreadyClaimed) {
       toastr.error('You have already claimed!')
@@ -182,7 +183,7 @@ class ChallengeClaimReward extends Component {
         })
       }
 
-      await registry.claimReward(claimChallengeId, claimSalt)
+      await registry.claimReward(new BigNumber(claimChallengeId), claimSalt)
       toastr.success('Transaction sent')
 
       setTimeout(() => {

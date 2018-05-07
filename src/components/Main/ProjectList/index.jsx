@@ -125,7 +125,7 @@ class ProjectList extends Component {
   async getProjectList () {
     try {
       var projectList = await registry.getProjectList()
-      
+
       for (let i = 0; i < projectList.length; i++) {
         projectList[i].action = this.getProjectAction(projectList[i])
       }
@@ -159,7 +159,7 @@ class ProjectList extends Component {
               <Modal size='large' trigger={<a href='#!' className='domain' title='View profile'>{project.projectName}</a>}>
                 <Modal.Header>{project.projectName}</Modal.Header>
                 <Modal.Content>
-                  <ProjectProfile project={project}/>
+                  <ProjectProfile project={project} />
                 </Modal.Content>
               </Modal>
             </div>

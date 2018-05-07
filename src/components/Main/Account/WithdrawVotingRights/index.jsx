@@ -6,7 +6,7 @@ import toastr from 'toastr'
 import CSSModules from 'react-css-modules'
 import commafy from 'commafy'
 import InProgress from '../../InProgress'
-
+import { toStandardUnit } from '../../../../utils/utils'
 import styles from './styles.css'
 
 class WithdrawVotingRights extends Component {
@@ -45,8 +45,8 @@ class WithdrawVotingRights extends Component {
     }
 
     try {
-      const availableTokens = (await registry.getAvailableTokensToWithdraw()).toNumber()
-      const lockedTokens = (await registry.getLockedTokens()).toNumber()
+      const availableTokens = await registry.getAvailableTokensToWithdraw()
+      const lockedTokens = await registry.getLockedTokens()
 
       this.setState({
         availableTokens,
@@ -65,7 +65,7 @@ class WithdrawVotingRights extends Component {
 
   async withdrawTokens () {
     const {availableTokens} = this.state
-    if (commafy(availableTokens) === 0) {
+    if (availableTokens.isZero()) {
       toastr.error('No available tokens')
       return
     }
@@ -97,6 +97,9 @@ class WithdrawVotingRights extends Component {
       lockedTokens
     } = this.state
 
+    let _availableTokens = availableTokens ? toStandardUnit(availableTokens).toNumber() : 0
+    let _lockedTokens = lockedTokens ? toStandardUnit(lockedTokens).toNumber() : 0
+
     return (
       <div className='withdraw-voting-rights-container'>
         <div className='ui grid stackable center aligned'>
@@ -108,7 +111,7 @@ class WithdrawVotingRights extends Component {
                 content='Withdraw vToken held by the PLCR contract. VToken is locked up during voting and unlocked after the reveal stage. When it is unlocked you may withdraw the vToken to your account at any time.'
               />
             </p>
-            <div><small>Available unlocked VTH: {availableTokens !== null ? commafy(availableTokens) : '-'}<strong> (Locked VTH: {lockedTokens !== null ? commafy(lockedTokens) : '-'})</strong></small></div>
+            <div><small>Available unlocked VTH: {commafy(_availableTokens)}<strong> (Locked VTH: {commafy(_lockedTokens)})</strong></small></div>
             <div>
               <button onClick={this.onWithdraw} className='ui button blue tiny'>
                 Withdraw VTH

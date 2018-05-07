@@ -6,7 +6,6 @@ import { Radio, Popup } from 'semantic-ui-react'
 import Countdown from '../Countdown'
 import registry from '../../../../services/registry'
 import InProgress from '../../InProgress'
-
 import './styles.css'
 
 class ChallengeVoteReveal extends Component {
@@ -297,7 +296,7 @@ class ChallengeVoteReveal extends Component {
 
     try {
       const projectName = this.props.project.projectName
-      const revealed = await registry.revealVote({projectName, voteOption, salt})
+      const revealed = await registry.revealVote(projectName, voteOption, salt)
       this.setState({
         inProgress: false
       })
