@@ -8,6 +8,7 @@ import { Grid, Container, Segment } from 'semantic-ui-react'
 import '../../../bootstrap/css/bootstrap-iso.css'
 import { Base64 } from 'js-base64'
 import JsonSchema from './schema.json'
+import { toStandardUnit } from '../../../utils/utils'
 
 class Application extends Component {
   constructor () {
@@ -38,11 +39,8 @@ class Application extends Component {
 
   async getMinDeposit () {
     const minDeposit = await registry.getMinDeposit()
-
     if (this._isMounted) {
-      this.setState({
-        minDeposit: minDeposit || 0
-      })
+      this.setState({minDeposit: minDeposit})
     }
   }
 
@@ -79,9 +77,9 @@ class Application extends Component {
 
   validate ({ projectName }, errors) {
     if (!/^\w+$/.test(projectName)) {
-      errors.projectName.addError('Project Name can only contain letters and numbers');
+      errors.projectName.addError('Project Name can only contain letters and numbers')
     }
-    return errors;
+    return errors
   }
 
   render () {
@@ -97,7 +95,7 @@ class Application extends Component {
         <Grid stretched>
           <Container fluid>
             <Segment>
-              <strong> Non-refundable Application Fees: </strong>{minDeposit} VTH
+              <strong> Non-refundable Application Fees: </strong>{toStandardUnit(minDeposit).toNumber()} VTH
             </Segment>
             <div className='bootstrap-iso'>
               <Form
@@ -108,7 +106,7 @@ class Application extends Component {
                 onSubmit={this.onSubmit}
                 validate={this.validate}
                 showErrorList={false}
-                liveValidate={true}
+                liveValidate
               />
             </div>
           </Container>

@@ -100,8 +100,7 @@ class TokenService {
       }
 
       try {
-        const result = await this.token.balanceOf(account)
-        const balance = result.toNumber() / Math.pow(10, this.decimals)
+        const balance = await this.token.balanceOf(account)
         resolve(balance)
         return false
       } catch (error) {
@@ -119,7 +118,7 @@ class TokenService {
       }
 
       try {
-        const result = await this.token.approve(sender, value)
+        const result = await this.token.approve(sender, value.toString())
 
         store.dispatch({
           type: 'TOKEN_APPROVE',

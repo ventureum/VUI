@@ -12,11 +12,6 @@ import { getRegistry } from '../config'
 import { getProvider } from './provider'
 import moment from 'moment'
 
-// TODO: check number param
-const big = (number) => new Eth.BN(number.toString(10))
-const tenToTheNinth = big(10).pow(big(9))
-const tenToTheEighteenth = big(10).pow(big(18))
-
 const parameters = keyMirror({
   minDeposit: null,
   applyStageLen: null,
@@ -88,10 +83,10 @@ class RegistryService {
     return this.account
   }
 
-  // needBalance must be a JS number, not a BigNumber object
+  // needBalance must be a BN
   async checkBalance (needBalance) {
-    var vthBalance = await token.getBalance() || 0
-    if (vthBalance < needBalance) {
+    var vthBalance = await token.getBalance()
+    if (vthBalance.lt(needBalance)) {
       throw new Error('Insufficient VTH balance')
     }
   }
@@ -109,9 +104,8 @@ class RegistryService {
 
     var deposit = await this.getMinDeposit()
     await this.checkBalance(deposit)
-    deposit = big(deposit).mul(tenToTheEighteenth).toString(10)
-    const allowed = (await token.allowance(this.account, this.address)).toString(10)
-    if (allowed < deposit) {
+    const allowed = await token.allowance(this.account, this.address)
+    if (allowed.lt(deposit)) {
       try {
         await token.approve(this.address, deposit)
       } catch (error) {
@@ -120,7 +114,7 @@ class RegistryService {
     }
 
     try {
-      await this.registry.apply(name, deposit, {from: this.account})
+      await this.registry.apply(name, deposit.toString(), {from: this.account})
     } catch (error) {
       throw error
     }
@@ -143,7 +137,6 @@ class RegistryService {
       }
       let minDeposit = await this.getMinDeposit()
       await this.checkBalance(minDeposit)
-      minDeposit = (new Eth.BN(minDeposit)).mul(tenToTheEighteenth).toString(10)
       await token.approve(this.address, minDeposit)
       await this.registry.challenge(name)
     } catch (error) {
@@ -248,11 +241,7 @@ class RegistryService {
       var projectData = await this.registry.listings.call(hash)
       var projectObj = {}
       for (let i = 0; i < projectData.length; i++) {
-        if (projectData[i].constructor.name === 'BigNumber') {
-          projectObj[propertyNameMap[i]] = projectData[i].toNumber()
-        } else {
-          projectObj[propertyNameMap[i]] = projectData[i]
-        }
+        projectObj[propertyNameMap[i]] = projectData[i]
       }
       return projectObj
     } catch (error) {
@@ -289,18 +278,20 @@ class RegistryService {
     }
 
     try {
-      const challenge = await this.registry.challenges.call(challengeId)
+      const challenge = await this.registry.challenges.call(challengeId.toString())
       const map = {
         // (remaining) pool of tokens distributed amongst winning voters
-        rewardPool: challenge[0] ? challenge[0].div(tenToTheEighteenth).toNumber() : 0,
+        rewardPool: challenge[0],
+        // Challenge id
+        challengeId: challenge[3],
         // owner of challenge
-        challenger: challenge[1],
+        challenger: challenge[4],
         // indication of if challenge is resolved
-        resolved: challenge[2],
+        resolved: challenge[5],
         // number of tokens at risk for either party during challenge
-        stake: challenge[3] ? challenge[3].toNumber() : 0,
+        stake: challenge[6],
         // (remaining) amount of tokens used for voting by the winning side
-        totalTokens: challenge[4]
+        winningTokens: challenge[7]
       }
 
       return map
@@ -384,7 +375,7 @@ class RegistryService {
   }
 
   async getMinDeposit () {
-    return (await this.getParameter('minDeposit')).div(tenToTheEighteenth).toNumber()
+    return this.getParameter('minDeposit')
   }
 
   async getCurrentBlockNumber () {
@@ -466,15 +457,12 @@ class RegistryService {
     }
   }
 
-  async commitVote ({projectName, votes, voteOption, salt}) {
+  async commitVote (projectName, votes, voteOption, salt) {
     if (!projectName) {
       throw new Error('projectName is required')
     }
 
     await this.checkBalance(votes)
-
-    // atto VTH to VTH
-    const bigVotes = big(votes).mul(tenToTheEighteenth).toString(10)
 
     let challengeId = null
 
@@ -487,14 +475,14 @@ class RegistryService {
     try {
       const hash = saltHashVote(voteOption, salt)
 
-      await plcr.commit({pollId: challengeId, hash, tokens: bigVotes})
+      await plcr.commit(challengeId, hash, votes)
       return this.didCommitForPoll(challengeId)
     } catch (error) {
       throw error
     }
   }
 
-  async revealVote ({projectName, voteOption, salt}) {
+  async revealVote (projectName, voteOption, salt) {
     let challengeId = null
 
     try {
@@ -504,7 +492,7 @@ class RegistryService {
     }
 
     try {
-      await plcr.reveal({pollId: challengeId, voteOption, salt})
+      await plcr.reveal(challengeId, voteOption, salt)
       return this.didRevealForPoll(challengeId)
     } catch (error) {
       throw error
@@ -645,7 +633,7 @@ class RegistryService {
   didClaimForPoll (challengeId) {
     return new Promise(async (resolve, reject) => {
       try {
-        const hasClaimed = await this.registry.tokenClaims(challengeId, this.account)
+        const hasClaimed = await this.registry.tokenClaims(challengeId.toString(), this.account)
         resolve(hasClaimed)
       } catch (error) {
         reject(error)
@@ -657,14 +645,13 @@ class RegistryService {
     return new Promise(async (resolve, reject) => {
       try {
         const voter = this.account
-        const voterReward = (await this.calculateVoterReward(voter, challengeId, salt)).toNumber()
-
-        if (voterReward <= 0) {
+        const voterReward = await this.calculateVoterReward(voter, challengeId.toString(), salt)
+        if (voterReward.isZero()) {
           reject(new Error('Account has no reward for challenge ID'))
           return false
         }
 
-        await this.registry.claimReward(challengeId, salt)
+        await this.registry.claimReward(challengeId.toString(), salt)
 
         store.dispatch({
           type: 'REGISTRY_CLAIM_REWARD'
@@ -690,26 +677,20 @@ class RegistryService {
   }
 
   async requestVotingRights (votes) {
-    // normal VTH to nano VTH
-    const tokens = big(votes).mul(tenToTheNinth).toString(10)
-
-    await token.approve(plcr.address, tokens)
-    await plcr.requestVotingRights(tokens)
+    await token.approve(plcr.address, votes.toString())
+    await plcr.requestVotingRights(votes)
   }
 
   async getTotalVotingRights () {
-    const tokens = await plcr.getTokenBalance()
-    return big(tokens).div(tenToTheEighteenth)
+    return plcr.getTokenBalance()
   }
 
   async getAvailableTokensToWithdraw () {
-    const tokens = await plcr.getAvailableTokensToWithdraw()
-    return big(tokens).div(tenToTheEighteenth)
+    return plcr.getAvailableTokensToWithdraw()
   }
 
   async getLockedTokens () {
-    const tokens = await plcr.getLockedTokens()
-    return big(tokens).div(tenToTheEighteenth)
+    return plcr.getLockedTokens()
   }
 
   async withdrawVotingRights (tokens) {
@@ -717,29 +698,15 @@ class RegistryService {
       throw new Error('Number of tokens required')
     }
 
-    tokens = big(tokens).mul(tenToTheEighteenth).toString(10)
-
-    await plcr.withdrawVotingRights(tokens)
-
-    return true
+    return plcr.withdrawVotingRights(tokens)
   }
 
   async approveTokens (tokens) {
-    const bigTokens = big(tokens).mul(tenToTheNinth).toString(10)
-
-    return token.approve(this.address, bigTokens)
-  }
-
-  async transferTokens (tokens) {
-    const bigTokens = big(tokens).mul(tenToTheNinth).toString(10)
-
-    // TODO
+    return token.approve(this.address, tokens)
   }
 
   async getTokenAllowance () {
-    const allowed = await token.allowance(this.account, this.address)
-    const bigTokens = big(allowed).div(tenToTheNinth)
-    return bigTokens
+    return token.allowance(this.account, this.address)
   }
 
   async getTransaction (tx) {
@@ -771,8 +738,7 @@ class RegistryService {
       return 0
     }
 
-    const result = await pify(window.web3.eth.getBalance)(this.account)
-    return result.div(tenToTheEighteenth)
+    return pify(window.web3.eth.getBalance)(this.account)
   }
 
   async getNetwork () {

@@ -9,8 +9,9 @@ import saveFile from '../../../../utils/saveFile'
 import generateReminder from '../../../../utils/generateReminder'
 import Countdown from '../Countdown'
 import registry from '../../../../services/registry'
-import sale from '../../../../services/sale'
 import InProgress from '../../InProgress'
+import { BigNumber } from 'bignumber.js'
+import { toStandardUnit, toBasicUnit } from '../../../../utils/utils'
 
 import './styles.css'
 
@@ -69,7 +70,7 @@ class ChallengeVoteCommit extends Component {
   // which will confuse user if they have 4.99999999 vth and apply need 5
   // thus use this function to keep accuracy
   toFixed (num, fixed) {
-    var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?')
+    var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?') // eslint-disable-line
     return num.toString().match(re)[0]
   }
 
@@ -106,18 +107,18 @@ class ChallengeVoteCommit extends Component {
             </div>
           </div>
           {didChallenge &&
-            <div className='column sixteen wide center aligned'>
-              <div className='ui message warning'>
-                You've <strong>challenged</strong> this project.
-              </div>
+          <div className='column sixteen wide center aligned'>
+            <div className='ui message warning'>
+              You've <strong>challenged</strong> this project.
             </div>
+          </div>
           }
           {didCommit &&
-            <div className='column sixteen wide center aligned'>
-              <div className='ui message warning'>
-                You've <strong>commited</strong> for this project.
-              </div>
+          <div className='column sixteen wide center aligned'>
+            <div className='ui message warning'>
+              You've <strong>commited</strong> for this project.
             </div>
+          </div>
           }
           <div className='column sixteen wide center aligned'>
             <div className='ui divider' />
@@ -140,13 +141,13 @@ class ChallengeVoteCommit extends Component {
                 {stage === 'In Voting Commit' && challenge &&
                 <div>
                   <div className='ui field'>
-                    <p>Challenge ID: <label className='ui label'>{challengeId}</label></p>
+                    <p>Challenge ID: <label className='ui label'>{challengeId.toNumber()}</label></p>
                   </div>
                   <div className='ui field'>
                     <p>Challenger: <label className='ui label'>{challenge.challenger}</label></p>
                   </div>
                   <div className='ui field'>
-                    <p>Reward Pool: <label className='ui label'>{commafy(this.toFixed(challenge.rewardPool, 4))} VTH</label></p>
+                    <p>Reward Pool: <label className='ui label'>{commafy(this.toFixed(toStandardUnit(challenge.rewardPool).toNumber(), 4))} VTH</label></p>
                   </div>
                 </div>
                 }
@@ -210,7 +211,7 @@ class ChallengeVoteCommit extends Component {
                           onClick={this.onReminderDownload}
                           title='Download commit info'
                           className={`ui mini button right labeled icon ${revealReminderDownloaded ? 'default' : 'blue'}`}>
-                          Reveal Reminder
+                         Reveal Reminder
                           <i className='icon download' />
                         </button>
                       </div>
@@ -224,7 +225,7 @@ class ChallengeVoteCommit extends Component {
                         : <button
                           type='submit'
                           className={`ui button ${voteOption ? 'blue' : 'purple'} right labeled icon`}>
-                          VOTE TO {voteOption ? 'SUPPORT' : 'OPPOSE'} <i className={`icon thumbs ${voteOption ? 'up' : 'down'}`} />
+                         VOTE TO {voteOption ? 'SUPPORT' : 'OPPOSE'} <i className={`icon thumbs ${voteOption ? 'up' : 'down'}`} />
                         </button>
                       }
                     </div>
@@ -352,7 +353,6 @@ class ChallengeVoteCommit extends Component {
     try {
       const challenge = await registry.getChallenge(this.state.challengeId)
       const didChallenge = await registry.didChallenge(this.state.projectName)
-
       if (this._isMounted) {
         this.setState({
           didChallenge,
@@ -398,7 +398,8 @@ class ChallengeVoteCommit extends Component {
     }
 
     try {
-      const commited = await registry.commitVote({projectName, votes, voteOption, salt})
+      const tokens = toBasicUnit(new BigNumber(votes))
+      const commited = await registry.commitVote(projectName, tokens, voteOption, salt)
 
       if (this._isMounted) {
         this.setState({

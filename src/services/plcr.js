@@ -55,39 +55,20 @@ class PlcrService {
       }
 
       try {
-        const result = await this.plcr.pollMap(pollId)
+        const result = await this.plcr.pollMap(pollId.toString())
 
         const map = {
           // expiration date of commit stage for poll
-          commitEndDate: result[0] ? result[0].toNumber() : null,
+          commitEndDate: result[0],
           // expiration date of reveal stage for poll
-          revealEndDate: result[1] ? result[1].toNumber() : null,
+          revealEndDate: result[1],
           // number of votes required for a proposal to pass
-          voteQuorum: result[2] ? result[2].toNumber() : 0,
+          voteQuorum: result[2],
           // tally of votes supporting proposal
-          votesFor: result[3] ? result[3].toNumber() : 0,
+          votesFor: result[3],
           // tally of votes countering proposal
-          votesAgainst: result[4] ? result[4].toNumber() : 0
+          votesAgainst: result[4]
         }
-
-        if (map.votesFor) {
-          // nano VTH to normal VTH
-          map.votesFor = map.votesFor / Math.pow(10, token.decimals)
-
-          // clamp
-          if (!map.votesFor || map.votesFor < 0) {
-            map.votesFor = 0
-          }
-        }
-
-        if (map.votesAgainst) {
-          map.votesAgainst = map.votesAgainst / Math.pow(10, token.decimals)
-
-          if (!map.votesagainst || map.votesagainst < 0) {
-            map.votesagainst = 0
-          }
-        }
-
         resolve(map)
         return false
       } catch (error) {
@@ -105,7 +86,7 @@ class PlcrService {
       }
 
       try {
-        const result = await this.plcr.commitStageActive(pollId)
+        const result = await this.plcr.commitStageActive(pollId.toString())
         resolve(result)
         return false
       } catch (error) {
@@ -123,7 +104,7 @@ class PlcrService {
       }
 
       try {
-        const result = await this.plcr.revealStageActive(pollId)
+        const result = await this.plcr.revealStageActive(pollId.toString())
         resolve(result)
         return false
       } catch (error) {
@@ -133,7 +114,7 @@ class PlcrService {
     })
   }
 
-  async commit ({pollId, hash, tokens}) {
+  async commit (pollId, hash, tokens) {
     return new Promise(async (resolve, reject) => {
       if (!pollId) {
         reject(new Error('Poll ID is required'))
@@ -153,7 +134,7 @@ class PlcrService {
       let active = null
 
       try {
-        active = await this.commitStageActive(pollId)
+        active = await this.commitStageActive(pollId.toString())
       } catch (error) {
         reject(error)
         return false
@@ -164,20 +145,19 @@ class PlcrService {
         return false
       }
 
-      const voteTokenBalance = (await this.plcr.voteTokenBalance(this.getAccount())).toString(10)
+      const voteTokenBalance = await this.plcr.voteTokenBalance(this.getAccount())
+      const requiredVotes = tokens.minus(voteTokenBalance)
 
-      const requiredVotes = (tokens - voteTokenBalance)
-
-      if (requiredVotes > 0) {
+      if (requiredVotes.isPositive()) {
         try {
-          await token.approve(this.address, requiredVotes)
+          await token.approve(this.address, requiredVotes.toString())
         } catch (error) {
           reject(error)
           return false
         }
 
         try {
-          await this.plcr.requestVotingRights(requiredVotes)
+          await this.plcr.requestVotingRights(requiredVotes.toString())
         } catch (error) {
           reject(error)
           return false
@@ -186,8 +166,8 @@ class PlcrService {
 
       try {
         const prevPollId =
-          await this.plcr.getInsertPointForNumTokens.call(this.getAccount(), tokens)
-        const result = await this.plcr.commitVote(pollId, hash, tokens, prevPollId)
+              await this.plcr.getInsertPointForNumTokens.call(this.getAccount(), tokens.toString())
+        const result = await this.plcr.commitVote(pollId.toString(), hash, tokens.toString(), prevPollId)
 
         store.dispatch({
           type: 'PLCR_VOTE_COMMIT',
@@ -203,10 +183,10 @@ class PlcrService {
     })
   }
 
-  async reveal ({pollId, voteOption, salt}) {
+  async reveal (pollId, voteOption, salt) {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.plcr.revealVote(pollId, voteOption, salt)
+        await this.plcr.revealVote(pollId.toString(), voteOption, salt)
 
         store.dispatch({
           type: 'PLCR_VOTE_REVEAL',
@@ -222,7 +202,7 @@ class PlcrService {
   }
 
   requestVotingRights (tokens) {
-    const result = this.plcr.requestVotingRights(tokens)
+    const result = this.plcr.requestVotingRights(tokens.toString())
 
     store.dispatch({
       type: 'PLCR_REQUEST_VOTING_RIGHTS',
@@ -235,26 +215,8 @@ class PlcrService {
   async getTokensCommited (pollId) {
     return new Promise(async (resolve, reject) => {
       try {
-        const numTokens = await this.plcr.getNumTokens(pollId)
+        const numTokens = await this.plcr.getNumTokens(pollId.toString())
         resolve(numTokens)
-        return false
-      } catch (error) {
-        reject(error)
-        return false
-      }
-    })
-  }
-
-  hasEnoughTokens (tokens) {
-    return new Promise(async (resolve, reject) => {
-      if (!tokens) {
-        reject(new Error('Tokens is required'))
-        return false
-      }
-
-      try {
-        const result = await this.plcr.hasEnoughTokens(tokens)
-        resolve(result)
         return false
       } catch (error) {
         reject(error)
@@ -266,7 +228,7 @@ class PlcrService {
   async pollEnded (pollId) {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.plcr.pollEnded(pollId)
+        const result = await this.plcr.pollEnded(pollId.toString())
         resolve(result)
         return false
       } catch (error) {
@@ -279,7 +241,7 @@ class PlcrService {
   async getCommitHash (voter, pollId) {
     return new Promise(async (resolve, reject) => {
       try {
-        const hash = await this.plcr.getCommitHash(voter, pollId)
+        const hash = await this.plcr.getCommitHash(voter, pollId.toString())
         resolve(hash)
       } catch (error) {
         reject(error)
@@ -295,7 +257,7 @@ class PlcrService {
       }
 
       try {
-        const didReveal = await this.plcr.hasBeenRevealed(voter, pollId)
+        const didReveal = await this.plcr.hasBeenRevealed(voter, pollId.toString())
 
         resolve(didReveal)
       } catch (error) {
@@ -318,7 +280,7 @@ class PlcrService {
   }
 
   async withdrawVotingRights (tokens) {
-    await this.plcr.withdrawVotingRights(tokens)
+    await this.plcr.withdrawVotingRights(tokens.toString())
 
     store.dispatch({
       type: 'PLCR_WITHDRAW_VOTING_RIGHTS',
