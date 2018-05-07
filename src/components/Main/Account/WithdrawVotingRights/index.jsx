@@ -108,7 +108,7 @@ class WithdrawVotingRights extends Component {
               Withdraw Voting Rights
               <Popup
                 trigger={<i className='icon info circle' />}
-                content='Withdraw vToken held by the PLCR contract. VToken is locked up during voting and unlocked after the reveal stage. When it is unlocked you may withdraw the vToken to your account at any time.'
+                content='Withdraw VTH held by the PLCR contract. VTH is locked up during voting and unlocked after the reveal stage. When it is unlocked you may withdraw the VTH to your account at any time.'
               />
             </div>
             <div>Available unlocked VTH: {availableTokens !== null ? commafy(availableTokens) : '-'}<strong> (Locked VTH: {lockedTokens !== null ? commafy(lockedTokens) : '-'})</strong></div>
