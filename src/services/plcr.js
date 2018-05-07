@@ -148,7 +148,7 @@ class PlcrService {
       const voteTokenBalance = await this.plcr.voteTokenBalance(this.getAccount())
       const requiredVotes = tokens.minus(voteTokenBalance)
 
-      if (requiredVotes.isPositive()) {
+      if (tokens.gt(voteTokenBalance)) {
         try {
           await token.approve(this.address, requiredVotes.toString())
         } catch (error) {

@@ -462,7 +462,9 @@ class RegistryService {
       throw new Error('projectName is required')
     }
 
-    await this.checkBalance(votes)
+    const voteTokenBalance = await plcr.getTokenBalance()
+    const requiredVotes = votes.minus(voteTokenBalance)
+    await this.checkBalance(requiredVotes)
 
     let challengeId = null
 
