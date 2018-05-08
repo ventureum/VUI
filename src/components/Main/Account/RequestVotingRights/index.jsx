@@ -113,19 +113,19 @@ class RequestVotingRights extends Component {
       <div className='request-voting-rights-container'>
         <div className='ui grid stackable center aligned'>
           <div className='column sixteen wide'>
-            <div className='ui large header center aligned'>
+            <p>
               Request Voting Rights
               <Popup
                 trigger={<i className='icon info circle' />}
                 content='Pre-requesting voting rights will minimizes the number of transactions when performing commit votes. This can save gas fees if voting frequently. 1 VTH = 1 Vote. Pre-requesting voting rights will withdraw VToken from your account to the PLCR contract. You may convert the votes to vToken and withdraw at any time.'
               />
-            </div>
-            <div>Total current voting rights: <strong>{availableVotes}</strong></div>
-            <div>Enter amount of VTH to convert to votes</div>
+            </p>
+            <div><small>Total current voting rights: <strong>{availableVotes}</strong></small></div>
+            <div><small>Enter amount of VTH to convert to votes</small></div>
             <br />
             <div className='ui input action mini'>
               <input onKeyUp={this.onVotesKeyUp} type='text' placeholder='100' id='request-voting-rights-container-input' />
-              <button onClick={this.onRequest} className='ui button blue'>Request Voting Rights</button>
+              <button onClick={this.onRequest} className='ui button blue tiny'>Request Voting Rights</button>
             </div>
           </div>
         </div>

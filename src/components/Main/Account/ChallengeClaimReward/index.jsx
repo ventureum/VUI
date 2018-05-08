@@ -48,16 +48,16 @@ class ChallengeClaimReward extends Component {
                 onSubmit={this.onFormSubmit}
                 className='ui form'>
                 <div className='ui field'>
-                  <div className='ui large header center aligned'>
+                  <p>
                     Claim Reward
                     <Popup
                       trigger={<i className='icon info circle' />}
                       content='Voters in the winning party can claim their token rewards by proving the challenge ID (poll ID) and secret phase (salt).'
                     />
-                  </div>
+                  </p>
                 </div>
                 <div className='ui field'>
-                  <label>Upload Commit File</label>
+                  <label><small>Upload Commit File</small></label>
                   <input
                     type='file'
                     name='file'
@@ -65,10 +65,10 @@ class ChallengeClaimReward extends Component {
                     className='ui file' />
                 </div>
                 <div className='ui field'>
-                  or
+                  <small>or</small>
                 </div>
                 <div className='ui field'>
-                  <label>Challenge ID</label>
+                  <label><small>Challenge ID</small></label>
                   <div className='ui input small'>
                     <input
                       type='text'
@@ -80,7 +80,7 @@ class ChallengeClaimReward extends Component {
                   </div>
                 </div>
                 <div className='ui field'>
-                  <label>Secret Phrase (salt)</label>
+                  <label><small>Secret Phrase (salt)</small></label>
                   <div className='ui input small'>
                     <input
                       type='text'
@@ -94,7 +94,7 @@ class ChallengeClaimReward extends Component {
                 <div className='ui field'>
                   <button
                     type='submit'
-                    className='ui button blue right labeled icon'>
+                    className='ui button blue right labeled icon tiny'>
                     Claim Reward
                     <i className='icon certificate' />
                   </button>
