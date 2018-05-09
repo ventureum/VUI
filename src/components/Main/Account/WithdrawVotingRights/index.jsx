@@ -48,10 +48,12 @@ class WithdrawVotingRights extends Component {
       const availableTokens = await registry.getAvailableTokensToWithdraw()
       const lockedTokens = await registry.getLockedTokens()
 
-      this.setState({
-        availableTokens,
-        lockedTokens
-      })
+      if (this._isMounted) {
+        this.setState({
+          availableTokens,
+          lockedTokens
+        })
+      }
     } catch (error) {
       toastr.error(error.message)
     }

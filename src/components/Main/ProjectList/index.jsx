@@ -78,6 +78,7 @@ class ProjectList extends Component {
   }
 
   componentDidMount () {
+    this._isMounted = true
     this.setState({
       inProgress: true
     })
@@ -89,6 +90,10 @@ class ProjectList extends Component {
         this.getProjectList()
       }
     })
+  }
+
+  componentWillUnmount () {
+    this._isMounted = false
   }
 
   updatePerPage () {
@@ -129,12 +134,15 @@ class ProjectList extends Component {
       for (let i = 0; i < projectList.length; i++) {
         projectList[i].action = this.getProjectAction(projectList[i])
       }
-      this.setState({
-        inProgress: false,
-        projectList: projectList,
-        totalPage: Math.ceil(projectList.length / this.state.perPage)
-      })
-      setTimeout(this.updatePerPage, 0)
+
+      if (this._isMounted) {
+        this.setState({
+          inProgress: false,
+          projectList: projectList,
+          totalPage: Math.ceil(projectList.length / this.state.perPage)
+        })
+        setTimeout(this.updatePerPage, 0)
+      }
     } catch (error) {
       toastr.error(error.message)
     }

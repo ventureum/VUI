@@ -7,7 +7,7 @@ import styles from './styles.css'
 class Home extends React.Component {
   render () {
     return (
-      <div class='home'>
+      <div className='home'>
         <Segment compact>
           <Container text>
             <Segment color='orange'>

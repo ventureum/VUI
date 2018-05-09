@@ -310,7 +310,7 @@ class ChallengeVoteCommit extends Component {
     const projectName = this.props.project.projectName
     const filename = `${projectName}--challenge_id_${challengeId}--reveal_start_${revealDateString}--reminder.ics`
     const title = `Reveal Vote for ${projectName}`
-    const url = `${window.location.protocol}` + '//' + `${window.location.host}/project/${projectName}`
+    const url = `${window.location.protocol}//${window.location.host}/project/${projectName}`
 
     const data = await generateReminder({
       start: revealDate,
