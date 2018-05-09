@@ -23,6 +23,7 @@ pipeline {
         sh 'npm install'
         sh 'cp ./react-scripts/config/* ./node_modules/react-scripts/config/'
         sh 'cp ./react-css-modules/dist/extendReactClass.js ./node_modules/react-css-modules/dist/'
+        sh 'cp ./react-jsonschema-form/lib/components/widgets/AltDateWidget.js ./node_modules/react-jsonschema-form/lib/components/widgets/'
       }
     }
     stage('Build') {
