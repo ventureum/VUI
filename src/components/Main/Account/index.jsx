@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import CSSModules from 'react-css-modules'
 import registry from '../../../services/registry'
-import RequestVotingRights from './RequestVotingRights'
 import WithdrawVotingRights from './WithdrawVotingRights'
 import ChallengeClaimReward from './ChallengeClaimReward'
 
@@ -25,9 +24,6 @@ class Account extends Component {
     return (
       <div className='account'>
         <div className='ui grid stackable padded'>
-          <div className='column five wide'>
-            <RequestVotingRights account={account} />
-          </div>
           <div className='column five wide'>
             <WithdrawVotingRights account={account} />
           </div>
