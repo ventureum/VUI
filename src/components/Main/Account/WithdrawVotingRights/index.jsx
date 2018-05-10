@@ -48,10 +48,12 @@ class WithdrawVotingRights extends Component {
       const availableTokens = await registry.getAvailableTokensToWithdraw()
       const lockedTokens = await registry.getLockedTokens()
 
-      this.setState({
-        availableTokens,
-        lockedTokens
-      })
+      if (this._isMounted) {
+        this.setState({
+          availableTokens,
+          lockedTokens
+        })
+      }
     } catch (error) {
       toastr.error(error.message)
     }
@@ -108,10 +110,11 @@ class WithdrawVotingRights extends Component {
               Withdraw Voting Rights
               <Popup
                 trigger={<i className='icon info circle' />}
-                content='Withdraw vToken held by the PLCR contract. VToken is locked up during voting and unlocked after the reveal stage. When it is unlocked you may withdraw the vToken to your account at any time.'
+                content='Withdraw VTH held by the PLCR contract. VTH is locked up during voting and unlocked after the reveal stage. When it is unlocked you may withdraw the VTH to your account at any time.'
               />
             </p>
             <div><small>Available unlocked VTH: {commafy(_availableTokens)}<strong> (Locked VTH: {commafy(_lockedTokens)})</strong></small></div>
+            <br />
             <div>
               <button onClick={this.onWithdraw} className='ui button blue tiny'>
                 Withdraw VTH
