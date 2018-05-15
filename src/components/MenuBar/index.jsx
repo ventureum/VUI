@@ -104,7 +104,7 @@ class SideMenu extends Component {
     } = this.state
 
     return (
-      <Menu stackable>
+      <Menu stackable className='grid'>
         <Menu.Item
           as={Link}
           to='/'
