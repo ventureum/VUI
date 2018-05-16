@@ -85,7 +85,7 @@ class ProjectProfile extends Component {
           </Grid.Column>
           <Grid.Column width={9}>
             <Segment>
-              <strong>Application Expiry: </strong>{moment.unix(project.applicationExpiry).format('YYYY-MM-DD HH:mm:ss')}
+              <strong>Application Expiry: </strong>{moment.unix(project.applicationExpiry).utc().format('YYYY-MM-DD HH:mm:ss')}
             </Segment>
             <Table celled>
               <Table.Header>
