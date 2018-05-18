@@ -8,7 +8,7 @@ import { Grid, Container, Segment } from 'semantic-ui-react'
 import '../../../bootstrap/css/bootstrap-iso.css'
 import { Base64 } from 'js-base64'
 import JsonSchema from './schema.json'
-import { toStandardUnit } from '../../../utils/utils'
+import { toStandardUnit, wrapWithTransactionInfo } from '../../../utils/utils'
 
 class Application extends Component {
   constructor () {
@@ -103,7 +103,7 @@ class Application extends Component {
                 uiSchema={uiSchema}
                 formData={formData}
                 onChange={this.onChange}
-                onSubmit={this.onSubmit}
+                onSubmit={wrapWithTransactionInfo('apply', this.onSubmit)}
                 validate={this.validate}
                 showErrorList={false}
                 liveValidate

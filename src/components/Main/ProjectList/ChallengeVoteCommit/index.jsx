@@ -11,7 +11,7 @@ import Countdown from '../Countdown'
 import registry from '../../../../services/registry'
 import InProgress from '../../InProgress'
 import { BigNumber } from 'bignumber.js'
-import { toStandardUnit, toBasicUnit } from '../../../../utils/utils'
+import { toStandardUnit, toBasicUnit, wrapWithTransactionInfo } from '../../../../utils/utils'
 
 import './styles.css'
 
@@ -42,10 +42,10 @@ class ChallengeVoteCommit extends Component {
 
     this.onDepositKeyUp = this.onDepositKeyUp.bind(this)
     this.onVoteOptionChange = this.onVoteOptionChange.bind(this)
-    this.onFormSubmit = this.onFormSubmit.bind(this)
     this.onDownload = this.onDownload.bind(this)
     this.onReminderDownload = this.onReminderDownload.bind(this)
     this.enableDownloadCheck = this.enableDownloadCheck.bind(this)
+    this.commit = this.commit.bind(this)
   }
 
   componentDidMount () {
@@ -136,7 +136,7 @@ class ChallengeVoteCommit extends Component {
             <div className='ui divider' />
             <div className='column sixteen wide center aligned'>
               <form
-                onSubmit={this.onFormSubmit}
+                onSubmit={wrapWithTransactionInfo('vote-commit', this.commit)}
                 className='ui form center aligned'>
                 {stage === 'In Voting Commit' && challenge &&
                 <div>
@@ -310,7 +310,7 @@ class ChallengeVoteCommit extends Component {
     const projectName = this.props.project.projectName
     const filename = `${projectName}--challenge_id_${challengeId}--reveal_start_${revealDateString}--reminder.ics`
     const title = `Reveal Vote for ${projectName}`
-    const url = `${window.location.protocol}//${window.location.host}/project/${projectName}`
+    const url = `${window.location.protocol}// ${window.location.host}/project/${projectName}`
 
     const data = await generateReminder({
       start: revealDate,
@@ -323,12 +323,6 @@ class ChallengeVoteCommit extends Component {
     this.setState({
       revealReminderDownloaded: true
     })
-  }
-
-  onFormSubmit (event) {
-    event.preventDefault()
-
-    this.commit()
   }
 
   async getPoll () {

@@ -6,6 +6,7 @@ import { Radio, Popup } from 'semantic-ui-react'
 import Countdown from '../Countdown'
 import registry from '../../../../services/registry'
 import InProgress from '../../InProgress'
+import { wrapWithTransactionInfo } from '../../../../utils/utils'
 import './styles.css'
 
 class ChallengeVoteReveal extends Component {
@@ -30,8 +31,8 @@ class ChallengeVoteReveal extends Component {
     }
 
     this.onVoteOptionChange = this.onVoteOptionChange.bind(this)
-    this.onFormSubmit = this.onFormSubmit.bind(this)
     this.onFileInput = this.onFileInput.bind(this)
+    this.reveal = this.reveal.bind(this)
   }
 
   componentDidMount () {
@@ -111,7 +112,7 @@ class ChallengeVoteReveal extends Component {
             { !didReveal &&
               <div className='column sixteen wide center aligned'>
                 <form
-                  onSubmit={this.onFormSubmit}
+                  onSubmit={wrapWithTransactionInfo('vote-reveal', this.reveal)}
                   className='ui form'>
                   <div className='ui field'>
                     <label>Upload Commit File to reveal vote</label>
@@ -199,9 +200,11 @@ class ChallengeVoteReveal extends Component {
     try {
       const didCommit = await registry.didCommit(this.props.project.projectName)
 
-      this.setState({
-        didCommit: didCommit
-      })
+      if (this._isMounted) {
+        this.setState({
+          didCommit: didCommit
+        })
+      }
     } catch (error) {
       toastr.error(error)
     }
@@ -269,12 +272,6 @@ class ChallengeVoteReveal extends Component {
     }
   }
 
-  onFormSubmit (event) {
-    event.preventDefault()
-
-    this.reveal()
-  }
-
   async reveal () {
     const {salt, voteOption} = this.state
 
@@ -297,9 +294,12 @@ class ChallengeVoteReveal extends Component {
     try {
       const projectName = this.props.project.projectName
       const revealed = await registry.revealVote(projectName, voteOption, salt)
-      this.setState({
-        inProgress: false
-      })
+
+      if (this._isMounted) {
+        this.setState({
+          inProgress: false
+        })
+      }
 
       if (revealed) {
         toastr.success('Successfully revealed')

@@ -1,4 +1,5 @@
 import { BigNumber } from 'bignumber.js'
+import store from '../store.js'
 
 const big = (number) => new BigNumber(number.toString(10))
 const tenToTheEighteenth = big(10).pow(big(18))
@@ -13,4 +14,17 @@ function toBasicUnit (val) {
   return val.times(tenToTheEighteenth)
 }
 
-export {toStandardUnit, toBasicUnit}
+function wrapWithTransactionInfo (name, cb, data) {
+  return function (e) {
+    e && e.preventDefault && e.preventDefault()
+    store.dispatch({
+      type: 'SHOW_TRANSACTION_INFO',
+      name,
+      cb: () => {
+        cb(data)
+      }
+    })
+  }
+}
+
+export {toStandardUnit, toBasicUnit, wrapWithTransactionInfo}

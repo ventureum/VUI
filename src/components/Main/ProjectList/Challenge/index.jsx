@@ -7,7 +7,7 @@ import registry from '../../../../services/registry'
 import InProgress from '../../InProgress'
 import Countdown from '../Countdown'
 import { BigNumber } from 'bignumber.js'
-import { toStandardUnit } from '../../../../utils/utils'
+import { toStandardUnit, wrapWithTransactionInfo } from '../../../../utils/utils'
 import './styles.css'
 
 class Challenge extends Component {
@@ -22,7 +22,7 @@ class Challenge extends Component {
       inProgress: false
     }
 
-    this.onChallenge = this.onChallenge.bind(this)
+    this.challenge = this.challenge.bind(this)
   }
 
   componentDidMount () {
@@ -81,7 +81,7 @@ class Challenge extends Component {
               </div>
               <div className='ui field'>
                 <button
-                  onClick={this.onChallenge}
+                  onClick={wrapWithTransactionInfo('challenge', this.challenge)}
                   className='ui button purple right labeled icon'>
                   CHALLENGE
                   <i className='icon thumbs down' />
@@ -127,12 +127,6 @@ class Challenge extends Component {
         currentDeposit
       })
     }
-  }
-
-  onChallenge (event) {
-    event.preventDefault()
-
-    this.challenge()
   }
 
   async challenge () {

@@ -11,6 +11,7 @@ import ProjectProfile from './ProjectProfile'
 import registry from '../../../services/registry'
 import store from '../../../store'
 import InProgress from '../InProgress'
+import { wrapWithTransactionInfo } from '../../../utils/utils'
 
 var $ = window.jQuery
 
@@ -34,9 +35,7 @@ class ProjectList extends Component {
     this.updateStatus = this.updateStatus.bind(this)
   }
 
-  async updateStatus (e, project) {
-    e.preventDefault()
-
+  async updateStatus (project) {
     try {
       await registry.updateStatus(project.projectName)
       toastr.success('Transaction successfully sent')
@@ -175,7 +174,7 @@ class ProjectList extends Component {
             <div className='rt-td Number' style={{flex: '150 0 auto', width: '150px'}}>{moment.unix(project.applicationExpiry).utc().format('YYYY-MM-DD HH:mm:ss')}</div>
             <div className='rt-td' style={{flex: '200 0 auto', width: '200px'}}>
               {!this.actionNeedModal(project) &&
-                <a onClick={(e) => { this.updateStatus(e, project) }} className='ui mini button purple' href='#!'>{project.action}</a>
+                <a onClick={wrapWithTransactionInfo('update-status', this.updateStatus, project)} className='ui mini button purple' href='#!'>{project.action}</a>
               }
               {this.actionNeedModal(project) &&
                 <Modal size={project.action === 'view' ? 'large' : 'mini'} trigger={<a className='ui mini button purple' href='#!'>{project.action}</a>}>
