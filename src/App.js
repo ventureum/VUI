@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { BrowserRouter, Route } from 'react-router-dom'
 import { Message } from 'semantic-ui-react'
+import MobileDetect from 'mobile-detect'
 import MenuBar from './components/MenuBar'
 import Application from './components/Main/Application'
 import ProjectList from './components/Main/ProjectList'
@@ -53,6 +54,18 @@ class App extends Component {
     }
   }
 
+  noMetamask () {
+    var mobile = new MobileDetect(window.navigator.userAgent)
+    var isChrome = !!window.chrome && !!window.chrome.webstore
+    var isFirefox = typeof InstallTrigger !== 'undefined'
+
+    if (!mobile.mobile() && (isChrome || isFirefox)) {
+      return <p>Please Install <a target='_blank' rel='noopener noreferrer' href='https://metamask.io/'>MetaMask</a> to use the Ventureum UI properly</p>
+    } else {
+      return <p>Please Use the Desktop Versions of Chrome or Firefox and Install <a target='_blank' rel='noopener noreferrer' href='https://metamask.io/'>MetaMask</a> to use the Ventureum UI properly</p>
+    }
+  }
+
   render () {
     if (this.state.fatalError) {
       return (
@@ -61,7 +74,7 @@ class App extends Component {
             Fatal Error
           </Message.Header>
           <p>
-            {this.state.fatalError}
+            {this.state.fatalError === 'no metamask' ? this.noMetamask() : this.state.fatalError}
           </p>
         </Message>
       )

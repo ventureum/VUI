@@ -16,6 +16,7 @@
     "js-base64": "^2.4.3",
     "json-formatter-js": "^2.2.0",
     "key-mirror": "^1.0.1",
+    "mobile-detect": "^1.4.1",
     "moment": "^2.21.0",
     "npm-run-all": "^4.1.2",
     "pad": "^2.0.3",
