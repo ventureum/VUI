@@ -1,6 +1,4 @@
 import React, { Component } from 'react'
-import CSSModules from 'react-css-modules'
-import styles from './styles.css'
 import { Modal, List, Button } from 'semantic-ui-react'
 
 class TransactionInfo extends Component {
@@ -135,4 +133,4 @@ class TransactionInfo extends Component {
   }
 }
 
-export default CSSModules(TransactionInfo, styles)
+export default TransactionInfo
