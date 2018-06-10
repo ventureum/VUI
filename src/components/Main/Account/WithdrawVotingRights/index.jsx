@@ -6,7 +6,7 @@ import toastr from 'toastr'
 import CSSModules from 'react-css-modules'
 import commafy from 'commafy'
 import InProgress from '../../InProgress'
-import { toStandardUnit } from '../../../../utils/utils'
+import { toStandardUnit, wrapWithTransactionInfo } from '../../../../utils/utils'
 import styles from './styles.css'
 
 class WithdrawVotingRights extends Component {
@@ -20,7 +20,7 @@ class WithdrawVotingRights extends Component {
       lockedTokens: null
     }
 
-    this.onWithdraw = this.onWithdraw.bind(this)
+    this.withdrawTokens = this.withdrawTokens.bind(this)
   }
 
   componentDidMount () {
@@ -57,12 +57,6 @@ class WithdrawVotingRights extends Component {
     } catch (error) {
       toastr.error(error.message)
     }
-  }
-
-  onWithdraw (event) {
-    event.preventDefault()
-
-    this.withdrawTokens()
   }
 
   async withdrawTokens () {
@@ -116,7 +110,7 @@ class WithdrawVotingRights extends Component {
             <div><small>Available unlocked VTH: {commafy(_availableTokens)}<strong> (Locked VTH: {commafy(_lockedTokens)})</strong></small></div>
             <br />
             <div>
-              <button onClick={this.onWithdraw} className='ui button blue tiny'>
+              <button onClick={wrapWithTransactionInfo('withdraw-voting-rights', this.withdrawTokens)} className='ui button blue tiny'>
                 Withdraw VTH
               </button>
             </div>

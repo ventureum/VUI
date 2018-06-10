@@ -1,14 +1,215 @@
 import React, { Component } from 'react'
-import CSSModules from 'react-css-modules'
 import saveFile from '../../../../utils/saveFile'
-import { Grid, Table, Menu, Icon, Button, Segment } from 'semantic-ui-react'
+import { Grid, Table, Menu, Icon, Button, Segment, Modal, List } from 'semantic-ui-react'
 import { Scrollbars } from 'react-custom-scrollbars'
 import { Base64 } from 'js-base64'
 import ReactJson from 'react-json-view'
 import toastr from 'toastr'
 import moment from 'moment'
+import CSSModules from 'react-css-modules'
+import styles from './styles.css'
+import Form from 'react-jsonschema-form'
+import JsonSchema from './schema.json'
+import '../../../../bootstrap/css/bootstrap-iso.css'
 
 var basePath = 'https://15mw7pha3h.execute-api.us-west-1.amazonaws.com/alpha'
+var allRegulators = ['aa', 'bb', 'cc', 'dd']
+var schema = JsonSchema.schema
+
+class DelegateVotes extends Component {
+  constructor (props) {
+    super(props)
+
+    schema.definitions.regulator.properties.name.enum = allRegulators
+    schema.properties.regulators.maxItems = allRegulators.length
+    schema.definitions.regulator.properties.name.default = allRegulators[0]
+
+    this.state = {
+      open: false,
+      schema: schema,
+      uiSchema: {
+        'regulators': {
+          'items': {
+            'name': {
+              "ui:options": {
+                inline: true
+              }
+            }
+          }
+        }
+      },
+      formData: {},
+    }
+
+    this.open = this.open.bind(this)
+    this.close = this.close.bind(this)
+    this.onChange = this.onChange.bind(this)
+  }
+
+  updateSchema (selectedRegulators) {
+    var uiSchema = {
+      'regulators': {
+        'items': {
+          'name': {
+            'ui:enumDisabled': selectedRegulators.slice(),
+            "ui:options": {
+              inline: true
+            }
+          }
+        }
+      }
+    }
+    var schema = this.state.schema
+    for (let i = 0; i < allRegulators.length; i++) {
+      if (selectedRegulators.indexOf(allRegulators[i]) < 0) {
+        schema.definitions.regulator.properties.name.default = allRegulators[i]
+        break
+      }
+    }
+    this.setState({
+      uiSchema,
+      schema
+    })
+  }
+
+  open () {
+    this.setState({
+      open: true
+    })
+  }
+
+  close () {
+    this.setState({
+      open: false
+    })
+  }
+
+  onChange ({formData}) {
+    var selectedRegulators = []
+    for (let i = 0; i < formData.regulators.length; i++) {
+      selectedRegulators.push(formData.regulators[i].name)
+    }
+    if (selectedRegulators.length > 0) {
+      this.updateSchema(selectedRegulators)
+    }
+    this.setState({
+      formData
+    })
+  }
+
+  render () {
+    const {
+      open,
+      schema,
+      uiSchema,
+      formData,
+    } = this.state
+
+    return (
+      <Modal
+        dimmer={false}
+        open={open}
+        onOpen={this.open}
+        onClose={this.close}
+        size='small'
+        trigger={<Button primary>Delegate Votes</Button>}
+        className='delegate-vote'
+      >
+        <Modal.Header>Delegate Votes</Modal.Header>
+        <Modal.Content>
+          <div className='bootstrap-iso'>
+            <Form
+              schema={schema}
+              uiSchema={uiSchema}
+              formData={formData}
+              onChange={this.onChange}
+              showErrorList={false}
+              liveValidate
+            />
+          </div>
+        </Modal.Content>
+        <Modal.Actions>
+          <Button primary onClick={this.submit}>Submit</Button>
+          <Button icon='check' content='Close' onClick={this.close} />
+        </Modal.Actions>
+      </Modal>
+    )
+  }
+}
+
+class MilestoneModal extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      open: false,
+      milestone: this.props.data
+    }
+
+    this.open = this.open.bind(this)
+    this.close = this.close.bind(this)
+  }
+
+  open () {
+    this.setState({
+      open: true
+    })
+  }
+
+  close () {
+    this.setState({
+      open: false
+    })
+  }
+
+  render () {
+    const {
+      open,
+      milestone
+    } = this.state
+
+    var objs = []
+    for (let i = 0; i < milestone.objectives.length; i++) {
+      objs.push(<List.Item as='li' key={milestone.name + milestone.objectives[i]}>{milestone.objectives[i]}</List.Item>)
+    }
+
+    return (
+      <Modal
+        dimmer={false}
+        open={open}
+        onOpen={this.open}
+        onClose={this.close}
+        size='small'
+        trigger={<a href='#!'>{milestone.name}</a>}
+      >
+        <Modal.Header>Milestone Info</Modal.Header>
+        <Modal.Content>
+          <List>
+            <List.Item>
+              <strong>Name: </strong>{milestone.name}
+            </List.Item>
+            <List.Item>
+              <strong>Deadline: </strong>{moment(milestone.deadline).utc().format('YYYY-MM-DD HH:mm:ss')}
+            </List.Item>
+            <List.Item>
+              <strong>Percentage of Funds Locked: </strong>{milestone.percentageOfFundsLocked}
+            </List.Item>
+            <List.Item>
+              <strong>Objectives: </strong>
+              <List.List as='ul'>
+                {objs}
+              </List.List>
+            </List.Item>
+          </List>
+          <Button primary>Start Proxy Voting</Button>
+          <DelegateVotes />
+        </Modal.Content>
+        <Modal.Actions>
+          <Button icon='check' content='Close' onClick={this.close} />
+        </Modal.Actions>
+      </Modal>
+    )
+  }
+}
 
 class ProjectProfile extends Component {
   constructor (props) {
@@ -57,8 +258,8 @@ class ProjectProfile extends Component {
       if (milestoneData) {
         for (let i = 0; i < milestoneData.length; i++) {
           milestoneRows.push(
-            <Table.Row>
-              <Table.Cell>{milestoneData[i].name}</Table.Cell>
+            <Table.Row key={milestoneData[i].name}>
+              <Table.Cell><MilestoneModal data={milestoneData[i]} /></Table.Cell>
               <Table.Cell>Inactive</Table.Cell>
               <Table.Cell>{moment(milestoneData[i].deadline).format('YYYY-MM-DD HH:mm:ss')}</Table.Cell>
               <Table.Cell />
@@ -126,4 +327,4 @@ class ProjectProfile extends Component {
     )
   }
 }
-export default CSSModules(ProjectProfile)
+export default CSSModules(ProjectProfile, styles)

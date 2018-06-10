@@ -7,6 +7,7 @@ import { BigNumber } from 'bignumber.js'
 import registry from '../../../../services/registry'
 import InProgress from '../../InProgress'
 import styles from './styles.css'
+import { wrapWithTransactionInfo } from '../../../../utils/utils'
 
 class ChallengeClaimReward extends Component {
   constructor (props) {
@@ -21,7 +22,7 @@ class ChallengeClaimReward extends Component {
     }
 
     this.onFileInput = this.onFileInput.bind(this)
-    this.onFormSubmit = this.onFormSubmit.bind(this)
+    this.claimReward = this.claimReward.bind(this)
   }
 
   componentDidMount () {
@@ -45,7 +46,7 @@ class ChallengeClaimReward extends Component {
           <div className='column sixteen wide'>
             <div>
               <form
-                onSubmit={this.onFormSubmit}
+                onSubmit={wrapWithTransactionInfo('claim-reward', this.claimReward)}
                 className='ui form'>
                 <div className='ui field'>
                   <p>
@@ -145,12 +146,6 @@ class ChallengeClaimReward extends Component {
     }
 
     fr.readAsText(file)
-  }
-
-  onFormSubmit (event) {
-    event.preventDefault()
-
-    this.claimReward()
   }
 
   async claimReward () {

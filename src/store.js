@@ -27,10 +27,10 @@ function reducer (state = -1, action) {
     case 'SALE_EVENT':
     case 'REGISTRY_CONTRACT_INIT':
     case 'REGISTRY_NAME_APPLY':
-    case 'REGISTRY_DOMAIN_CHALLENGE':
-    case 'REGISTRY_DOMAIN_VOTE_COMMIT':
-    case 'REGISTRY_DOMAIN_VOTE_REVEAL':
-    case 'REGISTRY_DOMAIN_UPDATE_STATUS':
+    case 'REGISTRY_PROJECT_CHALLENGE':
+    case 'REGISTRY_PROJECT_VOTE_COMMIT':
+    case 'REGISTRY_PROJECT_VOTE_REVEAL':
+    case 'REGISTRY_PROJECT_UPDATE_STATUS':
     case 'REGISTRY_CLAIM_REWARD':
     case 'REGISTRY_EVENT':
     case 'PLCR_CONTRACT_INIT':
@@ -41,6 +41,7 @@ function reducer (state = -1, action) {
     case 'PLCR_WITHDRAW_VOTING_RIGHTS':
     case 'PARAMETERIZER_CONTRACT_INIT':
     case 'PARAMETERIZER_EVENT':
+    case 'SHOW_TRANSACTION_INFO':
       return action
     default:
       return state

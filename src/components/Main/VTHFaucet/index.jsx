@@ -3,6 +3,7 @@ import { Modal } from 'semantic-ui-react'
 import InProgress from '../InProgress'
 import sale from '../../../services/sale'
 import toastr from 'toastr'
+import { wrapWithTransactionInfo } from '../../../utils/utils'
 
 import './styles.css'
 
@@ -18,10 +19,10 @@ class VTHFaucet extends Component {
       vthPrice: null
     }
 
-    this.onRequest = this.onRequest.bind(this)
     this.handleClose = this.handleClose.bind(this)
     this.handleOpen = this.handleOpen.bind(this)
     this.onTokenAmountKeyUp = this.onTokenAmountKeyUp.bind(this)
+    this.requestToken = this.requestToken.bind(this)
   }
 
   componentDidMount () {
@@ -64,12 +65,6 @@ class VTHFaucet extends Component {
     this.setState({
       modalOpen: true
     })
-  }
-
-  onRequest (event) {
-    event.preventDefault()
-
-    this.requestToken()
   }
 
   async requestToken () {
@@ -118,7 +113,7 @@ class VTHFaucet extends Component {
                 <div className='column sixteen wide'>
                   <div className='ui input action mini'>
                     <input onKeyUp={this.onTokenAmountKeyUp} type='text' placeholder='100' />
-                    <button onClick={this.onRequest} className='ui button blue tiny'>Transfer VTH</button>
+                    <button onClick={wrapWithTransactionInfo('vthfaucet', this.requestToken)} className='ui button blue tiny'>Transfer VTH</button>
                   </div>
                 </div>
               </div>
