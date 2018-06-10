@@ -4,7 +4,7 @@ import { getProvider } from '../services/provider'
 var createErrorHandler = function (name) {
   return function (err) {
     console.error(err)
-    throw new Error('contract ' + name + ' cannot be found, make sure you are using the correct network.')
+    throw new Error('contract ' + name + ' cannot be found, make sure you are connected to Rinkeby Testnet')
   }
 }
 

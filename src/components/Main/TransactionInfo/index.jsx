@@ -122,6 +122,7 @@ class TransactionInfo extends Component {
                 {transactionList}
               </List>
               <p>Please note that each transaction will take 15 to 30 seconds. Please do not switch/close page before all transactions have finished. You must approve all transactions to have your request processed.</p>
+              <p style={{color: 'red'}}> To view pending transactions, open Metamask and select "SENT" tab. </p>
               <Button disabled={countdown !== 0} onClick={this.props.onContinue} color={'blue'}>
                 Continue{countdown !== 0 && '(' + countdown + ')'}
               </Button>
