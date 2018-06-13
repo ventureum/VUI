@@ -168,8 +168,10 @@ class MilestoneModal extends Component {
     } = this.state
 
     var objs = []
-    for (let i = 0; i < milestone.objectives.length; i++) {
-      objs.push(<List.Item as='li' key={milestone.name + milestone.objectives[i]}>{milestone.objectives[i]}</List.Item>)
+    if (milestone.objectives) {
+      for (let i = 0; i < milestone.objectives.length; i++) {
+        objs.push(<List.Item as='li' key={milestone.name + milestone.objectives[i]}>{milestone.objectives[i]}</List.Item>)
+      }
     }
 
     return (
