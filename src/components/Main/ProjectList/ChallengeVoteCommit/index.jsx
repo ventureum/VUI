@@ -67,7 +67,7 @@ class ChallengeVoteCommit extends Component {
   }
 
   // JS function toFixed() will round 4.999999999 to 5
-  // which will confuse user if they have 4.99999999 vth and apply need 5
+  // which will confuse user if they have 4.99999999 vtx and apply need 5
   // thus use this function to keep accuracy
   toFixed (num, fixed) {
     var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?') // eslint-disable-line
@@ -102,7 +102,7 @@ class ChallengeVoteCommit extends Component {
               {stage}
               <Popup
                 trigger={<i className='icon info circle' />}
-                content='The first phase of the voting process is the commit phase where the VTH holder stakes a hidden amount of votes. The second phase is the reveal phase where the VTH holder reveals the staked amount of votes to either the SUPPORT or OPPOSE side.'
+                content='The first phase of the voting process is the commit phase where the VTX holder stakes a hidden amount of votes. The second phase is the reveal phase where the VTX holder reveals the staked amount of votes to either the SUPPORT or OPPOSE side.'
               />
             </div>
           </div>
@@ -147,7 +147,7 @@ class ChallengeVoteCommit extends Component {
                     <p>Challenger: <label className='ui label'>{challenge.challenger}</label></p>
                   </div>
                   <div className='ui field'>
-                    <p>Reward Pool: <label className='ui label'>{commafy(this.toFixed(toStandardUnit(challenge.rewardPool).toNumber(), 4))} VTH</label></p>
+                    <p>Reward Pool: <label className='ui label'>{commafy(this.toFixed(toStandardUnit(challenge.rewardPool).toNumber(), 4))} VTX</label></p>
                   </div>
                 </div>
                 }

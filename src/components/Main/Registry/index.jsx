@@ -17,7 +17,7 @@ class Registry extends Component {
                       <div className='statistic'>
                         <div className='value'>680,000</div>
                         <div className='label'>
-                          TOTAL VTH STAKED&nbsp;
+                          TOTAL VTX STAKED&nbsp;
                           <Popup
                             trigger={<Icon name='info circle' />}
                             content='This is an info'

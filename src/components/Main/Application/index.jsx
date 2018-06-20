@@ -95,7 +95,7 @@ class Application extends Component {
         <Grid stretched>
           <Container fluid>
             <Segment>
-              <strong> Non-refundable Application Fees: </strong>{toStandardUnit(minDeposit).toNumber()} VTH
+              <strong> Non-refundable Application Fees: </strong>{toStandardUnit(minDeposit).toNumber()} VTX
             </Segment>
             <div className='bootstrap-iso'>
               <Form
