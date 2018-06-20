@@ -4,7 +4,7 @@ import toastr from 'toastr'
 import styles from './styles.css'
 import registry from '../../../services/registry'
 import Form from 'react-jsonschema-form'
-import { Grid, Container, Segment } from 'semantic-ui-react'
+import { Grid, Container, Segment, Modal, Button, List, Divider } from 'semantic-ui-react'
 import '../../../bootstrap/css/bootstrap-iso.css'
 import { Base64 } from 'js-base64'
 import JsonSchema from './schema.json'
@@ -20,11 +20,14 @@ class Application extends Component {
       uiSchema: JsonSchema.uiSchema,
       formData: JsonSchema.formData,
       liveValidate: true,
-      minDeposit: null
+      minDeposit: null,
+      displayModal: false
     }
 
     this.onChange = this.onChange.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
+    this.showModal = this.showModal.bind(this)
+    this.hideModal = this.hideModal.bind(this)
   }
 
   componentDidMount () {
@@ -37,6 +40,18 @@ class Application extends Component {
     this._isMounted = false
   }
 
+  showModal () {
+    this.setState({
+      displayModal: true
+    })
+  }
+
+  hideModal () {
+    this.setState({
+      displayModal: false
+    })
+  }
+
   async getMinDeposit () {
     const minDeposit = await registry.getMinDeposit()
     if (this._isMounted) {
@@ -45,6 +60,7 @@ class Application extends Component {
   }
 
   async onSubmit () {
+    this.hideModal()
     const { projectName } = this.state.formData
 
     if (!projectName) {
@@ -82,16 +98,118 @@ class Application extends Component {
     return errors
   }
 
+  getRefSchema (target) {
+    let name = target.slice(target.lastIndexOf('/') + 1)
+    let subSchema = JsonSchema.schema.definitions[name]
+    return subSchema
+  }
+
+  generateElem (subSchema, val) {
+    let _this = this
+    let type = subSchema.type
+    if (type === 'array') {
+      let objs = []
+      if (subSchema.items['$ref']) {
+        subSchema.items = this.getRefSchema(subSchema.items['$ref'])
+      }
+      let subType = subSchema.items.type
+      val.forEach(function (elem, index) {
+        if (subType !== 'array' && subType !== 'object') {
+          objs.push(<List.Item as='li' key={index}>{elem}</List.Item>)
+        } else {
+          elem = _this.generateElem(subSchema.items, elem)
+          if (elem) {
+            objs.push(elem)
+          }
+        }
+      })
+
+      if (objs.length > 0) {
+        return (
+          <div>
+            <strong>{subSchema.title}</strong>
+            <List.List as='ul'>
+              {objs}
+            </List.List>
+          </div>)
+      }
+    }
+
+    if (type === 'object') {
+      let objs = []
+      Object.keys(val).forEach(function (key, index) {
+        if (val[key]) {
+          let data = subSchema.properties[key]
+          let type = data.type
+          if (type !== 'array' && type !== 'object') {
+            objs.push(<p><strong>{data.title + ': '}</strong>{val[key]}</p>)
+          } else {
+            let elem = _this.generateElem(subSchema.properties[key], val[key])
+            if (elem) {
+              objs.push(elem)
+            }
+          }
+        }
+      })
+      if (objs.length > 0) {
+        return (
+          <div>
+            <strong>{subSchema.title}</strong>
+            <List.List as='ul'>
+              {objs}
+            </List.List>
+          </div>)
+      }
+    }
+  }
+
   render () {
     const {
       schema,
       uiSchema,
       formData,
-      minDeposit
+      minDeposit,
+      displayModal
     } = this.state
+
+    var previewContent = []
+    var _this = this
+    if (formData) {
+      Object.keys(formData).forEach(function (key, index) {
+        if (formData[key]) {
+          let data = JsonSchema.schema.properties[key]
+          let type = data.type
+          if (type !== 'array' && type !== 'object') {
+            previewContent.push(<div key={index}><strong>{data.title + ': '}</strong>{formData[key]}</div>)
+            previewContent.push(<Divider key={index + 'divider'} />)
+          } else {
+            let elem = _this.generateElem(JsonSchema.schema.properties[key], formData[key])
+            if (elem) {
+              previewContent.push(elem)
+              previewContent.push(<Divider key={index + 'divider'} />)
+            }
+          }
+        }
+      })
+    }
 
     return (
       <div className='application'>
+        <Modal size='large' open={displayModal} closeIcon onClose={this.hideModal}>
+          <Modal.Header>Application Review</Modal.Header>
+          <Modal.Content>
+            <Segment>
+              <strong>Please double check your application before submitting.</strong>
+            </Segment>
+            {previewContent}
+            <Segment>
+              <strong>Please double check your application before submitting.</strong>
+            </Segment>
+            <Button onClick={wrapWithTransactionInfo('apply', this.onSubmit)} color={'blue'}>
+              Submit
+            </Button>
+          </Modal.Content>
+        </Modal>
         <Grid stretched>
           <Container fluid>
             <Segment>
@@ -103,7 +221,7 @@ class Application extends Component {
                 uiSchema={uiSchema}
                 formData={formData}
                 onChange={this.onChange}
-                onSubmit={wrapWithTransactionInfo('apply', this.onSubmit)}
+                onSubmit={this.showModal}
                 validate={this.validate}
                 showErrorList={false}
                 liveValidate
