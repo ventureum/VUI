@@ -53,7 +53,7 @@ class Challenge extends Component {
               IN APPLICATION
               <Popup
                 trigger={<i className='icon info circle' />}
-                content='VTH holders are encouraged to challenge publisher applications where the token holders believe the Publisher to be fraudulent.'
+                content='VTX holders are encouraged to challenge publisher applications where the token holders believe the Publisher to be fraudulent.'
               />
             </div>
           </div>
@@ -76,7 +76,7 @@ class Challenge extends Component {
               <div className='ui field'>
                 <div className='ui message default'>
                   <p>Minimum deposit required</p>
-                  <p><strong>{minDeposit ? commafy(toStandardUnit(minDeposit).toNumber()) : '-'} VTH</strong></p>
+                  <p><strong>{minDeposit ? commafy(toStandardUnit(minDeposit).toNumber()) : '-'} VTX</strong></p>
                 </div>
               </div>
               <div className='ui field'>

@@ -77,7 +77,7 @@ class VoteReveal extends Component {
               {this.state.stage}
               <Popup
                 trigger={<i className='icon info circle' />}
-                content='The first phase of the voting process is the commit phase where the VTH holder stakes a hidden amount of votes to SUPPORT or OPPOSE the domain application. The second phase is the reveal phase where the VTH holder reveals the staked amount of votes to either the SUPPORT or OPPOSE side.'
+                content='The first phase of the voting process is the commit phase where the VTX holder stakes a hidden amount of votes to SUPPORT or OPPOSE the domain application. The second phase is the reveal phase where the VTX holder reveals the staked amount of votes to either the SUPPORT or OPPOSE side.'
               />
             </div>
           </div>

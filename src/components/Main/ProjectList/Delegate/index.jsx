@@ -38,17 +38,17 @@ class Delegate extends Component {
         'John': {
           name: 'John Smith',
           ethAddr: '0x20ca9efd76a8738f000013783161872d00008486',
-          lockedVth: 1042
+          lockedVtx: 1042
         },
         'Richard': {
           name: 'Richard White',
           ethAddr: '0xe71d864ce000066bb8d640ad2e03bce75dc80000',
-          lockedVth: 3241
+          lockedVtx: 3241
         },
         'Brian': {
           name: 'John Lee',
           ethAddr: '0x4a0000006500816731f2af00001eb43761c88a79',
-          lockedVth: 8012
+          lockedVtx: 8012
         }
       }
     }
@@ -86,7 +86,7 @@ class Delegate extends Component {
               {this.state.stage}
               <Popup
                 trigger={<i className='icon info circle' />}
-                content='VTH holders are encouraged to challenge publisher applications where the token holders believe the Publisher to be fraudulent.'
+                content='VTX holders are encouraged to challenge publisher applications where the token holders believe the Publisher to be fraudulent.'
               />
             </div>
           </div>
@@ -120,7 +120,7 @@ class Delegate extends Component {
                 <div className='ui field'>
                   <label>Name: {this.state.proxyInfo[this.state.proxyValue].name}</label>
                   <label>ETH address: {this.state.proxyInfo[this.state.proxyValue].ethAddr}</label>
-                  <label>Locked VTH: {this.state.proxyInfo[this.state.proxyValue].lockedVth}</label>
+                  <label>Locked VTX: {this.state.proxyInfo[this.state.proxyValue].lockedVtx}</label>
                 </div>
               }
               <div className='ui field'>

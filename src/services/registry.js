@@ -85,9 +85,9 @@ class RegistryService {
 
   // needBalance must be a BN
   async checkBalance (needBalance) {
-    var vthBalance = await token.getBalance()
-    if (vthBalance.lt(needBalance)) {
-      throw new Error('Insufficient VTH balance')
+    var vtxBalance = await token.getBalance()
+    if (vtxBalance.lt(needBalance)) {
+      throw new Error('Insufficient VTX balance')
     }
   }
 

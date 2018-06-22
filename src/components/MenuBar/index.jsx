@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Menu, Image } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import CSSModules from 'react-css-modules'
-import VTHFaucet from '../Main/VTHFaucet'
+import VTXFaucet from '../Main/VTXFaucet'
 import registry from '../../services/registry'
 import token from '../../services/token'
 import store from '../../store'
@@ -19,7 +19,7 @@ class SideMenu extends Component {
       address: null,
       network: null,
       ethBalance: null,
-      vthBalance: null,
+      vtxBalance: null,
       isLoading: true,
       tokenAmount: null
     }
@@ -67,15 +67,15 @@ class SideMenu extends Component {
 
   async updateBalance () {
     try {
-      const vthBalance = await token.getBalance()
+      const vtxBalance = await token.getBalance()
 
       this.setState({
-        vthBalance: (vthBalance || new BigNumber(0))
+        vtxBalance: (vtxBalance || new BigNumber(0))
       })
     } catch (error) {
       toastr.error(error)
       this.setState({
-        vthBalance: null
+        vtxBalance: null
       })
     }
 
@@ -96,7 +96,7 @@ class SideMenu extends Component {
   }
 
   render () {
-    const { vthBalance,
+    const { vtxBalance,
       ethBalance,
       address,
       network,
@@ -161,8 +161,8 @@ class SideMenu extends Component {
         </div>
 
         <div className='item'>
-          <Image src='images/vth_icon_32x32.png' />
-          {vthBalance !== null ? commafy(toStandardUnit(vthBalance).toNumber().toFixed(4)) : '-'} VTH{vthBalance !== null && <VTHFaucet address={address} />}
+          <Image src='images/vtx_icon_32x32.png' />
+          {vtxBalance !== null ? commafy(toStandardUnit(vtxBalance).toNumber().toFixed(4)) : '-'} VTX{vtxBalance !== null && <VTXFaucet address={address} />}
         </div>
 
       </Menu>

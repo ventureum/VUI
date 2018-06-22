@@ -245,7 +245,7 @@ class ProjectProfile extends Component {
 
   onDownload (event) {
     event.preventDefault()
-    saveFile(JSON.stringify(this.state.projectData), this.state.projectName + '.json')
+    saveFile(JSON.stringify(this.state.projectData), this.state.project.projectName + '.json')
   }
 
   render () {

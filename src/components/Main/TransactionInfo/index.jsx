@@ -18,7 +18,7 @@ class TransactionInfo extends Component {
             desc: 'Execute a transaction to submit the project application to the registry.'
           }
         ],
-        'vthfaucet': [
+        'vtxfaucet': [
           {
             name: 'Purchase Token',
             desc: 'Execute a transaction to purchase VTX token to your account.'

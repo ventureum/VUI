@@ -70,7 +70,7 @@ class ChallengeVoteReveal extends Component {
               {this.state.stage}
               <Popup
                 trigger={<i className='icon info circle' />}
-                content='The second phase of the voting process is the reveal phase where the VTH holders reveal their previous commits.'
+                content='The second phase of the voting process is the reveal phase where the VTX holders reveal their previous commits.'
               />
             </div>
           </div>

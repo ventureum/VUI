@@ -7,7 +7,7 @@ import { wrapWithTransactionInfo } from '../../../utils/utils'
 
 import './styles.css'
 
-class VTHFaucet extends Component {
+class VTXFaucet extends Component {
   constructor (props) {
     super()
 
@@ -16,7 +16,7 @@ class VTHFaucet extends Component {
       inProgress: false,
       modalOpen: false,
       tokenAmount: null,
-      vthPrice: null
+      vtxPrice: null
     }
 
     this.handleClose = this.handleClose.bind(this)
@@ -37,11 +37,11 @@ class VTHFaucet extends Component {
 
   async getPrice () {
     try {
-      const vthPrice = await sale.getPrice()
+      const vtxPrice = await sale.getPrice()
 
       if (this._isMounted) {
         this.setState({
-          vthPrice: vthPrice.toNumber()
+          vtxPrice: vtxPrice.toNumber()
         })
       }
     } catch (error) {
@@ -68,10 +68,10 @@ class VTHFaucet extends Component {
   }
 
   async requestToken () {
-    const {tokenAmount, vthPrice} = this.state
+    const {tokenAmount, vtxPrice} = this.state
 
     if (!tokenAmount) {
-      toastr.error('Please enter amount of VTH to transfer')
+      toastr.error('Please enter amount of VTX to transfer')
       return false
     }
 
@@ -80,7 +80,7 @@ class VTHFaucet extends Component {
     })
 
     try {
-      await sale.purchaseTokens(tokenAmount / vthPrice)
+      await sale.purchaseTokens(tokenAmount / vtxPrice)
 
       this.handleClose()
       this.setState({
@@ -104,8 +104,8 @@ class VTHFaucet extends Component {
     } = this.state
 
     return (
-      <Modal onClose={this.handleClose} open={modalOpen} size='mini' trigger={<a onClick={this.handleOpen} href='#!'>&nbsp;(VTH Faucet)</a>}>
-        <Modal.Header>VTH Faucet</Modal.Header>
+      <Modal onClose={this.handleClose} open={modalOpen} size='mini' trigger={<a onClick={this.handleOpen} href='#!'>&nbsp;(VTX Faucet)</a>}>
+        <Modal.Header>VTX Faucet</Modal.Header>
         <Modal.Content>
           <div className='ui grid stackable padded'>
             <div className='column five wide'>
@@ -113,7 +113,7 @@ class VTHFaucet extends Component {
                 <div className='column sixteen wide'>
                   <div className='ui input action mini'>
                     <input onKeyUp={this.onTokenAmountKeyUp} type='text' placeholder='100' />
-                    <button onClick={wrapWithTransactionInfo('vthfaucet', this.requestToken)} className='ui button blue tiny'>Transfer VTH</button>
+                    <button onClick={wrapWithTransactionInfo('vtxfaucet', this.requestToken)} className='ui button blue tiny'>Transfer VTX</button>
                   </div>
                 </div>
               </div>
@@ -126,4 +126,4 @@ class VTHFaucet extends Component {
   }
 }
 
-export default VTHFaucet
+export default VTXFaucet

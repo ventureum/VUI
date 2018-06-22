@@ -62,7 +62,7 @@ class TokenDistribution extends Component {
       <div className='column sixteen wide center aligned token-distribution'>
         <div className='progress-container'>
           <p>
-            VTH holders have revealed their vote to show:
+            VTX holders have revealed their vote to show:
           </p>
           <div className='bar-container'>
             <StatProgressBar
