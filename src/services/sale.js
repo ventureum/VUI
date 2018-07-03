@@ -2,6 +2,8 @@ import Eth from 'ethjs'
 import { getProvider } from './provider'
 import { getSale } from '../config'
 import store from '../store'
+import { BigNumber } from 'bignumber.js'
+import { toBasicUnit } from '../utils/utils'
 
 class SaleService {
   constructor () {
@@ -40,11 +42,7 @@ class SaleService {
   }
 
   async purchaseTokens (tokenAmount) {
-    await this.sale.purchaseTokens({value: Eth.toWei(tokenAmount, 'ether')})
-  }
-
-  async getPrice () {
-    return this.sale.price.call()
+    await this.sale.purchaseTokens(1, {value: toBasicUnit(BigNumber(tokenAmount)).toString(10)})
   }
 }
 

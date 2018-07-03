@@ -15,8 +15,7 @@ class VTXFaucet extends Component {
       address: props.address,
       inProgress: false,
       modalOpen: false,
-      tokenAmount: null,
-      vtxPrice: null
+      tokenAmount: null
     }
 
     this.handleClose = this.handleClose.bind(this)
@@ -27,26 +26,10 @@ class VTXFaucet extends Component {
 
   componentDidMount () {
     this._isMounted = true
-
-    this.getPrice()
   }
 
   componentWillUnmount () {
     this._isMounted = false
-  }
-
-  async getPrice () {
-    try {
-      const vtxPrice = await sale.getPrice()
-
-      if (this._isMounted) {
-        this.setState({
-          vtxPrice: vtxPrice.toNumber()
-        })
-      }
-    } catch (error) {
-      toastr.error(error.message)
-    }
   }
 
   onTokenAmountKeyUp (event) {
@@ -68,7 +51,7 @@ class VTXFaucet extends Component {
   }
 
   async requestToken () {
-    const {tokenAmount, vtxPrice} = this.state
+    const { tokenAmount } = this.state
 
     if (!tokenAmount) {
       toastr.error('Please enter amount of VTX to transfer')
@@ -80,7 +63,7 @@ class VTXFaucet extends Component {
     })
 
     try {
-      await sale.purchaseTokens(tokenAmount / vtxPrice)
+      await sale.purchaseTokens(tokenAmount)
 
       this.handleClose()
       this.setState({

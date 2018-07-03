@@ -43,45 +43,39 @@ export const getRegistry = async (account, provider) => {
 }
 
 export const getSale = async (account, provider) => {
-  const saleArtifact = await getAbi('Sale')
+  const saleArtifact = await getAbi('Presale')
   const Sale = contract(saleArtifact)
   Sale.defaults({from: account})
   Sale.setProvider(provider || getProvider())
 
-  return Sale.deployed().catch(createErrorHandler('Sale'))
+  return Sale.deployed().catch(createErrorHandler('Presale'))
 }
 
-export const getToken = async (account) => {
-  const sale = await getSale()
-  const tokenAddress = await sale.token.call()
-  const tokenArtifact = await getAbi('HumanStandardToken')
+export const getToken = async (account, provider) => {
+  const tokenArtifact = await getAbi('VetXToken')
   const Token = contract(tokenArtifact)
   Token.defaults({from: account})
-  Token.setProvider(getProvider())
+  Token.setProvider(provider || getProvider())
 
-  return Token.at(tokenAddress)
+  return Token.deployed().catch(createErrorHandler('VetXToken'))
 }
 
 export const getPLCR = async (account) => {
-  const registry = await getRegistry()
-  const plcrAddress = await registry.voting.call()
   const plcrArtifact = await getAbi('PLCRVoting')
   const PLCRVoting = contract(plcrArtifact)
   PLCRVoting.defaults({from: account})
   PLCRVoting.setProvider(getProvider())
 
-  return PLCRVoting.at(plcrAddress)
+  return PLCRVoting.deployed().catch(createErrorHandler('PLCRVoting'))
 }
 
 export const getParameterizer = async (account) => {
-  const registry = await getRegistry()
-  const pAddress = await registry.parameterizer.call()
   const pArtifact = await getAbi('Parameterizer')
   const Parameterizer = contract(pArtifact)
   Parameterizer.defaults({from: account})
   Parameterizer.setProvider(getProvider())
 
-  return Parameterizer.at(pAddress)
+  return Parameterizer.deployed().catch(createErrorHandler('Parameterizer'))
 }
 
 // sendTransaction

@@ -189,7 +189,7 @@ class RegistryService {
     } else if (await this.registry.canBeWhitelisted(projectObj.projectName)) {
       // can be whitelisted
       return 'Pending to Whitelist'
-    } else if (projectObj.challengeId) {
+    } else if (projectObj.challengeId && projectObj.challengeId.toNumber() !== 0) {
       if (await plcr.commitStageActive(projectObj.challengeId)) {
         return 'In Voting Commit'
       } else if (await plcr.revealStageActive(projectObj.challengeId)) {
@@ -243,6 +243,7 @@ class RegistryService {
       for (let i = 0; i < projectData.length; i++) {
         projectObj[propertyNameMap[i]] = projectData[i]
       }
+      projectObj.applicationExpiry = projectObj.applicationExpiry.toNumber()
       return projectObj
     } catch (error) {
       throw error
@@ -251,9 +252,8 @@ class RegistryService {
 
   // check if an application has expired
   isExpired (timestamp) {
-    let t = moment.unix(timestamp)
-    let now = moment()
-    return now >= t
+    let now = moment.unix()
+    return now >= timestamp
   }
 
   async getListing (name) {
