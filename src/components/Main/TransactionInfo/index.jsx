@@ -71,6 +71,24 @@ class TransactionInfo extends Component {
             name: 'Withdraw Voting Rights',
             desc: 'Execute a transaction to unlock tokens from the voting contract.'
           }
+        ],
+        'start-token-sale': [
+          {
+            name: 'Start Token Sale',
+            desc: 'Execute a transaction to start token sale.'
+          }
+        ],
+        'stop-token-sale': [
+          {
+            name: 'Stop Token Sale',
+            desc: 'Execute a transaction to stop token sale.'
+          }
+        ],
+        'buy-token': [
+          {
+            name: 'Buy Token',
+            desc: 'Execute a transaction to buy token.'
+          }
         ]
       }
     }

@@ -3,12 +3,16 @@ import CSSModules from 'react-css-modules'
 import { Modal } from 'semantic-ui-react'
 import moment from 'moment'
 import toastr from 'toastr'
+import update from 'immutability-helper'
 import styles from './styles.css'
 import Challenge from './Challenge'
 import ChallengeVoteCommit from './ChallengeVoteCommit'
 import ChallengeVoteReveal from './ChallengeVoteReveal'
 import ProjectProfile from './ProjectProfile'
+import TokenSale from './TokenSale'
 import registry from '../../../services/registry'
+import tokenSale from '../../../services/tokenSale'
+import projectController from '../../../services/projectController'
 import store from '../../../store'
 import InProgress from '../InProgress'
 import { wrapWithTransactionInfo } from '../../../utils/utils'
@@ -33,6 +37,7 @@ class ProjectList extends Component {
     this.nextPage = this.nextPage.bind(this)
     this.prevPage = this.prevPage.bind(this)
     this.updateStatus = this.updateStatus.bind(this)
+    this.projectInProgress = this.projectInProgress.bind(this)
   }
 
   async updateStatus (project) {
@@ -85,7 +90,8 @@ class ProjectList extends Component {
 
     store.subscribe(x => {
       const state = store.getState()
-      if (state.type === 'REGISTRY_EVENT' || state.type === 'REGISTRY_PROJECT_UPDATE_STATUS') {
+      const eventList = ['REGISTRY_EVENT', 'REGISTRY_PROJECT_UPDATE_STATUS', 'TOKEN_SALE_EVENT']
+      if (eventList.indexOf(state.type) >= 0) {
         this.getProjectList()
       }
     })
@@ -132,6 +138,13 @@ class ProjectList extends Component {
 
       for (let i = 0; i < projectList.length; i++) {
         projectList[i].action = this.getProjectAction(projectList[i])
+        if (projectList[i].action === 'view') {
+          projectList[i].controllerStage = await projectController.getProjectState(projectList[i])
+          if (projectList[i].controllerStage.toNumber() === 3) {
+            projectList[i].tokenInfo = await tokenSale.getTokenInfo(projectList[i].projectName)
+          }
+          projectList[i].inProgress = false
+        }
       }
 
       if (this._isMounted) {
@@ -144,6 +157,26 @@ class ProjectList extends Component {
       }
     } catch (error) {
       toastr.error(error.message)
+    }
+  }
+
+  projectInProgress (name, value = true) {
+    let index = -1
+    for (index = 0; index < this.state.projectList.length; index++) {
+      if (this.state.projectList[index].projectName === name) {
+        break
+      }
+    }
+    if (index !== -1) {
+      this.setState({
+        projectList: update(this.state.projectList, {
+          [index]: {
+            inProgress: {
+              $set: value
+            }
+          }
+        })
+      })
     }
   }
 
@@ -187,6 +220,7 @@ class ProjectList extends Component {
                   </Modal.Content>
                 </Modal>
               }
+              {project.action === 'view' && <TokenSale projectInProgress={this.projectInProgress} project={project} />}
             </div>
           </div>
         </div>

@@ -243,8 +243,8 @@ class ChallengeVoteReveal extends Component {
         this.setState({
           votesFor,
           votesAgainst,
-          commitEndDate,
-          revealEndDate
+          commitEndDate: commitEndDate.toNumber(),
+          revealEndDate: revealEndDate.toNumber()
         })
       }
     } catch (error) {

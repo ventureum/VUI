@@ -334,8 +334,8 @@ class ChallengeVoteCommit extends Component {
 
       if (this._isMounted) {
         this.setState({
-          commitEndDate,
-          revealEndDate
+          commitEndDate: commitEndDate.toNumber(),
+          revealEndDate: revealEndDate.toNumber()
         })
       }
     } catch (error) {

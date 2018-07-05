@@ -78,4 +78,22 @@ export const getParameterizer = async (account) => {
   return Parameterizer.deployed().catch(createErrorHandler('Parameterizer'))
 }
 
+export const getTokenSale = async (account) => {
+  const pArtifact = await getAbi('TokenSale')
+  const TokenSale = contract(pArtifact)
+  TokenSale.defaults({from: account})
+  TokenSale.setProvider(getProvider())
+
+  return TokenSale.deployed().catch(createErrorHandler('TokenSale'))
+}
+
+export const getProjectController = async (account) => {
+  const pArtifact = await getAbi('ProjectController')
+  const ProjectController = contract(pArtifact)
+  ProjectController.defaults({from: account})
+  ProjectController.setProvider(getProvider())
+
+  return ProjectController.deployed().catch(createErrorHandler('ProjectController'))
+}
+
 // sendTransaction

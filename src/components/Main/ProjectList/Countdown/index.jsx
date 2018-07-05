@@ -15,7 +15,7 @@ class Countdown extends Component {
       isExpired: false,
 
       // expired if no endDate set on init
-      onExpireCalled: !endDate
+      onExpireCalled: !endDate || endDate <= moment()
     }
 
     if (props.onExpire) {
@@ -81,7 +81,7 @@ class Countdown extends Component {
         })
       }
 
-      if (!this.onExpireCalled) {
+      if (!this.state.onExpireCalled) {
         if (this._isMounted) {
           this.setState({onExpireCalled: true})
         }

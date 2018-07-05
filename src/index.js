@@ -11,6 +11,8 @@ import plcr from './services/plcr'
 import parameterizer from './services/parameterizer'
 import token from './services/token'
 import sale from './services/sale'
+import tokenSale from './services/tokenSale'
+import projectController from './services/projectController'
 import toastr from 'toastr'
 
 async function init () {
@@ -38,7 +40,9 @@ async function init () {
       registry.init(),
       plcr.init(),
       parameterizer.init(),
-      sale.init()
+      sale.init(),
+      tokenSale.init(),
+      projectController.init()
     ])
     ReactDOM.render(<App />, document.getElementById('root'))
     await initAccountPoll()
@@ -46,7 +50,7 @@ async function init () {
     toastr.error(error)
     ReactDOM.render(<App fatalError={error.message} />, document.getElementById('root'))
   }
-  
+
   registerServiceWorker()
 }
 

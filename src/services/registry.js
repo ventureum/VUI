@@ -256,6 +256,10 @@ class RegistryService {
     return now >= timestamp
   }
 
+  isOwner (address) {
+    return address === this.account
+  }
+
   async getListing (name) {
     if (!name) {
       throw new Error('Project name is required')
