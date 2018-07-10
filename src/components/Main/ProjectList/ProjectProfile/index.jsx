@@ -8,9 +8,10 @@ import toastr from 'toastr'
 import moment from 'moment'
 import CSSModules from 'react-css-modules'
 import styles from './styles.css'
+import milestone from '../../../../services/milestone'
 import Form from 'react-jsonschema-form'
 import JsonSchema from './schema.json'
-import '../../../../bootstrap/css/bootstrap-iso.css'
+import { stopPropagation, toStandardUnit } from '../../../../utils/utils'
 
 var basePath = 'https://15mw7pha3h.execute-api.us-west-1.amazonaws.com/alpha'
 var allRegulators = ['aa', 'bb', 'cc', 'dd']
@@ -31,14 +32,14 @@ class DelegateVotes extends Component {
         'regulators': {
           'items': {
             'name': {
-              "ui:options": {
+              'ui:options': {
                 inline: true
               }
             }
           }
         }
       },
-      formData: {},
+      formData: {}
     }
 
     this.open = this.open.bind(this)
@@ -52,7 +53,7 @@ class DelegateVotes extends Component {
         'items': {
           'name': {
             'ui:enumDisabled': selectedRegulators.slice(),
-            "ui:options": {
+            'ui:options': {
               inline: true
             }
           }
@@ -102,7 +103,7 @@ class DelegateVotes extends Component {
       open,
       schema,
       uiSchema,
-      formData,
+      formData
     } = this.state
 
     return (
@@ -111,6 +112,7 @@ class DelegateVotes extends Component {
         open={open}
         onOpen={this.open}
         onClose={this.close}
+        closeIcon
         size='small'
         trigger={<Button primary>Delegate Votes</Button>}
         className='delegate-vote'
@@ -130,7 +132,7 @@ class DelegateVotes extends Component {
         </Modal.Content>
         <Modal.Actions>
           <Button primary onClick={this.submit}>Submit</Button>
-          <Button icon='check' content='Close' onClick={this.close} />
+          <Button content='Close' onClick={this.close} />
         </Modal.Actions>
       </Modal>
     )
@@ -168,33 +170,46 @@ class MilestoneModal extends Component {
     } = this.state
 
     var objs = []
-    if (milestone.objectives) {
-      for (let i = 0; i < milestone.objectives.length; i++) {
-        objs.push(<List.Item as='li' key={milestone.name + milestone.objectives[i]}>{milestone.objectives[i]}</List.Item>)
+    if (milestone.objsStrs) {
+      for (let i = 0; i < milestone.objsStrs.length; i++) {
+        objs.push(<List.Item as='li' key={milestone.id + milestone.objsStrs[i]}>Name: {milestone.objsStrs[i]}, Type: {milestone.objTypesStrs[i]}</List.Item>)
       }
     }
 
     return (
       <Modal
-        dimmer={false}
         open={open}
         onOpen={this.open}
         onClose={this.close}
+        closeIcon
         size='small'
-        trigger={<a href='#!'>{milestone.name}</a>}
+        trigger={<a href='#!'>{milestone.id}</a>}
       >
         <Modal.Header>Milestone Info</Modal.Header>
         <Modal.Content>
           <List>
             <List.Item>
-              <strong>Name: </strong>{milestone.name}
+              <strong>ID: </strong>{milestone.id}
             </List.Item>
             <List.Item>
-              <strong>Deadline: </strong>{moment(milestone.deadline).utc().format('YYYY-MM-DD HH:mm:ss')}
+              <strong>State: </strong>{milestone.stateStr}
             </List.Item>
             <List.Item>
-              <strong>Percentage of Funds Locked: </strong>{milestone.percentageOfFundsLocked}
+              <strong>Length: </strong>{milestone.days} days
             </List.Item>
+            <List.Item>
+              <strong>Token Locked: </strong>{toStandardUnit(milestone.weiLocked).toNumber()}
+            </List.Item>
+            {milestone.startTime !== 0 &&
+              <List.Item>
+                <strong>Start Time: </strong>{moment(milestone.startTime).utc().format('YYYY-MM-DD HH:mm:ss')}
+              </List.Item>
+            }
+            {milestone.endTime !== 0 &&
+              <List.Item>
+                <strong>End Time: </strong>{moment(milestone.endTime).utc().format('YYYY-MM-DD HH:mm:ss')}
+              </List.Item>
+            }
             <List.Item>
               <strong>Objectives: </strong>
               <List.List as='ul'>
@@ -206,7 +221,7 @@ class MilestoneModal extends Component {
           <DelegateVotes />
         </Modal.Content>
         <Modal.Actions>
-          <Button icon='check' content='Close' onClick={this.close} />
+          <Button content='Close' onClick={stopPropagation(this.close)} />
         </Modal.Actions>
       </Modal>
     )
@@ -218,15 +233,37 @@ class ProjectProfile extends Component {
     super(props)
     this.state = {
       project: props.project,
-      projectData: null
+      projectData: null,
+      milestoneData: null,
+      open: false,
+      schema: JsonSchema.MilestoneSchema,
+      formData: {}
     }
 
     this.onDownload = this.onDownload.bind(this)
     this.getProjectData = this.getProjectData.bind(this)
+    this.open = this.open.bind(this)
+    this.close = this.close.bind(this)
+    this.onChange = this.onChange.bind(this)
+    this.submit = this.submit.bind(this)
   }
 
   componentDidMount () {
     this.getProjectData()
+    this.getMilestoneData()
+  }
+
+  async getMilestoneData () {
+    try {
+      let data = await milestone.getMilestoneData(this.state.project.projectName)
+      if (data) {
+        this.setState({
+          milestoneData: data
+        })
+      }
+    } catch (error) {
+      toastr.error(error)
+    }
   }
 
   async getProjectData () {
@@ -248,26 +285,55 @@ class ProjectProfile extends Component {
     saveFile(JSON.stringify(this.state.projectData), this.state.project.projectName + '.json')
   }
 
+  open () {
+    this.setState({
+      open: true
+    })
+  }
+
+  close () {
+    this.setState({
+      open: false
+    })
+  }
+
+  onChange ({formData}) {
+    this.setState({
+      formData
+    })
+  }
+
+  async submit () {
+    try {
+      await milestone.addMilestone(this.state.project.projectName, this.state.formData)
+      toastr.success('Milestone added successfully!')
+      this.close()
+    } catch (error) {
+      toastr.error(error)
+    }
+  }
+
   render () {
     const {
       project,
-      projectData
+      projectData,
+      milestoneData,
+      open,
+      schema,
+      formData
     } = this.state
 
     var milestoneRows = []
-    if (projectData) {
-      var milestoneData = projectData.application.roadmapDefinition
-      if (milestoneData) {
-        for (let i = 0; i < milestoneData.length; i++) {
-          milestoneRows.push(
-            <Table.Row key={milestoneData[i].name}>
-              <Table.Cell><MilestoneModal data={milestoneData[i]} /></Table.Cell>
-              <Table.Cell>Inactive</Table.Cell>
-              <Table.Cell>{moment(milestoneData[i].deadline).utc().format('YYYY-MM-DD HH:mm:ss')}</Table.Cell>
-              <Table.Cell />
-            </Table.Row>
-          )
-        }
+    if (milestoneData) {
+      for (let i = 0; i < milestoneData.length; i++) {
+        milestoneRows.push(
+          <Table.Row key={milestoneData[i].id}>
+            <Table.Cell><MilestoneModal data={milestoneData[i]} /></Table.Cell>
+            <Table.Cell>{milestoneData[i].stateStr}</Table.Cell>
+            <Table.Cell>
+            </Table.Cell>
+          </Table.Row>
+        )
       }
     }
 
@@ -290,39 +356,65 @@ class ProjectProfile extends Component {
             <Segment>
               <strong>Application Expiry: </strong>{moment.unix(project.applicationExpiry).utc().format('YYYY-MM-DD HH:mm:ss')}
             </Segment>
-            <Table celled>
-              <Table.Header>
-                <Table.Row>
-                  <Table.HeaderCell>Milestone</Table.HeaderCell>
-                  <Table.HeaderCell>Stage</Table.HeaderCell>
-                  <Table.HeaderCell>Stage Ends</Table.HeaderCell>
-                  <Table.HeaderCell>Action</Table.HeaderCell>
-                </Table.Row>
-              </Table.Header>
+            {project.isOwner && project.controllerStageStr === 'accepted' &&
+              <Modal
+                className='add-ms-modal'
+                open={open}
+                onOpen={this.open}
+                onClose={this.close}
+                size='small'
+                trigger={<Button color='blue'>Add Milestone</Button>}
+              >
+                <Modal.Header>Add Milestone</Modal.Header>
+                <Modal.Content>
+                  <div className='bootstrap-iso'>
+                    <Form
+                      schema={schema}
+                      formData={formData}
+                      onChange={this.onChange}
+                      showErrorList={false}
+                      liveValidate>
+                      <Button onClick={stopPropagation(this.submit)} color='blue'>Submit</Button>
+                      <Button onClick={stopPropagation(this.close)}>Cancel</Button>
+                    </Form>
+                  </div>
+                </Modal.Content>
+              </Modal>
+            }
+            {milestoneRows.length > 0 &&
+              <Table celled>
+                <Table.Header>
+                  <Table.Row>
+                    <Table.HeaderCell>Milestone</Table.HeaderCell>
+                    <Table.HeaderCell>State</Table.HeaderCell>
+                    <Table.HeaderCell>Action</Table.HeaderCell>
+                  </Table.Row>
+                </Table.Header>
 
-              <Table.Body>
-                {milestoneRows}
-              </Table.Body>
+                <Table.Body>
+                  {milestoneRows}
+                </Table.Body>
 
-              <Table.Footer>
-                <Table.Row>
-                  <Table.HeaderCell colSpan='4'>
-                    <Menu floated='right' pagination>
-                      <Menu.Item as='a' icon>
-                        <Icon name='chevron left' />
-                      </Menu.Item>
-                      <Menu.Item as='a'>1</Menu.Item>
-                      <Menu.Item as='a'>2</Menu.Item>
-                      <Menu.Item as='a'>3</Menu.Item>
-                      <Menu.Item as='a'>4</Menu.Item>
-                      <Menu.Item as='a' icon>
-                        <Icon name='chevron right' />
-                      </Menu.Item>
-                    </Menu>
-                  </Table.HeaderCell>
-                </Table.Row>
-              </Table.Footer>
-            </Table>
+                <Table.Footer>
+                  <Table.Row>
+                    <Table.HeaderCell colSpan='4'>
+                      <Menu floated='right' pagination>
+                        <Menu.Item as='a' icon>
+                          <Icon name='chevron left' />
+                        </Menu.Item>
+                        <Menu.Item as='a'>1</Menu.Item>
+                        <Menu.Item as='a'>2</Menu.Item>
+                        <Menu.Item as='a'>3</Menu.Item>
+                        <Menu.Item as='a'>4</Menu.Item>
+                        <Menu.Item as='a' icon>
+                          <Icon name='chevron right' />
+                        </Menu.Item>
+                      </Menu>
+                    </Table.HeaderCell>
+                  </Table.Row>
+                </Table.Footer>
+              </Table>
+            }
           </Grid.Column>
         </Grid>
       </div>

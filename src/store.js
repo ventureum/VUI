@@ -45,6 +45,8 @@ function reducer (state = -1, action) {
     case 'TOKEN_SALE_EVENT':
     case 'PROJECT_CONTROLLER_CONTRACT_INIT':
     case 'PROJECT_CONTROLLER_EVENT':
+    case 'MILESTONE_CONTRACT_INIT':
+    case 'MILESTONE_EVENT':
     case 'SHOW_TRANSACTION_INFO':
       return action
     default:

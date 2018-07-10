@@ -1,6 +1,4 @@
-:root:root .delegate-vote .array-item fieldset > .field {
-  float: left;
-}
-:root:root .delegate-vote .array-item fieldset > .field + .field {
-  margin-left: 20px;
+:root:root .add-ms-modal {
+  overflow: auto;
+  max-height: 90vh;
 }

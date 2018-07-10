@@ -90,7 +90,7 @@ class ProjectList extends Component {
 
     store.subscribe(x => {
       const state = store.getState()
-      const eventList = ['REGISTRY_EVENT', 'REGISTRY_PROJECT_UPDATE_STATUS', 'TOKEN_SALE_EVENT']
+      const eventList = ['REGISTRY_EVENT', 'REGISTRY_PROJECT_UPDATE_STATUS', 'TOKEN_SALE_EVENT', 'MILESTONE_EVENT']
       if (eventList.indexOf(state.type) >= 0) {
         this.getProjectList()
       }
@@ -133,14 +133,24 @@ class ProjectList extends Component {
   }
 
   async getProjectList () {
+    let projectStateMap = {
+      0: 'not-exist',
+      1: 'submitted',
+      2: 'accepted',
+      3: 'token-sale',
+      4: 'milestone',
+      5: 'complete'
+    }
     try {
       var projectList = await registry.getProjectList()
 
       for (let i = 0; i < projectList.length; i++) {
         projectList[i].action = this.getProjectAction(projectList[i])
+        projectList[i].isOwner = registry.isOwner(projectList[i].owner)
         if (projectList[i].action === 'view') {
           projectList[i].controllerStage = await projectController.getProjectState(projectList[i])
-          if (projectList[i].controllerStage.toNumber() === 3) {
+          projectList[i].controllerStageStr = projectStateMap[projectList[i].controllerStage.toNumber()]
+          if (projectList[i].controllerStageStr === 'token-sale') {
             projectList[i].tokenInfo = await tokenSale.getTokenInfo(projectList[i].projectName)
           }
           projectList[i].inProgress = false
@@ -196,7 +206,7 @@ class ProjectList extends Component {
         <div className='rt-tr-group' key={project.projectName}>
           <div className='rt-tr -odd'>
             <div className='rt-td' style={{flex: '200 0 auto', width: '200px'}}>
-              <Modal size='large' trigger={<a href='#!' className='domain' title='View profile'>{project.projectName}</a>}>
+              <Modal size='large' closeIcon trigger={<a href='#!' className='domain' title='View profile'>{project.projectName}</a>}>
                 <Modal.Header>{project.projectName}</Modal.Header>
                 <Modal.Content>
                   <ProjectProfile project={project} />

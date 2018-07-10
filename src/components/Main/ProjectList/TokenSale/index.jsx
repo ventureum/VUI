@@ -6,7 +6,6 @@ import commafy from 'commafy'
 import { Modal, Form, Button } from 'semantic-ui-react'
 import { wrapWithTransactionInfo, toStandardUnit } from '../../../../utils/utils'
 import InProgress from '../../InProgress'
-import registry from '../../../../services/registry'
 import tokenSale from '../../../../services/tokenSale'
 
 import styles from './styles.css'
@@ -124,18 +123,9 @@ class TokenSale extends Component {
   }
 
   getTokenSaleDom (project) {
-    let projectStateMap = {
-      0: 'not-exist',
-      1: 'submitted',
-      2: 'accepted',
-      3: 'token-sale',
-      4: 'milestone',
-      5: 'complete'
-    }
-    let isOwner = registry.isOwner(project.owner)
-    let projectStage = projectStateMap[project.controllerStage.toNumber()]
-    if (isOwner) {
-      if (projectStage === 'accepted') {
+    let stage = project.controllerStageStr
+    if (project.isOwner) {
+      if (stage === 'accepted') {
         return (
           <Modal closeIcon onClose={this.handleClose} open={this.state.tokenSaleModalOpen} className='token-sale' size='mini' trigger={<a onClick={this.handleOpen} className='ui mini button blue' href='#!'>start token sale</a>}>
             <Modal.Header>{project.projectName}</Modal.Header>
@@ -160,13 +150,13 @@ class TokenSale extends Component {
               </div>
             </Modal.Content>
           </Modal>)
-      } else if (projectStage === 'token-sale' && !project.tokenInfo.finalized) {
+      } else if (stage === 'token-sale' && !project.tokenInfo.finalized) {
         return [
           <Button key='btn' loading={project.inProgress} disabled={project.inProgress} onClick={wrapWithTransactionInfo('stop-token-sale', this.stopTokenSale, project.projectName)} size='mini' color='red'>stop token sale</Button>,
           this.buyTokenDOM(project)
         ]
       }
-    } else if (projectStage === 'token-sale' && !project.tokenInfo.finalized) {
+    } else if (stage === 'token-sale' && !project.tokenInfo.finalized) {
       return (
         this.buyTokenDOM(project))
     } else {

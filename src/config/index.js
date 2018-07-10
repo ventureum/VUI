@@ -96,4 +96,22 @@ export const getProjectController = async (account) => {
   return ProjectController.deployed().catch(createErrorHandler('ProjectController'))
 }
 
+export const getMilestoneController = async (account) => {
+  const pArtifact = await getAbi('MilestoneController')
+  const MilestoneController = contract(pArtifact)
+  MilestoneController.defaults({from: account})
+  MilestoneController.setProvider(getProvider())
+
+  return MilestoneController.deployed().catch(createErrorHandler('MilestoneController'))
+}
+
+export const getMilestoneControllerView = async (account) => {
+  const pArtifact = await getAbi('MilestoneControllerView')
+  const MilestoneControllerView = contract(pArtifact)
+  MilestoneControllerView.defaults({from: account})
+  MilestoneControllerView.setProvider(getProvider())
+
+  return MilestoneControllerView.deployed().catch(createErrorHandler('MilestoneControllerView'))
+}
+
 // sendTransaction

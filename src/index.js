@@ -13,6 +13,7 @@ import token from './services/token'
 import sale from './services/sale'
 import tokenSale from './services/tokenSale'
 import projectController from './services/projectController'
+import milestone from './services/milestone'
 import toastr from 'toastr'
 
 async function init () {
@@ -42,7 +43,8 @@ async function init () {
       parameterizer.init(),
       sale.init(),
       tokenSale.init(),
-      projectController.init()
+      projectController.init(),
+      milestone.init()
     ])
     ReactDOM.render(<App />, document.getElementById('root'))
     await initAccountPoll()

@@ -27,4 +27,12 @@ function wrapWithTransactionInfo (name, cb, data) {
   }
 }
 
-export {toStandardUnit, toBasicUnit, wrapWithTransactionInfo}
+function stopPropagation (cb) {
+  return function (e) {
+    e.stopPropagation()
+    e.nativeEvent.stopImmediatePropagation()
+    cb()
+  }
+}
+
+export {toStandardUnit, toBasicUnit, wrapWithTransactionInfo, stopPropagation}
