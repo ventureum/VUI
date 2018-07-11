@@ -89,6 +89,12 @@ class TransactionInfo extends Component {
             name: 'Buy Token',
             desc: 'Execute a transaction to buy token.'
           }
+        ],
+        'unlock-token': [
+          {
+            name: 'Unlock Token',
+            desc: 'Execute a transaction to unlock the token you use to vote.'
+          }
         ]
       }
     }

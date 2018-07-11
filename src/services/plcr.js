@@ -215,7 +215,7 @@ class PlcrService {
   async getTokensCommited (pollId) {
     return new Promise(async (resolve, reject) => {
       try {
-        const numTokens = await this.plcr.getNumTokens(pollId.toString())
+        const numTokens = await this.plcr.getNumTokens(this.account, pollId.toString())
         resolve(numTokens)
         return false
       } catch (error) {
@@ -313,6 +313,10 @@ class PlcrService {
     }
 
     return window.web3.eth.defaultAccount
+  }
+
+  async unlock (id) {
+    await this.plcr.rescueTokens(id)
   }
 }
 

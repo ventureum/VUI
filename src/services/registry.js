@@ -219,6 +219,8 @@ class RegistryService {
       projectObj = await this.getProjectInfo(hash)
       projectObj.stage = await this.getProjectStage(hash, projectObj)
       projectObj.hash = hash
+      projectObj.didCommit = await this.didCommitForPoll(projectObj.challengeId.toNumber())
+      projectObj.hasBeenRevealed = await plcr.hasBeenRevealed(this.account, projectObj.challengeId.toNumber())
       projectList.push(projectObj)
     }
     return projectList

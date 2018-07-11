@@ -12,6 +12,7 @@ import ProjectProfile from './ProjectProfile'
 import TokenSale from './TokenSale'
 import registry from '../../../services/registry'
 import tokenSale from '../../../services/tokenSale'
+import plcr from '../../../services/plcr'
 import projectController from '../../../services/projectController'
 import store from '../../../store'
 import InProgress from '../InProgress'
@@ -38,6 +39,7 @@ class ProjectList extends Component {
     this.prevPage = this.prevPage.bind(this)
     this.updateStatus = this.updateStatus.bind(this)
     this.projectInProgress = this.projectInProgress.bind(this)
+    this.unlock = this.unlock.bind(this)
   }
 
   async updateStatus (project) {
@@ -190,6 +192,22 @@ class ProjectList extends Component {
     }
   }
 
+  async unlock (project) {
+    try {
+      await plcr.unlock(project.challengeId)
+      toastr.success('Token unlocked successfully.')
+    } catch (error) {
+      toastr.error(error.message)
+    }
+  }
+
+  canCall (name, project) {
+    if (name === 'unlock') {
+      let actionArr = ['whitelist', 'resolve challenge', 'refresh status', 'view']
+      return project.didCommit && actionArr.indexOf(project.action) >= 0 && !project.hasBeenRevealed
+    }
+  }
+
   render () {
     const {
       perPage,
@@ -230,6 +248,7 @@ class ProjectList extends Component {
                   </Modal.Content>
                 </Modal>
               }
+              {this.canCall('unlock', project) && <a onClick={wrapWithTransactionInfo('unlock-token', this.unlock, project)} className='ui mini button blue' href='#!'>unlock token</a>}
               {project.action === 'view' && <TokenSale projectInProgress={this.projectInProgress} project={project} />}
             </div>
           </div>
