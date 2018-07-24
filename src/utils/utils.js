@@ -30,9 +30,20 @@ function wrapWithTransactionInfo (name, cb, data) {
 function stopPropagation (cb) {
   return function (e) {
     e.stopPropagation()
-    e.nativeEvent.stopImmediatePropagation()
+    e.nativeEvent && e.nativeEvent.stopImmediatePropagation()
     cb()
   }
 }
 
-export {toStandardUnit, toBasicUnit, wrapWithTransactionInfo, stopPropagation}
+function dayToSeconds (val) {
+  return val * 24 * 60 * 60
+}
+
+function equalWithPrecision (val1, val2) {
+  if (!val1.eq(val2) && val1.toNumber() === val2.toNumber()) {
+    return true
+  }
+  return false
+}
+
+export {toStandardUnit, toBasicUnit, wrapWithTransactionInfo, stopPropagation, dayToSeconds, equalWithPrecision}

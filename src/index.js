@@ -14,6 +14,10 @@ import sale from './services/sale'
 import tokenSale from './services/tokenSale'
 import projectController from './services/projectController'
 import milestone from './services/milestone'
+import repSys from './services/repSys'
+import regulatingRating from './services/regulatingRating'
+import refundManager from './services/refundManager'
+import rewardManager from './services/rewardManager'
 import toastr from 'toastr'
 
 async function init () {
@@ -44,7 +48,11 @@ async function init () {
       sale.init(),
       tokenSale.init(),
       projectController.init(),
-      milestone.init()
+      milestone.init(),
+      repSys.init(),
+      regulatingRating.init(),
+      refundManager.init(),
+      rewardManager.init()
     ])
     ReactDOM.render(<App />, document.getElementById('root'))
     await initAccountPoll()

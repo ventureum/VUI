@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Modal, List, Button } from 'semantic-ui-react'
+import { stopPropagation } from '../../../utils/utils'
 
 class TransactionInfo extends Component {
   constructor (props) {
@@ -95,6 +96,100 @@ class TransactionInfo extends Component {
             name: 'Unlock Token',
             desc: 'Execute a transaction to unlock the token you use to vote.'
           }
+        ],
+        'add-milestone': [
+          {
+            name: 'Add Milestone',
+            desc: 'Execute a transaction to add the milestone to your project.'
+          }
+        ],
+        'activate': [
+          {
+            name: 'Activate Milestone',
+            desc: 'Execute a transaction to activate the milestone.'
+          }
+        ],
+        'start-poll': [
+          {
+            name: 'Start Voting Poll',
+            desc: 'Execute a transaction to start the voting poll of this milestone.'
+          }
+        ],
+        'start-rating-stage': [
+          {
+            name: 'Start Rating Stage',
+            desc: 'Execute a transaction to start the rating stage of this milestone.'
+          }
+        ],
+        'start-refund': [
+          {
+            name: 'Starg Refund',
+            desc: 'Execute a transaction to start the refund stage of this milestone'
+          }
+        ],
+        'refund': [
+          {
+            name: 'Approve Project Token',
+            desc: 'Approve the project token you want to refund.'
+          },
+          {
+            name: 'Refund',
+            desc: 'Execute a transaction to refund the ETH of your project token.'
+          }
+        ],
+        'withdraw-refund': [
+          {
+            name: 'Withdraw Refund',
+            desc: 'Execute a transaction to transfer your refund ETH to your address.'
+          }
+        ],
+        'finalize': [
+          {
+            name: 'Finalize Milestone',
+            desc: 'Execute a transaction to finalize the last milestone.'
+          }
+        ],
+        'ms-vote': [
+          {
+            name: 'Proxy Voting',
+            desc: 'Execute a transaction to vote the regulator for the objective type.'
+          }
+        ],
+        'ms-write-available-votes': [
+          {
+            name: 'Write Available Votes',
+            desc: 'Execute a transaction to get your vote rights.'
+          }
+        ],
+        'ms-bid': [
+          {
+            name: 'Bid the Objective',
+            desc: 'Execute a transaction to bid the objective.'
+          }
+        ],
+        'ms-backout': [
+          {
+            name: 'Backout the Objective',
+            desc: 'Execute a transaction to backout the objective.'
+          }
+        ],
+        'ms-finalize-bid': [
+          {
+            name: 'Finalize the Bid',
+            desc: 'Execute a transaction to finalize the objective.'
+          }
+        ],
+        'ms-finalize-all-bids': [
+          {
+            name: 'Finalize All Bids',
+            desc: 'Execute a transaction to finalize all objectives.'
+          }
+        ],
+        'ms-withdraw-reward': [
+          {
+            name: 'Withdraw Reward',
+            desc: 'Execute a transaction to withdraw your rewards.'
+          }
         ]
       }
     }
@@ -134,7 +229,7 @@ class TransactionInfo extends Component {
 
     return (
       <div className='transaction-info'>
-        <Modal open closeIcon onClose={this.props.onClose}>
+        <Modal open closeIcon onClose={stopPropagation(this.props.onClose)}>
           <Modal.Header>Transaction Information</Modal.Header>
           <Modal.Content>
             <Modal.Description>
@@ -147,7 +242,7 @@ class TransactionInfo extends Component {
               </List>
               <p>Please note that each transaction will take 15 to 30 seconds. Please do not switch/close page before all transactions have finished. You must approve all transactions to have your request processed.</p>
               <p style={{color: 'red'}}> To view pending transactions, open Metamask and select "SENT" tab. </p>
-              <Button disabled={countdown !== 0} onClick={this.props.onContinue} color={'blue'}>
+              <Button disabled={countdown !== 0} onClick={stopPropagation(this.props.onContinue)} color={'blue'}>
                 Continue{countdown !== 0 && '(' + countdown + ')'}
               </Button>
             </Modal.Description>

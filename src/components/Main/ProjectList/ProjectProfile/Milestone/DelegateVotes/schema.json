@@ -1,0 +1,35 @@
+{
+  "definitions": {
+    "regulator": {
+      "type": "object",
+      "required": [
+        "name",
+        "votes"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Regulator Name"
+        },
+        "votes": {
+          "type": "number",
+          "title": "Delegated Votes",
+          "default": 1
+        }
+      }
+    }
+  },
+  "type": "object",
+  "required": [],
+  "properties": {
+    "regulators": {
+      "type": "array",
+      "title": "Delegate Votes",
+      "minItems": 0,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions/regulator"
+      }
+    }
+  }
+}

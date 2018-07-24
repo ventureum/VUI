@@ -9,26 +9,9 @@ var createErrorHandler = function (name) {
 }
 
 export const getAbi = async (contract) => {
-  const storageKey = `ventureum:abi:${contract}`
-  const cached = window.sessionStorage.getItem(storageKey)
-
-  try {
-    if (cached) {
-      return JSON.parse(cached)
-    }
-  } catch (error) {
-    console.error(error)
-  }
-
   const url = '/contracts'
   const data = await window.fetch(`${url}/${contract}.json`)
   const json = await data.json()
-
-  try {
-    window.sessionStorage.setItem(storageKey, JSON.stringify(json))
-  } catch (error) {
-    console.error(error)
-  }
 
   return json
 }
@@ -112,6 +95,60 @@ export const getMilestoneControllerView = async (account) => {
   MilestoneControllerView.setProvider(getProvider())
 
   return MilestoneControllerView.deployed().catch(createErrorHandler('MilestoneControllerView'))
+}
+
+export const getCarbonVoteXCore = async (account) => {
+  const pArtifact = await getAbi('CarbonVoteXCore')
+  const CarbonVoteXCore = contract(pArtifact)
+  CarbonVoteXCore.defaults({from: account})
+  CarbonVoteXCore.setProvider(getProvider())
+
+  return CarbonVoteXCore.deployed().catch(createErrorHandler('CarbonVoteXCore'))
+}
+
+export const getRepSys = async (account) => {
+  const pArtifact = await getAbi('ReputationSystem')
+  const ReputationSystem = contract(pArtifact)
+  ReputationSystem.defaults({from: account})
+  ReputationSystem.setProvider(getProvider())
+
+  return ReputationSystem.deployed().catch(createErrorHandler('ReputationSystem'))
+}
+
+export const getRegulatingRating = async (account) => {
+  const pArtifact = await getAbi('RegulatingRating')
+  const RegulatingRating = contract(pArtifact)
+  RegulatingRating.defaults({from: account})
+  RegulatingRating.setProvider(getProvider())
+
+  return RegulatingRating.deployed().catch(createErrorHandler('RegulatingRating'))
+}
+
+export const getRefundManager = async (account) => {
+  const pArtifact = await getAbi('RefundManager')
+  const RefundManager = contract(pArtifact)
+  RefundManager.defaults({from: account})
+  RefundManager.setProvider(getProvider())
+
+  return RefundManager.deployed().catch(createErrorHandler('RefundManager'))
+}
+
+export const getRewardManager = async (account) => {
+  const pArtifact = await getAbi('RewardManager')
+  const RewardManager = contract(pArtifact)
+  RewardManager.defaults({from: account})
+  RewardManager.setProvider(getProvider())
+
+  return RewardManager.deployed().catch(createErrorHandler('RewardManager'))
+}
+
+export const getERC20Token = async (account, address) => {
+  const pArtifact = await getAbi('ERC20')
+  const Token = contract(pArtifact)
+  Token.defaults({from: account})
+  Token.setProvider(getProvider())
+
+  return Token.at(address)
 }
 
 // sendTransaction
