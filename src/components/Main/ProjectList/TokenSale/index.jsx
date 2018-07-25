@@ -134,9 +134,9 @@ class TokenSale extends Component {
                 <div className='column sixteen wide'>
                   <Form>
                     <Form.Field>
-                      <label>Token Rate</label>
+                      <label>Token Rate (must be integer)</label>
                       <div className='add-text'>
-                        <span>1 ETH = </span><input value={this.state.tokenRate} onChange={(e) => { this.handleInputChange('tokenRate', e) }} placeholder='token number' />
+                        <span>1 ETH = </span><input type='number' step='1' value={this.state.tokenRate} onChange={(e) => { this.handleInputChange('tokenRate', e) }} placeholder='token number' />
                       </div>
                     </Form.Field>
                     <Form.Field>
@@ -174,7 +174,11 @@ class TokenSale extends Component {
 
   handleInputChange (name, e) {
     let obj = {}
-    obj[name] = e.target.value
+    if (name === 'tokenRate') {
+      obj[name] = parseInt(e.target.value)
+    } else {
+      obj[name] = e.target.value
+    }
     this.setState(obj)
   }
 
