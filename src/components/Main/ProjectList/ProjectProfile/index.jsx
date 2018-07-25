@@ -17,7 +17,7 @@ import milestone from '../../../../services/milestone'
 import refundManager from '../../../../services/refundManager'
 import repSys from '../../../../services/repSys'
 import store from '../../../../store'
-import { dayToSeconds, wrapWithTransactionInfo } from '../../../../utils/utils'
+import { dayToSeconds, wrapWithTransactionInfo, toStandardUnit } from '../../../../utils/utils'
 
 var basePath = 'https://15mw7pha3h.execute-api.us-west-1.amazonaws.com/alpha'
 
@@ -39,6 +39,7 @@ class ProjectProfile extends Component {
   }
 
   componentDidMount () {
+    this._isMounted = true
     this.getProjectData()
     this.getMilestoneData()
 
@@ -51,10 +52,14 @@ class ProjectProfile extends Component {
     })
   }
 
+  componentWillUnmount () {
+    this._isMounted = false
+  }
+
   async getMilestoneData () {
     try {
       let data = await milestone.getMilestoneData(this.state.project)
-      if (data) {
+      if (data && this._isMounted) {
         this.setState({
           milestoneData: data
         })
@@ -68,7 +73,7 @@ class ProjectProfile extends Component {
     try {
       let response = await fetch(basePath + '/project/' + this.state.project.projectName) // eslint-disable-line
       let body = await response.json()
-      if (response.status === 200) {
+      if (response.status === 200 && this._isMounted) {
         this.setState({
           projectData: JSON.parse(Base64.decode(body.data))
         })
@@ -227,6 +232,8 @@ class ProjectProfile extends Component {
           <Grid.Column width={9}>
             <Segment>
               <strong>Application Expiry: </strong>{moment.unix(project.applicationExpiry).utc().format('YYYY-MM-DD HH:mm:ss')}
+              <br />
+              <strong>Your Project Token Balance: </strong>{toStandardUnit(project.balance).toNumber()}
             </Segment>
             {project.isOwner && project.controllerStageStr === 'accepted' &&
               <AddMilestone project={project} />
