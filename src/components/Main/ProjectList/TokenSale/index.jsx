@@ -4,10 +4,12 @@ import CSSModules from 'react-css-modules'
 import web3 from 'web3'
 import commafy from 'commafy'
 import { getERC20Token } from '../../../../config'
-import { Modal, Form, Button, Segment } from 'semantic-ui-react'
+import { Modal, Form, Button, Segment, Table, List } from 'semantic-ui-react'
 import { wrapWithTransactionInfo, toStandardUnit } from '../../../../utils/utils'
 import InProgress from '../../InProgress'
 import tokenSale from '../../../../services/tokenSale'
+import milestone from '../../../../services/milestone'
+import store from '../../../../store'
 
 import styles from './styles.css'
 
@@ -22,7 +24,8 @@ class TokenSale extends Component {
       totalToken: '',
       tokenBalance: '',
       tokenSaleModalOpen: false,
-      buyTokenAmount: ''
+      buyTokenAmount: '',
+      milestoneData: null
     }
 
     this.startTokenSale = this.startTokenSale.bind(this)
@@ -151,12 +154,51 @@ class TokenSale extends Component {
   }
 
   buyTokenDOM (project) {
+    let milestoneRows = []
+    let milestoneData = this.state.milestoneData
+    if (milestoneData) {
+      for (let i = 0; i < milestoneData.length; i++) {
+        let objList = []
+        for (let j = 0; j < milestoneData[i].objsStrs.length; j++) {
+          objList.push(
+            <List.Item>
+              <strong>name: </strong>{milestoneData[i].objsStrs[j]},&nbsp;
+              <strong>type: </strong>{milestoneData[i].objTypesStrs[j]},&nbsp;
+              <strong>rewards: </strong>{milestoneData[i].objRewards[j].toNumber()}
+            </List.Item>)
+        }
+        milestoneRows.push(
+          <Table.Row key={milestoneData[i].id}>
+            <Table.Cell>{i + 1}</Table.Cell>
+            <Table.Cell>{milestoneData[i].days}</Table.Cell>
+            <Table.Cell>
+              <List>{objList}</List>
+            </Table.Cell>
+          </Table.Row>)
+      }
+    }
+
     return (
-      <Modal closeIcon key='modal' onClose={this.handleClose} open={this.state.tokenSaleModalOpen} size='mini' trigger={<a onClick={this.handleOpen} className='ui mini button blue' href='#!'>buy token</a>}>
+      <Modal closeIcon key='modal' onClose={this.handleClose} open={this.state.tokenSaleModalOpen} size='small' trigger={<a onClick={this.handleOpen} className='ui mini button blue' href='#!'>buy token</a>}>
         <Modal.Header>{project.projectName}</Modal.Header>
         <Modal.Content>
           <div className='ui grid stackable padded'>
             <div className='column sixteen wide'>
+              {milestoneRows.length > 0 &&
+                <Table celled>
+                  <Table.Header>
+                    <Table.Row>
+                      <Table.HeaderCell>Milestone ID</Table.HeaderCell>
+                      <Table.HeaderCell>Days</Table.HeaderCell>
+                      <Table.HeaderCell>Objectives</Table.HeaderCell>
+                    </Table.Row>
+                  </Table.Header>
+
+                  <Table.Body>
+                    {milestoneRows}
+                  </Table.Body>
+                </Table>
+              }
               <Form>
                 <Form.Field>
                   <label>Total Token Amount: {toStandardUnit(project.tokenInfo.numTokenLeft).toNumber()}</label>
@@ -250,10 +292,32 @@ class TokenSale extends Component {
 
   componentDidMount () {
     this._isMounted = true
+    this.getMilestoneData()
+
+    store.subscribe(x => {
+      const state = store.getState()
+      const eventList = ['REGISTRY_EVENT', 'REGISTRY_PROJECT_UPDATE_STATUS', 'MILESTONE_EVENT', 'REP_SYS_EVENT', 'REGULATING_RATING_EVENT', 'REFUND_MANAGER_EVENT', 'REWARD_MANAGER_EVENT']
+      if (eventList.indexOf(state.type) >= 0) {
+        this.getMilestoneData()
+      }
+    })
   }
 
   componentWillUnmount () {
     this._isMounted = false
+  }
+
+  async getMilestoneData () {
+    try {
+      let data = await milestone.getMilestoneData(this.props.project)
+      if (data && this._isMounted) {
+        this.setState({
+          milestoneData: data
+        })
+      }
+    } catch (e) {
+      toastr.error(e)
+    }
   }
 
   handleInputChange (name, e) {
