@@ -199,7 +199,7 @@ class MilestoneService {
     for (let i = 0; i < data.objs.length; i++) {
       objs.push(data.objs[i].name)
       objTypes.push(data.objs[i].type)
-      objRewards.push(data.objs[i].reward)
+      objRewards.push(toBasicUnit(big(data.objs[i].reward)).toString(10))
     }
     await this.ms.addMilestone(web3.utils.keccak256(name), dayToSeconds(data.days), objs, objTypes, objRewards)
   }

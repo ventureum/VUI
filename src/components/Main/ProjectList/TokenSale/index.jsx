@@ -131,10 +131,14 @@ class TokenSale extends Component {
       return false
     }
     if (this.state.totalToken > this.state.tokenBalance) {
-      toastr.error('Total token amount exceeds your token balance.')
+      this.state.tokenSaleModalOpen && toastr.error('Total token amount exceeds your token balance.')
       return false
     }
     if (!this.state.tokenRate) {
+      return false
+    }
+    if ((this.state.totalToken / this.state.tokenRate) < this.getRewards()) {
+      this.state.tokenSaleModalOpen && toastr.error('Total token ETH amount is less than your total rewards.')
       return false
     }
 
@@ -145,12 +149,36 @@ class TokenSale extends Component {
     if (!this.state.buyTokenAmount) {
       return false
     }
-    if (this.state.buyTokenAmount > toStandardUnit(project.tokenInfo.numTokenLeft).toNumber()) {
-      toastr.error('Token amount exceeds total token amount.')
+    if ((this.state.buyTokenAmount / project.tokenInfo.rate) > toStandardUnit(project.tokenInfo.numTokenLeft).toNumber()) {
+      this.state.tokenSaleModalOpen && toastr.error('Token amount exceeds total token amount.')
       return false
     }
 
     return true
+  }
+
+  getRewards () {
+    if (this.state.milestoneData) {
+      let total = 0
+      let ms = this.state.milestoneData
+      for (let i = 0; i < ms.length; i++) {
+        for (let j = 0; j < ms[i].objsStrs.length; j++) {
+          total += toStandardUnit(ms[i].objRewards[j]).toNumber()
+        }
+      }
+      return total
+    }
+  }
+
+  canStop (project) {
+    let rewards = this.getRewards()
+    let sold = toStandardUnit(project.tokenInfo.totalTokenSold.div(project.tokenInfo.rate)).toNumber()
+    let buyAmount = this.state.buyTokenAmount / (project.tokenInfo.rate.toNumber())
+    if (sold + buyAmount < rewards) {
+      return false
+    } else {
+      return true
+    }
   }
 
   buyTokenDOM (project) {
@@ -161,10 +189,10 @@ class TokenSale extends Component {
         let objList = []
         for (let j = 0; j < milestoneData[i].objsStrs.length; j++) {
           objList.push(
-            <List.Item>
+            <List.Item key={j}>
               <strong>name: </strong>{milestoneData[i].objsStrs[j]},&nbsp;
               <strong>type: </strong>{milestoneData[i].objTypesStrs[j]},&nbsp;
-              <strong>rewards: </strong>{milestoneData[i].objRewards[j].toNumber()}
+              <strong>rewards: </strong>{toStandardUnit(milestoneData[i].objRewards[j]).toNumber()}
             </List.Item>)
         }
         milestoneRows.push(
@@ -200,6 +228,11 @@ class TokenSale extends Component {
                 </Table>
               }
               <Form>
+                {this.state.milestoneData &&
+                  <Form.Field>
+                    <label>Total Milestone Rewards: {this.getRewards()}</label>
+                  </Form.Field>
+                }
                 <Form.Field>
                   <label>Total Token Amount: {toStandardUnit(project.tokenInfo.numTokenLeft).toNumber()}</label>
                 </Form.Field>
@@ -245,6 +278,11 @@ class TokenSale extends Component {
                     You can withdraw reset tokens after stopping token sale.
                   </Segment>
                   <Form>
+                    {this.state.milestoneData &&
+                      <Form.Field>
+                        <label>Total Milestone Rewards: {this.getRewards()}</label>
+                      </Form.Field>
+                    }
                     {this.state.tokenBalance && this.validAddress(this.state.tokenAddress) &&
                       <Form.Field>
                         <label>Your Token Balance: {this.state.tokenBalance}</label>
@@ -272,10 +310,14 @@ class TokenSale extends Component {
             </Modal.Content>
           </Modal>)
       } else if (stage === 'token-sale' && !project.tokenInfo.finalized) {
-        return [
-          <Button key='btn' loading={project.inProgress} disabled={project.inProgress} onClick={wrapWithTransactionInfo('stop-token-sale', this.stopTokenSale, project.projectName)} size='mini' color='red'>stop token sale</Button>,
-          this.buyTokenDOM(project)
-        ]
+        if (this.canStop(project)) {
+          return [
+            <Button key='btn' loading={project.inProgress} disabled={project.inProgress} onClick={wrapWithTransactionInfo('stop-token-sale', this.stopTokenSale, project.projectName)} size='mini' color='red'>stop token sale</Button>,
+            this.buyTokenDOM(project)
+          ]
+        } else {
+          return (this.buyTokenDOM(project))
+        }
       } else if ((stage === 'token-sale' && project.tokenInfo.finalized) || (stage === 'milestone') || (stage === 'complete')) {
         if (project.balance.toNumber() !== 0) {
           return (
