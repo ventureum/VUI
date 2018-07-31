@@ -3,7 +3,8 @@ import toastr from 'toastr'
 import CSSModules from 'react-css-modules'
 import web3 from 'web3'
 import commafy from 'commafy'
-import { Modal, Form, Button } from 'semantic-ui-react'
+import { getERC20Token } from '../../../../config'
+import { Modal, Form, Button, Segment } from 'semantic-ui-react'
 import { wrapWithTransactionInfo, toStandardUnit } from '../../../../utils/utils'
 import InProgress from '../../InProgress'
 import tokenSale from '../../../../services/tokenSale'
@@ -15,8 +16,11 @@ class TokenSale extends Component {
     super()
 
     this.state = {
+      token: null,
       tokenRate: '',
       tokenAddress: '',
+      totalToken: '',
+      tokenBalance: '',
       tokenSaleModalOpen: false,
       buyTokenAmount: ''
     }
@@ -26,6 +30,7 @@ class TokenSale extends Component {
     this.stopTokenSale = this.stopTokenSale.bind(this)
     this.handleClose = this.handleClose.bind(this)
     this.handleOpen = this.handleOpen.bind(this)
+    this.canStartTokenSale = this.canStartTokenSale.bind(this)
   }
 
   handleClose () {
@@ -49,7 +54,7 @@ class TokenSale extends Component {
       inProgress: true
     })
     try {
-      await tokenSale.startTokenSale(project.projectName, this.state.tokenRate, this.state.tokenAddress)
+      await tokenSale.startTokenSale(project.projectName, this.state.tokenRate, this.state.tokenAddress, this.token, this.state.totalToken)
       toastr.success('Token sale started successfully!')
       this.handleClose()
     } catch (error) {
@@ -89,6 +94,62 @@ class TokenSale extends Component {
     }
   }
 
+  async withdrawRestToken (project) {
+    try {
+      await tokenSale.withdrawToken(project.projectName)
+      toastr.success('Token withdrawed successfully!')
+    } catch (error) {
+      toastr.error(error.message)
+    }
+  }
+
+  async getBalance () {
+    let balance
+    if (!this.state.tokenBalance) {
+      try {
+        this.token = await getERC20Token(tokenSale.account, this.state.tokenAddress)
+        balance = await this.token.balanceOf.call(tokenSale.account)
+        balance = toStandardUnit(balance).toNumber()
+        this.setState({
+          tokenBalance: balance
+        })
+      } catch (e) {
+        toastr.error("Can't get your project token balance.")
+      }
+    }
+  }
+
+  canStartTokenSale () {
+    if (!this.validAddress(this.state.tokenAddress)) {
+      return false
+    }
+    this.getBalance()
+    if (!this.state.totalToken || !this.state.tokenBalance) {
+      return false
+    }
+    if (this.state.totalToken > this.state.tokenBalance) {
+      toastr.error('Total token amount exceeds your token balance.')
+      return false
+    }
+    if (!this.state.tokenRate) {
+      return false
+    }
+
+    return true
+  }
+
+  canBuyToken (project) {
+    if (!this.state.buyTokenAmount) {
+      return false
+    }
+    if (this.state.buyTokenAmount > toStandardUnit(project.tokenInfo.numTokenLeft).toNumber()) {
+      toastr.error('Token amount exceeds total token amount.')
+      return false
+    }
+
+    return true
+  }
+
   buyTokenDOM (project) {
     return (
       <Modal closeIcon key='modal' onClose={this.handleClose} open={this.state.tokenSaleModalOpen} size='mini' trigger={<a onClick={this.handleOpen} className='ui mini button blue' href='#!'>buy token</a>}>
@@ -98,13 +159,16 @@ class TokenSale extends Component {
             <div className='column sixteen wide'>
               <Form>
                 <Form.Field>
+                  <label>Total Token Amount: {toStandardUnit(project.tokenInfo.numTokenLeft).toNumber()}</label>
+                </Form.Field>
+                <Form.Field>
                   <label>Rate: 1 ETH = {project.tokenInfo.rate.toNumber()} token</label>
                 </Form.Field>
                 <Form.Field>
                   <label>Total Token Sold: {commafy(toStandardUnit(project.tokenInfo.totalTokenSold).toNumber().toFixed(4))}</label>
                 </Form.Field>
                 <Form.Field>
-                  <label>Total ETH: {commafy(toStandardUnit(project.tokenInfo.totalEth).toNumber().toFixed(4))}</label>
+                  <label>Total ETH Sold: {commafy(toStandardUnit(project.tokenInfo.totalEth).toNumber().toFixed(4))}</label>
                 </Form.Field>
                 <Form.Field>
                   <label>Input Token Amount to Buy</label>
@@ -113,7 +177,7 @@ class TokenSale extends Component {
                 <Form.Field>
                   <label>Equal to {this.state.buyTokenAmount ? commafy((this.state.buyTokenAmount / project.tokenInfo.rate).toFixed(4)) : 0} ETH</label>
                 </Form.Field>
-                <Button primary disabled={!this.state.buyTokenAmount} onClick={wrapWithTransactionInfo('buy-token', this.buyToken, project)} >Buy Token</Button>
+                <Button primary disabled={!this.canBuyToken(project)} onClick={wrapWithTransactionInfo('buy-token', this.buyToken, project)} >Buy Token</Button>
               </Form>
             </div>
             {this.state.inProgress ? <InProgress /> : null}
@@ -132,7 +196,22 @@ class TokenSale extends Component {
             <Modal.Content>
               <div className='ui grid stackable padded'>
                 <div className='column sixteen wide'>
+                  <Segment>
+                    <strong>Note: </strong> Please make sure your total token amount is large enough, it's not allowed to change after starting token sale.
+                    <br />
+                    <br />
+                    You can withdraw reset tokens after stopping token sale.
+                  </Segment>
                   <Form>
+                    {this.state.tokenBalance && this.validAddress(this.state.tokenAddress) &&
+                      <Form.Field>
+                        <label>Your Token Balance: {this.state.tokenBalance}</label>
+                      </Form.Field>
+                    }
+                    <Form.Field>
+                      <label>Total Token</label>
+                      <input value={this.state.totalToken} onChange={(e) => { this.handleInputChange('totalToken', e) }} placeholder='total token amount' />
+                    </Form.Field>
                     <Form.Field>
                       <label>Token Rate (must be integer)</label>
                       <div className='add-text'>
@@ -143,7 +222,7 @@ class TokenSale extends Component {
                       <label>Token Address</label>
                       <input value={this.state.tokenAddress} onChange={(e) => { this.handleInputChange('tokenAddress', e) }} placeholder='0x...' />
                     </Form.Field>
-                    <Button primary disabled={!(this.state.tokenRate && this.validAddress(this.state.tokenAddress))} onClick={wrapWithTransactionInfo('start-token-sale', this.startTokenSale, project)} >Start Token Sale</Button>
+                    <Button primary disabled={!this.canStartTokenSale()} onClick={wrapWithTransactionInfo('start-token-sale', this.startTokenSale, project)} >Start Token Sale</Button>
                   </Form>
                 </div>
                 {this.state.inProgress ? <InProgress /> : null}
@@ -155,6 +234,11 @@ class TokenSale extends Component {
           <Button key='btn' loading={project.inProgress} disabled={project.inProgress} onClick={wrapWithTransactionInfo('stop-token-sale', this.stopTokenSale, project.projectName)} size='mini' color='red'>stop token sale</Button>,
           this.buyTokenDOM(project)
         ]
+      } else if ((stage === 'token-sale' && project.tokenInfo.finalized) || (stage === 'milestone') || (stage === 'complete')) {
+        if (project.balance.toNumber() !== 0) {
+          return (
+            <Button primary onClick={wrapWithTransactionInfo('withdraw-rest-token', this.withdrawRestToken, project)} >withdraw rest token</Button>)
+        }
       }
     } else if (stage === 'token-sale' && !project.tokenInfo.finalized) {
       return (
@@ -178,6 +262,9 @@ class TokenSale extends Component {
       obj[name] = parseInt(e.target.value)
     } else {
       obj[name] = e.target.value
+    }
+    if (name === 'tokenAddress') {
+      obj.tokenBalance = ''
     }
     this.setState(obj)
   }

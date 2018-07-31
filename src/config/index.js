@@ -8,6 +8,18 @@ var createErrorHandler = function (name) {
   }
 }
 
+// refer to https://github.com/trufflesuite/truffle-contract/issues/88
+// can't catch error from `.at()`, use `then()` to check if we get the instance
+var createEmptyChecker = function (name) {
+  return function (inst) {
+    if (!inst) {
+      throw new Error('contract ' + name + ' cannot be found, make sure you are using the correct network.')
+    } else {
+      return Promise.resolve(inst)
+    }
+  }
+}
+
 export const getAbi = async (contract) => {
   const url = '/contracts'
   const data = await window.fetch(`${url}/${contract}.json`)
@@ -148,7 +160,7 @@ export const getERC20Token = async (account, address) => {
   Token.defaults({from: account})
   Token.setProvider(getProvider())
 
-  return Token.at(address)
+  return Token.at(address).then(createEmptyChecker('Token'))
 }
 
 // sendTransaction

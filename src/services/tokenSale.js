@@ -12,6 +12,7 @@ class TokenSaleService {
   constructor () {
     this.address = null
     this.tokenSale = null
+    this.account = null
   }
 
   async init () {
@@ -21,6 +22,7 @@ class TokenSaleService {
      */
     this.eth = new Eth(getProvider())
     const accounts = await this.eth.accounts()
+    this.account = accounts[0]
     this.tokenSale = await getTokenSale(accounts[0])
     this.address = this.tokenSale.address
     this.setUpEvents()
@@ -44,8 +46,11 @@ class TokenSaleService {
       })
   }
 
-  async startTokenSale (name, rate, addr) {
-    await this.tokenSale.startTokenSale(web3.utils.keccak256(name), rate, addr)
+  async startTokenSale (name, rate, addr, token, amount) {
+    console.log(name, rate, addr, amount, token)
+    let amountWei = toBasicUnit(big(amount)).toString(10)
+    await token.approve(this.address, amountWei)
+    await this.tokenSale.startTokenSale(web3.utils.keccak256(name), rate, addr, amountWei)
   }
 
   async stopTokenSale (name) {
@@ -56,13 +61,18 @@ class TokenSaleService {
     await this.tokenSale.buyTokens(web3.utils.keccak256(name), {value: toBasicUnit(big(amount)).div(rate).toString(10).replace(/\..*/, '')})
   }
 
+  async withdrawToken (name) {
+    await this.tokenSale.withdrawToken(web3.utils.keccak256(name))
+  }
+
   async getTokenInfo (name) {
     let info = await this.tokenSale.tokenInfo.call(web3.utils.keccak256(name))
     return {
       rate: info[0],
       totalTokenSold: info[1],
       totalEth: info[2],
-      finalized: info[3]
+      finalized: info[3],
+      numTokenLeft: info[4]
     }
   }
 }
