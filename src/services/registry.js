@@ -249,7 +249,8 @@ class RegistryService {
       if (projectObj.action === 'view') {
         projectObj.controllerStage = await projectController.getProjectState(projectObj)
         projectObj.controllerStageStr = projectStateMap[projectObj.controllerStage.toNumber()]
-        if (projectObj.controllerStageStr === 'token-sale') {
+        projectObj.etherCanLock = await projectController.getProjectEther(projectObj)
+        if (projectObj.controllerStage.toNumber() >= 3) {
           projectObj.tokenInfo = await tokenSale.getTokenInfo(projectObj.projectName)
         }
         projectObj.inProgress = false

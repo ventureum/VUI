@@ -45,6 +45,11 @@ class ProjectControllerService {
     return stage
   }
 
+  async getProjectEther (project) {
+    let stage = await this.projectController.getProjectInfo.call(web3.utils.keccak256(project.projectName))
+    return stage[2]
+  }
+
   async getTokenAddress (project) {
     let address = await this.projectController.getTokenAddress.call(web3.utils.keccak256(project.projectName))
     return address

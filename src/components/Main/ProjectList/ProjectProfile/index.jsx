@@ -180,7 +180,7 @@ class ProjectProfile extends Component {
             <Table.Cell>{milestoneData[i].stateStrReadable}</Table.Cell>
             <Table.Cell>
               {this.canCall('activate', milestoneData[i]) &&
-                <ActivateMilestone project={project} milestone={milestoneData[i]} />
+                <ActivateMilestone project={project} milestone={milestoneData[i]} lastone={i === milestoneData.length - 1} />
               }
               {this.canCall('startPoll', milestoneData[i]) &&
                 <StartVotingPoll project={project} milestone={milestoneData[i]} />
@@ -234,6 +234,10 @@ class ProjectProfile extends Component {
               <strong>Application Expiry: </strong>{moment.unix(project.applicationExpiry).utc().format('YYYY-MM-DD HH:mm:ss')}
               <br />
               <strong>Your Project Token Balance: </strong>{toStandardUnit(project.balance).toNumber()}
+              <br />
+              {project.etherCanLock &&
+                <span><strong>Project ETH Balance: </strong>{toStandardUnit(project.etherCanLock).toNumber()}</span>
+              }
             </Segment>
             {project.isOwner && project.controllerStageStr === 'accepted' &&
               <AddMilestone project={project} />

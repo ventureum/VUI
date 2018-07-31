@@ -2,7 +2,7 @@ import Eth from 'ethjs'
 import moment from 'moment'
 import { getProvider } from './provider'
 import { getMilestoneController, getMilestoneControllerView, getCarbonVoteXCore } from '../config'
-import { dayToSeconds, toBasicUnit } from '../utils/utils'
+import { dayToSeconds, toBasicUnit, equalWithPrecision } from '../utils/utils'
 import store from '../store'
 import web3 from 'web3'
 import repSys from './repSys'
@@ -204,11 +204,16 @@ class MilestoneService {
     await this.ms.addMilestone(web3.utils.keccak256(name), dayToSeconds(data.days), objs, objTypes, objRewards)
   }
 
-  async activate (name, id, wei, minTime, maxTime) {
+  async activate (name, id, wei, minTime, maxTime, etherCanLock) {
     let now = moment().utc().unix()
     let minStartTime = now + minTime
     let maxStartTime = now + maxTime
-    await this.ms.activate(web3.utils.keccak256(name), id, toBasicUnit(big(wei)).toString(10), minStartTime, maxStartTime)
+    if (equalWithPrecision(toBasicUnit(big(wei)), etherCanLock)) {
+      wei = etherCanLock
+    } else {
+      wei = toBasicUnit(big(wei))
+    }
+    await this.ms.activate(web3.utils.keccak256(name), id, wei.toString(10), minStartTime, maxStartTime)
   }
 
   async startRatingStage (name, id) {

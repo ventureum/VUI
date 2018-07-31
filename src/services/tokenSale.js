@@ -47,7 +47,6 @@ class TokenSaleService {
   }
 
   async startTokenSale (name, rate, addr, token, amount) {
-    console.log(name, rate, addr, amount, token)
     let amountWei = toBasicUnit(big(amount)).toString(10)
     await token.approve(this.address, amountWei)
     await this.tokenSale.startTokenSale(web3.utils.keccak256(name), rate, addr, amountWei)

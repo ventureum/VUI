@@ -319,7 +319,7 @@ class TokenSale extends Component {
           return (this.buyTokenDOM(project))
         }
       } else if ((stage === 'token-sale' && project.tokenInfo.finalized) || (stage === 'milestone') || (stage === 'complete')) {
-        if (project.balance.toNumber() !== 0) {
+        if (project.tokenInfo.numTokenLeft.toNumber() !== 0) {
           return (
             <Button primary onClick={wrapWithTransactionInfo('withdraw-rest-token', this.withdrawRestToken, project)} >withdraw rest token</Button>)
         }
