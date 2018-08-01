@@ -47,7 +47,6 @@ class AddMilestone extends Component {
   }
 
   onChange ({formData}) {
-    console.log(formData)
     this.setState({
       formData
     })

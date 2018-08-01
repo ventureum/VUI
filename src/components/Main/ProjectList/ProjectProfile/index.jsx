@@ -111,7 +111,7 @@ class ProjectProfile extends Component {
     } else if (name === 'startRefund') {
       return ms.stateStr !== 'rp' && ms.endTime !== 0 && now >= ms.endTime - dayToSeconds(7) && now < ms.endTime
     } else if (name === 'refund') {
-      return ms.stateStr === 'rp' && project.balance.toNumber() > 0 && this.canRefund(ms)
+      return ms.stateStr === 'rp' && project.balance.toNumber() > 0 && ms.restWeiLock.toNumber() > 0 && this.canRefund(ms)
     } else if (name === 'withdrawRefund') {
       return ms.refundInfo.canWithdraw
     } else if (name === 'finalize') {

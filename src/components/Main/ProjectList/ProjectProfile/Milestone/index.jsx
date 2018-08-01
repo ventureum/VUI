@@ -211,11 +211,6 @@ class MilestoneModal extends Component {
                 <strong>Refund Available Time: </strong>{moment.unix(milestone.refundInfo.availableTime).utc().format('YYYY-MM-DD HH:mm:ss')}
               </List.Item>
             }
-            {milestone.refundInfo.availableTime > 0 &&
-              <List.Item>
-                <strong>Refund Available Time: </strong>{moment.unix(milestone.refundInfo.availableTime).utc().format('YYYY-MM-DD HH:mm:ss')}
-              </List.Item>
-            }
             <List.Item>
               <strong>Objectives: </strong>
               <Table celled>

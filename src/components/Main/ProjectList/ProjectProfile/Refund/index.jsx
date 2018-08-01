@@ -44,7 +44,13 @@ class Refund extends Component {
       return false
     } else if (this.state.amount > toStandardUnit(this.props.project.balance).toNumber()) {
       this.setState({
-        error: 'Refund amount exceed ' + toStandardUnit(this.props.project.balance).toNumber() + '.',
+        error: 'Refund amount exceeds your balance.',
+        errorInput: 'amount'
+      })
+      return false
+    } else if (this.state.amount > toStandardUnit(this.props.milestone.restWeiLock.times(this.props.project.tokenInfo.rate)).toNumber()) {
+      this.setState({
+        error: 'Refund amount exceeds rest ETH locked.',
         errorInput: 'amount'
       })
       return false
@@ -53,15 +59,17 @@ class Refund extends Component {
     return true
   }
 
-  async refund () {
+  refund () {
     if (this.checkInput()) {
-      try {
-        await refundManager.refund(this.props.project, this.props.milestone.id, this.state.amount)
-        toastr.success('Refund successfully!')
-        this.close()
-      } catch (e) {
-        toastr.error(e)
-      }
+      wrapWithTransactionInfo('refund', async () => {
+        try {
+          await refundManager.refund(this.props.project, this.props.milestone.id, this.state.amount)
+          toastr.success('Refund successfully!')
+          this.close()
+        } catch (e) {
+          toastr.error(e)
+        }
+      })
     }
   }
 
@@ -74,7 +82,7 @@ class Refund extends Component {
     if (e.target.value < 0) {
       obj[name] = 0
     } else {
-      obj[name] = Math.round(e.target.value)
+      obj[name] = e.target.value
     }
     this.setState(obj)
   }
@@ -113,6 +121,12 @@ class Refund extends Component {
                 <List.Item>
                   <strong>Total Amount: </strong>{toStandardUnit(this.props.project.balance).toNumber()}
                 </List.Item>
+                <List.Item>
+                  <strong>Locked ETH: </strong>{toStandardUnit(this.props.milestone.restWeiLock).toNumber()}
+                </List.Item>
+                <List.Item>
+                  <strong>Locked ETH equals to project token: </strong>{toStandardUnit(this.props.milestone.restWeiLock.times(this.props.project.tokenInfo.rate)).toNumber()}
+                </List.Item>
               </List>
               {error &&
                 <Message error header='Error' content={error} />
@@ -122,7 +136,7 @@ class Refund extends Component {
                   <label>Input the amount of token you want to refund</label>
                   <input type='number' value={amount} onChange={(e) => { this.handleInputChange('amount', e) }} placeholder='100' />
                 </Form.Field>
-                <Button primary onClick={stopPropagation(wrapWithTransactionInfo('refund', this.refund))} >Refund</Button>
+                <Button primary onClick={stopPropagation(this.refund)} >Refund</Button>
                 <Button onClick={stopPropagation(this.close)}>Cancel</Button>
               </Form>
             </div>

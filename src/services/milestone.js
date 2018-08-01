@@ -9,6 +9,7 @@ import repSys from './repSys'
 import token from './token'
 import regulatingRating from './regulatingRating'
 import refundManager from './refundManager'
+import paymentManager from './paymentManager'
 import { BigNumber } from 'bignumber.js'
 
 const big = (number) => new BigNumber(number)
@@ -152,6 +153,10 @@ class MilestoneService {
       if (msState[ms[1].toNumber()] !== 'inactive') {
         pollInfo = await repSys.getPollRequest(pollId)
       }
+      let restWeiLock = null
+      if (msState[ms[1].toNumber()] !== 'inactive') {
+        restWeiLock = await paymentManager.getRestWeiLock(projectHash, i)
+      }
       let rewardInfo
       if (objFinalized.includes(true)) {
         rewardInfo = await this.getRegulationRewardsForRegulator(projectHash, i, objInfo[0], objFinalized)
@@ -180,6 +185,7 @@ class MilestoneService {
         pollExist,
         pollExpired,
         pollInfo,
+        restWeiLock,
         weiLocked: ms[4],
         rewardInfo,
         refundInfo,

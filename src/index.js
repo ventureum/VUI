@@ -18,6 +18,7 @@ import repSys from './services/repSys'
 import regulatingRating from './services/regulatingRating'
 import refundManager from './services/refundManager'
 import rewardManager from './services/rewardManager'
+import paymentManager from './services/paymentManager'
 import toastr from 'toastr'
 
 async function init () {
@@ -52,7 +53,8 @@ async function init () {
       repSys.init(),
       regulatingRating.init(),
       refundManager.init(),
-      rewardManager.init()
+      rewardManager.init(),
+      paymentManager.init()
     ])
     ReactDOM.render(<App />, document.getElementById('root'))
     await initAccountPoll()

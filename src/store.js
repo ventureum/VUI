@@ -55,6 +55,8 @@ function reducer (state = -1, action) {
     case 'REFUND_MANAGER_EVENT':
     case 'REWARD_MANAGER_CONTRACT_INIT':
     case 'REWARD_MANAGER_EVENT':
+    case 'PAYMENT_MANAGER_CONTRACT_INIT':
+    case 'PAYMENT_MANAGER_EVENT':
     case 'SHOW_TRANSACTION_INFO':
       return action
     default:

@@ -154,6 +154,15 @@ export const getRewardManager = async (account) => {
   return RewardManager.deployed().catch(createErrorHandler('RewardManager'))
 }
 
+export const getPaymentManager = async (account) => {
+  const pArtifact = await getAbi('PaymentManager')
+  const PaymentManager = contract(pArtifact)
+  PaymentManager.defaults({from: account})
+  PaymentManager.setProvider(getProvider())
+
+  return PaymentManager.deployed().catch(createErrorHandler('PaymentManager'))
+}
+
 export const getERC20Token = async (account, address) => {
   const pArtifact = await getAbi('ERC20')
   const Token = contract(pArtifact)
