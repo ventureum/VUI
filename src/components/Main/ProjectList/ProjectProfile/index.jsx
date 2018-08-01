@@ -15,6 +15,7 @@ import Refund from './Refund'
 import StartVotingPoll from './StartVotingPoll'
 import milestone from '../../../../services/milestone'
 import refundManager from '../../../../services/refundManager'
+import paymentManager from '../../../../services/paymentManager'
 import repSys from '../../../../services/repSys'
 import store from '../../../../store'
 import { dayToSeconds, wrapWithTransactionInfo, toStandardUnit } from '../../../../utils/utils'
@@ -36,6 +37,7 @@ class ProjectProfile extends Component {
     this.startRefund = this.startRefund.bind(this)
     this.withdrawRefund = this.withdrawRefund.bind(this)
     this.finalize = this.finalize.bind(this)
+    this.withdrawWeiLocked = this.withdrawWeiLocked.bind(this)
   }
 
   componentDidMount () {
@@ -45,7 +47,7 @@ class ProjectProfile extends Component {
 
     store.subscribe(x => {
       const state = store.getState()
-      const eventList = ['REGISTRY_EVENT', 'REGISTRY_PROJECT_UPDATE_STATUS', 'MILESTONE_EVENT', 'REP_SYS_EVENT', 'REGULATING_RATING_EVENT', 'REFUND_MANAGER_EVENT', 'REWARD_MANAGER_EVENT']
+      const eventList = ['REGISTRY_EVENT', 'REGISTRY_PROJECT_UPDATE_STATUS', 'MILESTONE_EVENT', 'REP_SYS_EVENT', 'REGULATING_RATING_EVENT', 'REFUND_MANAGER_EVENT', 'REWARD_MANAGER_EVENT', 'PAYMENT_MANAGER_EVENT']
       if (eventList.indexOf(state.type) >= 0) {
         this.getMilestoneData()
       }
@@ -115,7 +117,18 @@ class ProjectProfile extends Component {
     } else if (name === 'withdrawRefund') {
       return ms.refundInfo.canWithdraw
     } else if (name === 'finalize') {
-      return ms.id === this.state.milestoneData.length && ms.endTime !== 0 && now >= ms.endTime
+      return project.isOwner && ms.id === this.state.milestoneData.length && ms.endTime !== 0 && now >= ms.endTime
+    } else if (name === 'withdrawWeiLocked') {
+      return project.isOwner && ms.stateStr === 'completion' && ms.restWeiLock.toNumber() > 0
+    }
+  }
+
+  async withdrawWeiLocked (ms) {
+    try {
+      await paymentManager.withdraw(this.state.project.projectName, ms.id)
+      toastr.success('ETH withdrawed successfully!')
+    } catch (e) {
+      toastr.error(e)
     }
   }
 
@@ -178,6 +191,7 @@ class ProjectProfile extends Component {
           <Table.Row key={milestoneData[i].id}>
             <Table.Cell><Milestone milestone={milestoneData[i]} project={project} /></Table.Cell>
             <Table.Cell>{milestoneData[i].stateStrReadable}</Table.Cell>
+            <Table.Cell>{toStandardUnit(milestoneData[i].restWeiLock).toNumber()}</Table.Cell>
             <Table.Cell>
               {this.canCall('activate', milestoneData[i]) &&
                 <ActivateMilestone project={project} milestone={milestoneData[i]} lastone={i === milestoneData.length - 1} />
@@ -206,6 +220,11 @@ class ProjectProfile extends Component {
               {this.canCall('finalize', milestoneData[i]) &&
                 <Button onClick={wrapWithTransactionInfo('finalize', this.finalize, milestoneData[i])} color={'red'}>
                   finalize
+                </Button>
+              }
+              {this.canCall('withdrawWeiLocked', milestoneData[i]) &&
+                <Button onClick={wrapWithTransactionInfo('withdraw-weilocked', this.withdrawWeiLocked, milestoneData[i])} color={'blue'}>
+                  withdraw ETH locked
                 </Button>
               }
             </Table.Cell>
@@ -248,6 +267,7 @@ class ProjectProfile extends Component {
                   <Table.Row>
                     <Table.HeaderCell>Milestone</Table.HeaderCell>
                     <Table.HeaderCell>State</Table.HeaderCell>
+                    <Table.HeaderCell>ETH Locked</Table.HeaderCell>
                     <Table.HeaderCell>Action</Table.HeaderCell>
                   </Table.Row>
                 </Table.Header>

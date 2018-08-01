@@ -41,6 +41,7 @@ class MilestoneModal extends Component {
 
   canCall (name, i) {
     let ms = this.props.milestone
+    let project = this.props.project
     let now = moment().utc().unix()
     if (name === 'vote') {
       return ms.stateStr === 'ip' && ms.pollExist && !ms.pollExpired && ms.voteObtained && ms.voteRights.canVote && ms.voteRights[ms.objTypes[i]].toNumber() > 0
@@ -51,9 +52,9 @@ class MilestoneModal extends Component {
     } else if (name === 'backout') {
       return ms.stateStr === 'rs' && now < ms.endTime && !ms.objFinalized[i] && ms.bidInfo[i]
     } else if (name === 'finalizeBid') {
-      return ms.pollExist && ms.pollExpired && !ms.objFinalized[i]
+      return project.isOwner && ms.pollExist && ms.pollExpired && !ms.objFinalized[i]
     } else if (name === 'finalizeAllBids') {
-      return ms.pollExist && ms.pollExpired && ms.objFinalized.includes(false)
+      return project.isOwner && ms.pollExist && ms.pollExpired && ms.objFinalized.includes(false)
     } else if (name === 'withdrawReward') {
       return ms.objFinalized[i] && ms.rewardInfo[i] && ms.rewardInfo[i].isRegulator && ms.rewardInfo[i].finalized && ms.rewardInfo[i].rewards.toNumber() > 0
     }

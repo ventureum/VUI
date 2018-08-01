@@ -153,6 +153,12 @@ class TransactionInfo extends Component {
             desc: 'Execute a transaction to transfer your refund ETH to your address.'
           }
         ],
+        'withdraw-weilocked': [
+          {
+            name: 'Withdraw ETH Locked',
+            desc: 'Execute a transaction to transfer locked project ETH to your address.'
+          }
+        ],
         'finalize': [
           {
             name: 'Finalize Milestone',
