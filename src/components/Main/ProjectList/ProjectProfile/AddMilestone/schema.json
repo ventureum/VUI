@@ -27,13 +27,8 @@
     }
   },
   "type": "object",
-  "required": ["name", "days", "objs"],
+  "required": ["days", "objs"],
   "properties": {
-    "name": {
-      "type": "string",
-      "title": "Name",
-      "default": "Milestone 1"
-    },
     "days": {
       "type": "number",
       "title":"Length in days",

@@ -16,7 +16,6 @@ class AddMilestone extends Component {
       open: false,
       schema,
       formData: {
-        name: 'Milestone 1',
         days: 60,
         objs: [
           {
