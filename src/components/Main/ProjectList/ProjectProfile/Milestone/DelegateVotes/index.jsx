@@ -9,12 +9,8 @@ import repSys from '../../../../../../services/repSys'
 import styles from './styles.css'
 
 // TODO: replace mock data with real data
-var mockRegulatorName = ['regulator1', 'regulator2', 'regulator3']
-var mockRegulatorAddress = [
-  '0x53af25e00ef5a4a9b0f4c2431bd07a2d18ed5b8b',
-  '0xb73614389f815b78217052984d5561bad52a420a',
-  '0x35e13c4870077f4610b74f23e887cbb10e21c19f'
-]
+var mockRegulatorName = JSON.parse(process.env.REACT_APP_MOCK_REGULATOR_NAME)
+var mockRegulatorAddress = JSON.parse(process.env.REACT_APP_MOCK_REGULATOR_ADDRESS)
 
 class DelegateVotes extends Component {
   constructor (props) {

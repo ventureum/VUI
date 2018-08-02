@@ -244,7 +244,7 @@ class MilestoneService {
     let balance = await token.balanceOf(this.account)
 
     // TODO: later change to call aws api
-    let rootAddr = '0x959FD7Ef9089B7142B6B908Dc3A8af7Aa8ff0FA1'
+    let rootAddr = process.env.REACT_APP_ROOT_ADDRESS
     await this.carbonVoteXCore.writeAvailableVotes(ci, pollId, this.account, balance, {from: rootAddr})
   }
 }
