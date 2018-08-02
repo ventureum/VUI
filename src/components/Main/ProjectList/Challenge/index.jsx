@@ -42,7 +42,7 @@ class Challenge extends Component {
       inProgress
     } = this.state
 
-    const stageEndMoment = applicationExpiry ? moment.unix(applicationExpiry) : null
+    const stageEndMoment = applicationExpiry ? moment.unix(applicationExpiry).utc() : null
     const stageEnd = stageEndMoment ? stageEndMoment.format('YYYY-MM-DD HH:mm:ss') : '-'
 
     return (

@@ -1,6 +1,5 @@
 import Eth from 'ethjs'
 import web3 from 'web3'
-import moment from 'moment'
 import { BigNumber } from 'bignumber.js'
 import { getProvider } from './provider'
 import { getRefundManager } from '../config'

@@ -25,7 +25,7 @@ class StartVotingPoll extends Component {
         }
       },
       formData: {
-        start: moment().add(1, 'days').format('YYYY-MM-DDTHH:mm:ss.000Z'),
+        start: moment().utc().add(1, 'days').format('YYYY-MM-DDTHH:mm:ss.000Z'),
         end: moment.unix(props.milestone.endTime).utc().format('YYYY-MM-DDTHH:mm:ss.000Z')
       }
     }
@@ -62,7 +62,7 @@ class StartVotingPoll extends Component {
     if (!formData.end) {
       errors.end.addError('Please choose end time.')
     }
-    if (moment(formData.start) < moment()) {
+    if (moment(formData.start) < moment().utc()) {
       errors.start.addError('Start time has passed.')
     }
     if (moment(formData.start) >= moment(formData.end)) {

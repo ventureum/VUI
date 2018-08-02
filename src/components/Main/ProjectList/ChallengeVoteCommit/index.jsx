@@ -91,7 +91,7 @@ class ChallengeVoteCommit extends Component {
       stage
     } = this.state
 
-    const stageEndMoment = commitEndDate ? moment.unix(commitEndDate) : null
+    const stageEndMoment = commitEndDate ? moment.unix(commitEndDate).utc() : null
     const stageEnd = stageEndMoment ? stageEndMoment.format('YYYY-MM-DD HH:mm:ss') : '-'
 
     return (

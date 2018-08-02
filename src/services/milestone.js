@@ -1,8 +1,7 @@
 import Eth from 'ethjs'
-import moment from 'moment'
 import { getProvider } from './provider'
 import { getMilestoneController, getMilestoneControllerView, getCarbonVoteXCore } from '../config'
-import { dayToSeconds, toBasicUnit, equalWithPrecision } from '../utils/utils'
+import { dayToSeconds, toBasicUnit, equalWithPrecision, currentTimestamp } from '../utils/utils'
 import store from '../store'
 import web3 from 'web3'
 import repSys from './repSys'
@@ -212,7 +211,7 @@ class MilestoneService {
   }
 
   async activate (name, id, wei, minTime, maxTime, etherCanLock) {
-    let now = moment().utc().unix()
+    let now = await currentTimestamp(false)
     let minStartTime = now + minTime
     let maxStartTime = now + maxTime
     if (equalWithPrecision(toBasicUnit(big(wei)), etherCanLock)) {

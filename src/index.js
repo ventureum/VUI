@@ -20,6 +20,7 @@ import refundManager from './services/refundManager'
 import rewardManager from './services/rewardManager'
 import paymentManager from './services/paymentManager'
 import toastr from 'toastr'
+import { currentTimestamp } from './utils/utils'
 
 async function init () {
   async function initAccountPoll () {
@@ -58,6 +59,7 @@ async function init () {
     ])
     ReactDOM.render(<App />, document.getElementById('root'))
     await initAccountPoll()
+    currentTimestamp() // init timestamp
   } catch (error) {
     toastr.error(error)
     ReactDOM.render(<App fatalError={error.message} />, document.getElementById('root'))

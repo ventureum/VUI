@@ -1,10 +1,10 @@
 import Eth from 'ethjs'
 import web3 from 'web3'
-import moment from 'moment'
 import { getProvider } from './provider'
 import { getRepSys } from '../config'
 import store from '../store'
-import { toBasicUnit, equalWithPrecision } from '../utils/utils'
+import moment from 'moment'
+import { toBasicUnit, equalWithPrecision, currentTimestamp } from '../utils/utils'
 import { BigNumber } from 'bignumber.js'
 
 const big = (number) => new BigNumber(number)
@@ -48,7 +48,7 @@ class RepSysService {
   }
 
   async startPoll (name, ms, startTime, endTime) {
-    let now = moment().utc().unix()
+    let now = await currentTimestamp(false)
     startTime = moment(startTime).utc().unix()
     endTime = moment(endTime).utc().unix()
     let delayLength = Math.ceil((startTime - now) / 15)

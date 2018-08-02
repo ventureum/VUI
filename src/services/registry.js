@@ -12,7 +12,7 @@ import projectController from './projectController'
 import saltHashVote from '../utils/saltHashVote'
 import { getRegistry, getERC20Token } from '../config'
 import { getProvider } from './provider'
-import moment from 'moment'
+import { currentTimestamp } from '../utils/utils'
 
 const parameters = keyMirror({
   minDeposit: null,
@@ -134,7 +134,7 @@ class RegistryService {
 
     try {
       let projectObj = await this.getListing(name)
-      if (this.isExpired(projectObj.applicationExpiry)) {
+      if (await this.isExpired(projectObj.applicationExpiry)) {
         throw new Error('Cannot challenge after application period')
       }
       let minDeposit = await this.getMinDeposit()
@@ -200,7 +200,7 @@ class RegistryService {
         return 'Pending to Resolve'
       }
     }
-    if (!(this.isExpired(projectObj.applicationExpiry))) {
+    if (!(await this.isExpired(projectObj.applicationExpiry))) {
       return 'In Application'
     }
 
@@ -293,8 +293,8 @@ class RegistryService {
   }
 
   // check if an application has expired
-  isExpired (timestamp) {
-    let now = moment().utc().unix()
+  async isExpired (timestamp) {
+    let now = await currentTimestamp(false)
     return now >= timestamp
   }
 

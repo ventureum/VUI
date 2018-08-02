@@ -18,7 +18,7 @@ import refundManager from '../../../../services/refundManager'
 import paymentManager from '../../../../services/paymentManager'
 import repSys from '../../../../services/repSys'
 import store from '../../../../store'
-import { dayToSeconds, wrapWithTransactionInfo, toStandardUnit } from '../../../../utils/utils'
+import { dayToSeconds, wrapWithTransactionInfo, toStandardUnit, currentTimestamp } from '../../../../utils/utils'
 
 var basePath = 'https://15mw7pha3h.execute-api.us-west-1.amazonaws.com/alpha'
 
@@ -28,7 +28,8 @@ class ProjectProfile extends Component {
     this.state = {
       project: props.project,
       projectData: null,
-      milestoneData: null
+      milestoneData: null,
+      timestamp: currentTimestamp()
     }
 
     this.onDownload = this.onDownload.bind(this)
@@ -45,11 +46,19 @@ class ProjectProfile extends Component {
     this.getProjectData()
     this.getMilestoneData()
 
-    store.subscribe(x => {
+    store.subscribe(async (x) => {
       const state = store.getState()
       const eventList = ['REGISTRY_EVENT', 'REGISTRY_PROJECT_UPDATE_STATUS', 'MILESTONE_EVENT', 'REP_SYS_EVENT', 'REGULATING_RATING_EVENT', 'REFUND_MANAGER_EVENT', 'REWARD_MANAGER_EVENT', 'PAYMENT_MANAGER_EVENT']
       if (eventList.indexOf(state.type) >= 0) {
         this.getMilestoneData()
+      }
+      if (state.type === 'UPDATE_TIMESTAMP') {
+        let timestamp = await currentTimestamp(false)
+        if (this._isMounted) {
+          this.setState({
+            timestamp
+          })
+        }
       }
     })
   }
@@ -97,7 +106,7 @@ class ProjectProfile extends Component {
   canCall (name, ms) {
     let project = this.state.project
     let msData = this.state.milestoneData
-    let now = moment().utc().unix()
+    let now = this.state.timestamp
     if (project.controllerStageStr !== 'token-sale' && project.controllerStageStr !== 'milestone') {
       return false
     }

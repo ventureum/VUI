@@ -3,18 +3,20 @@ import CSSModules from 'react-css-modules'
 import { Button, Modal, List, Table } from 'semantic-ui-react'
 import moment from 'moment'
 import toastr from 'toastr'
+import store from '../../../../../store'
 import milestone from '../../../../../services/milestone'
 import regulatingRating from '../../../../../services/regulatingRating'
 import rewardManager from '../../../../../services/rewardManager'
 import DelegateVotes from './DelegateVotes'
-import { stopPropagation, toStandardUnit, wrapWithTransactionInfo } from '../../../../../utils/utils'
+import { stopPropagation, toStandardUnit, wrapWithTransactionInfo, currentTimestamp } from '../../../../../utils/utils'
 import styles from './styles.css'
 
 class MilestoneModal extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      open: false
+      open: false,
+      timestamp: currentTimestamp()
     }
 
     this.open = this.open.bind(this)
@@ -42,7 +44,7 @@ class MilestoneModal extends Component {
   canCall (name, i) {
     let ms = this.props.milestone
     let project = this.props.project
-    let now = moment().utc().unix()
+    let now = this.state.timestamp
     if (name === 'vote') {
       return ms.stateStr === 'ip' && ms.pollExist && !ms.pollExpired && ms.voteObtained && ms.voteRights.canVote && ms.voteRights[ms.objTypes[i]].toNumber() > 0
     } else if (name === 'writeAvailableVotes') {
@@ -112,6 +114,26 @@ class MilestoneModal extends Component {
     } catch (e) {
       toastr.error(e)
     }
+  }
+
+  componentDidMount () {
+    this._isMounted = true
+
+    store.subscribe(async (x) => {
+      const state = store.getState()
+      if (state.type === 'UPDATE_TIMESTAMP') {
+        let timestamp = await currentTimestamp(false)
+        if (this._isMounted) {
+          this.setState({
+            timestamp
+          })
+        }
+      }
+    })
+  }
+
+  componentWillUnmount () {
+    this._isMounted = false
   }
 
   render () {

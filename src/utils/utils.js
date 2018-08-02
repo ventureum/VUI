@@ -1,5 +1,6 @@
 import { BigNumber } from 'bignumber.js'
 import store from '../store.js'
+import moment from 'moment'
 
 const big = (number) => new BigNumber(number.toString(10))
 const tenToTheEighteenth = big(10).pow(big(18))
@@ -46,4 +47,46 @@ function equalWithPrecision (val1, val2) {
   return false
 }
 
-export {toStandardUnit, toBasicUnit, wrapWithTransactionInfo, stopPropagation, dayToSeconds, equalWithPrecision}
+var timestamp = 0
+var env = 'test'
+function currentTimestamp (sync = true) {
+  function getTimestampFromBlockchain (sync) {
+    if (sync) {
+      window.web3.eth.getBlock('latest', (err, res) => {
+        if (err) {
+          console.error(err)
+        } else {
+          timestamp = res.timestamp
+          store.dispatch({
+            type: 'UPDATE_TIMESTAMP',
+            timestamp
+          })
+        }
+      })
+      return timestamp
+    } else {
+      return new Promise(async (resolve, reject) => {
+        window.web3.eth.getBlock('latest', (err, res) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve(res.timestamp)
+          }
+        })
+      })
+    }
+  }
+
+  if (env === 'test') {
+    return getTimestampFromBlockchain(sync)
+  } else {
+    if (sync) {
+      timestamp = moment().utc().unix()
+      return timestamp
+    } else {
+      return Promise.resolve(timestamp)
+    }
+  }
+}
+
+export {toStandardUnit, toBasicUnit, wrapWithTransactionInfo, stopPropagation, dayToSeconds, equalWithPrecision, currentTimestamp}

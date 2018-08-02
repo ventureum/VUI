@@ -58,6 +58,7 @@ function reducer (state = -1, action) {
     case 'PAYMENT_MANAGER_CONTRACT_INIT':
     case 'PAYMENT_MANAGER_EVENT':
     case 'SHOW_TRANSACTION_INFO':
+    case 'UPDATE_TIMESTAMP':
       return action
     default:
       return state
