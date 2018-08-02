@@ -9,6 +9,7 @@ import repSys from './repSys'
 import token from './token'
 import regulatingRating from './regulatingRating'
 import refundManager from './refundManager'
+import rewardManager from './rewardManager'
 import paymentManager from './paymentManager'
 import { BigNumber } from 'bignumber.js'
 
@@ -71,11 +72,11 @@ class MilestoneService {
       if (objFinalized[i]) {
         let isRegulator = await regulatingRating.isRegulator(hash, id, objs[i], this.account)
         if (isRegulator) {
-          let temp = await this.ms.getRegulationRewardsForRegulator.call(hash, id, objs[i], this.account)
+          let temp = await rewardManager.getRegulationRewardsInfo(hash, id, objs[i])
           result[i] = {
             isRegulator: true,
-            finalized: temp[0],
-            rewards: temp[1]
+            finalized: temp.finalized,
+            rewards: temp.rewards
           }
         } else {
           result[i] = {

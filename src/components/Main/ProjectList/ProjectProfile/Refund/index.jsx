@@ -69,7 +69,7 @@ class Refund extends Component {
         } catch (e) {
           toastr.error(e)
         }
-      })
+      })()
     }
   }
 

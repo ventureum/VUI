@@ -48,6 +48,14 @@ class RewardManagerService {
   async withdraw (name, id, obj) {
     await this.rm.withdraw(web3.utils.keccak256(name), id, obj)
   }
+
+  async getRegulationRewardsInfo (hash, id, obj) {
+    let result = await this.rm.getRegulationRewardsInfo.call(hash, id, obj)
+    return {
+      finalized: result[0],
+      rewards: result[1]
+    }
+  }
 }
 
 export default new RewardManagerService()
