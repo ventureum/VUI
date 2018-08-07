@@ -14,9 +14,7 @@
         },
         "type": {
           "type": "string",
-          "title": "Type",
-          "enum": ["type1", "type2", "type3"],
-          "default": "type1"
+          "title": "Type"
         },
         "reward": {
           "type": "number",

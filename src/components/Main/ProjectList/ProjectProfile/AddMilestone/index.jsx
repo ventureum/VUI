@@ -8,6 +8,10 @@ import milestone from '../../../../../services/milestone'
 import { stopPropagation, wrapWithTransactionInfo } from '../../../../../utils/utils'
 import styles from './styles.css'
 
+const objTypes = JSON.parse(process.env.REACT_APP_OBJECTIVE_TYPES)
+schema.definitions.obj.properties.type.enum = objTypes
+schema.definitions.obj.properties.type.default = objTypes[0]
+
 class AddMilestone extends Component {
   constructor (props) {
     super(props)
@@ -20,7 +24,7 @@ class AddMilestone extends Component {
         objs: [
           {
             name: 'objective 1',
-            type: 'type1',
+            type: objTypes[0],
             reward: 10
           }
         ]
