@@ -70,6 +70,7 @@
   border-right: none;
 }
 :root:root .program-list .ReactTable .ui.button {
+  margin: 5px;
   font-size: 0.7em;
   text-transform: uppercase;
   min-width: 100px;

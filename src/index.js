@@ -11,7 +11,16 @@ import plcr from './services/plcr'
 import parameterizer from './services/parameterizer'
 import token from './services/token'
 import sale from './services/sale'
+import tokenSale from './services/tokenSale'
+import projectController from './services/projectController'
+import milestone from './services/milestone'
+import repSys from './services/repSys'
+import regulatingRating from './services/regulatingRating'
+import refundManager from './services/refundManager'
+import rewardManager from './services/rewardManager'
+import paymentManager from './services/paymentManager'
 import toastr from 'toastr'
+import { currentTimestamp } from './utils/utils'
 
 async function init () {
   async function initAccountPoll () {
@@ -38,15 +47,24 @@ async function init () {
       registry.init(),
       plcr.init(),
       parameterizer.init(),
-      sale.init()
+      sale.init(),
+      tokenSale.init(),
+      projectController.init(),
+      milestone.init(),
+      repSys.init(),
+      regulatingRating.init(),
+      refundManager.init(),
+      rewardManager.init(),
+      paymentManager.init()
     ])
     ReactDOM.render(<App />, document.getElementById('root'))
     await initAccountPoll()
+    currentTimestamp() // init timestamp
   } catch (error) {
     toastr.error(error)
     ReactDOM.render(<App fatalError={error.message} />, document.getElementById('root'))
   }
-  
+
   registerServiceWorker()
 }
 

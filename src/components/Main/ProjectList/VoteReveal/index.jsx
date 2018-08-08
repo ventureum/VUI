@@ -66,7 +66,7 @@ class VoteReveal extends Component {
       salt
     } = this.state
 
-    const stageEndMoment = revealEndDate ? moment.unix(revealEndDate) : null
+    const stageEndMoment = revealEndDate ? moment.unix(revealEndDate).utc() : null
     const stageEnd = stageEndMoment ? stageEndMoment.format('YYYY-MM-DD HH:mm:ss') : '-'
 
     return (

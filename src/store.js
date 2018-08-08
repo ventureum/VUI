@@ -41,7 +41,24 @@ function reducer (state = -1, action) {
     case 'PLCR_WITHDRAW_VOTING_RIGHTS':
     case 'PARAMETERIZER_CONTRACT_INIT':
     case 'PARAMETERIZER_EVENT':
+    case 'TOKEN_SALE_CONTRACT_INIT':
+    case 'TOKEN_SALE_EVENT':
+    case 'PROJECT_CONTROLLER_CONTRACT_INIT':
+    case 'PROJECT_CONTROLLER_EVENT':
+    case 'MILESTONE_CONTRACT_INIT':
+    case 'MILESTONE_EVENT':
+    case 'REP_SYS_CONTRACT_INIT':
+    case 'REP_SYS_EVENT':
+    case 'REGULATING_RATING_CONTRACT_INIT':
+    case 'REGULATING_RATING_EVENT':
+    case 'REFUND_MANAGER_CONTRACT_INIT':
+    case 'REFUND_MANAGER_EVENT':
+    case 'REWARD_MANAGER_CONTRACT_INIT':
+    case 'REWARD_MANAGER_EVENT':
+    case 'PAYMENT_MANAGER_CONTRACT_INIT':
+    case 'PAYMENT_MANAGER_EVENT':
     case 'SHOW_TRANSACTION_INFO':
+    case 'UPDATE_TIMESTAMP':
       return action
     default:
       return state

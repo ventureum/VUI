@@ -91,7 +91,7 @@ class ChallengeVoteCommit extends Component {
       stage
     } = this.state
 
-    const stageEndMoment = commitEndDate ? moment.unix(commitEndDate) : null
+    const stageEndMoment = commitEndDate ? moment.unix(commitEndDate).utc() : null
     const stageEnd = stageEndMoment ? stageEndMoment.format('YYYY-MM-DD HH:mm:ss') : '-'
 
     return (
@@ -310,7 +310,7 @@ class ChallengeVoteCommit extends Component {
     const projectName = this.props.project.projectName
     const filename = `${projectName}--challenge_id_${challengeId}--reveal_start_${revealDateString}--reminder.ics`
     const title = `Reveal Vote for ${projectName}`
-    const url = `${window.location.protocol}// ${window.location.host}/project/${projectName}`
+    const url = `${window.location.protocol}//${window.location.host}/project/${projectName}`
 
     const data = await generateReminder({
       start: revealDate,
@@ -334,8 +334,8 @@ class ChallengeVoteCommit extends Component {
 
       if (this._isMounted) {
         this.setState({
-          commitEndDate,
-          revealEndDate
+          commitEndDate: commitEndDate.toNumber(),
+          revealEndDate: revealEndDate.toNumber()
         })
       }
     } catch (error) {

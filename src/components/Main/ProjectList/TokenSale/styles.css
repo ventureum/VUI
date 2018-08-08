@@ -1,0 +1,7 @@
+:root:root .token-sale .add-text {
+  display: flex;
+  align-items: center;
+}
+:root:root .token-sale .add-text span {
+  width: 80px;
+}

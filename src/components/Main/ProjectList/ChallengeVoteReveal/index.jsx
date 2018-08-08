@@ -59,7 +59,7 @@ class ChallengeVoteReveal extends Component {
       salt
     } = this.state
 
-    const stageEndMoment = revealEndDate ? moment.unix(revealEndDate) : null
+    const stageEndMoment = revealEndDate ? moment.unix(revealEndDate).utc() : null
     const stageEnd = stageEndMoment ? stageEndMoment.format('YYYY-MM-DD HH:mm:ss') : '-'
 
     return (
@@ -243,8 +243,8 @@ class ChallengeVoteReveal extends Component {
         this.setState({
           votesFor,
           votesAgainst,
-          commitEndDate,
-          revealEndDate
+          commitEndDate: commitEndDate.toNumber(),
+          revealEndDate: revealEndDate.toNumber()
         })
       }
     } catch (error) {

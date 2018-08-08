@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "required": [],
+  "properties": {
+    "start": {
+      "type": "string",
+      "title":"Start Time",
+      "format": "date-time"
+    },
+    "end": {
+      "type": "string",
+      "title":"End Time",
+      "format": "date-time"
+    }
+  }
+}
+    

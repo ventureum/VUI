@@ -3,12 +3,15 @@ import CSSModules from 'react-css-modules'
 import { Modal } from 'semantic-ui-react'
 import moment from 'moment'
 import toastr from 'toastr'
+import update from 'immutability-helper'
 import styles from './styles.css'
 import Challenge from './Challenge'
 import ChallengeVoteCommit from './ChallengeVoteCommit'
 import ChallengeVoteReveal from './ChallengeVoteReveal'
 import ProjectProfile from './ProjectProfile'
+import TokenSale from './TokenSale'
 import registry from '../../../services/registry'
+import plcr from '../../../services/plcr'
 import store from '../../../store'
 import InProgress from '../InProgress'
 import { wrapWithTransactionInfo } from '../../../utils/utils'
@@ -33,6 +36,8 @@ class ProjectList extends Component {
     this.nextPage = this.nextPage.bind(this)
     this.prevPage = this.prevPage.bind(this)
     this.updateStatus = this.updateStatus.bind(this)
+    this.projectInProgress = this.projectInProgress.bind(this)
+    this.unlock = this.unlock.bind(this)
   }
 
   async updateStatus (project) {
@@ -85,7 +90,8 @@ class ProjectList extends Component {
 
     store.subscribe(x => {
       const state = store.getState()
-      if (state.type === 'REGISTRY_EVENT' || state.type === 'REGISTRY_PROJECT_UPDATE_STATUS') {
+      const eventList = ['REGISTRY_EVENT', 'REGISTRY_PROJECT_UPDATE_STATUS', 'TOKEN_SALE_EVENT', 'MILESTONE_EVENT', 'PLCR_EVENT']
+      if (eventList.indexOf(state.type) >= 0) {
         this.getProjectList()
       }
     })
@@ -113,26 +119,9 @@ class ProjectList extends Component {
     }
   }
 
-  getProjectAction (projectObj) {
-    var actionMap = {
-      'In Application': 'challenge',
-      'In Voting Commit': 'commit',
-      'In Voting Reveal': 'reveal',
-      'Pending to Whitelist': 'whitelist',
-      'Pending to Resolve': 'resolve challenge',
-      'Unresolved': 'refresh status',
-      'In Registry': 'view'
-    }
-    return actionMap[projectObj.stage]
-  }
-
   async getProjectList () {
     try {
       var projectList = await registry.getProjectList()
-
-      for (let i = 0; i < projectList.length; i++) {
-        projectList[i].action = this.getProjectAction(projectList[i])
-      }
 
       if (this._isMounted) {
         this.setState({
@@ -144,6 +133,42 @@ class ProjectList extends Component {
       }
     } catch (error) {
       toastr.error(error.message)
+    }
+  }
+
+  projectInProgress (name, value = true) {
+    let index = -1
+    for (index = 0; index < this.state.projectList.length; index++) {
+      if (this.state.projectList[index].projectName === name) {
+        break
+      }
+    }
+    if (index !== -1) {
+      this.setState({
+        projectList: update(this.state.projectList, {
+          [index]: {
+            inProgress: {
+              $set: value
+            }
+          }
+        })
+      })
+    }
+  }
+
+  async unlock (project) {
+    try {
+      await plcr.unlock(project.challengeId)
+      toastr.success('Token unlocked successfully.')
+    } catch (error) {
+      toastr.error(error.message)
+    }
+  }
+
+  canCall (name, project) {
+    if (name === 'unlock') {
+      let actionArr = ['whitelist', 'resolve challenge', 'refresh status', 'view']
+      return project.didCommit && actionArr.indexOf(project.action) >= 0 && !project.hasBeenRevealed
     }
   }
 
@@ -163,7 +188,7 @@ class ProjectList extends Component {
         <div className='rt-tr-group' key={project.projectName}>
           <div className='rt-tr -odd'>
             <div className='rt-td' style={{flex: '200 0 auto', width: '200px'}}>
-              <Modal size='large' trigger={<a href='#!' className='domain' title='View profile'>{project.projectName}</a>}>
+              <Modal size='large' closeIcon trigger={<a href='#!' className='domain' title='View profile'>{project.projectName}</a>}>
                 <Modal.Header>{project.projectName}</Modal.Header>
                 <Modal.Content>
                   <ProjectProfile project={project} />
@@ -177,7 +202,7 @@ class ProjectList extends Component {
                 <a onClick={wrapWithTransactionInfo('update-status', this.updateStatus, project)} className='ui mini button purple' href='#!'>{project.action}</a>
               }
               {this.actionNeedModal(project) &&
-                <Modal size={project.action === 'view' ? 'large' : 'mini'} trigger={<a className='ui mini button purple' href='#!'>{project.action}</a>}>
+                <Modal closeIcon size={project.action === 'view' ? 'large' : 'mini'} trigger={<a className='ui mini button purple' href='#!'>{project.action}</a>}>
                   <Modal.Header>{project.stage}</Modal.Header>
                   <Modal.Content>
                     {project.action === 'challenge' && <Challenge project={project} />}
@@ -187,6 +212,8 @@ class ProjectList extends Component {
                   </Modal.Content>
                 </Modal>
               }
+              {this.canCall('unlock', project) && <a onClick={wrapWithTransactionInfo('unlock-token', this.unlock, project)} className='ui mini button blue' href='#!'>unlock token</a>}
+              {project.action === 'view' && <TokenSale projectInProgress={this.projectInProgress} project={project} />}
             </div>
           </div>
         </div>
@@ -233,7 +260,7 @@ class ProjectList extends Component {
                       <input type='number' value={currentPage} onChange={this.handlePageChange} />
                     </div>
                     &nbsp;of&nbsp;
-                    <span className='-totalPages'>{totalPage}</span>
+                    <span className='-totalPages'>{totalPage || 1}</span>
                   </div>
                   <div className='-next'>
                     <button onClick={this.nextPage} type='button' disabled={currentPage === totalPage} className='-btn'>Next</button>

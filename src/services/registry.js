@@ -7,10 +7,12 @@ import store from '../store'
 import token from './token'
 import plcr from './plcr'
 import parameterizer from './parameterizer'
+import tokenSale from './tokenSale'
+import projectController from './projectController'
 import saltHashVote from '../utils/saltHashVote'
-import { getRegistry } from '../config'
+import { getRegistry, getERC20Token } from '../config'
 import { getProvider } from './provider'
-import moment from 'moment'
+import { currentTimestamp } from '../utils/utils'
 
 const parameters = keyMirror({
   minDeposit: null,
@@ -132,7 +134,7 @@ class RegistryService {
 
     try {
       let projectObj = await this.getListing(name)
-      if (this.isExpired(projectObj.applicationExpiry)) {
+      if (await this.isExpired(projectObj.applicationExpiry)) {
         throw new Error('Cannot challenge after application period')
       }
       let minDeposit = await this.getMinDeposit()
@@ -189,7 +191,7 @@ class RegistryService {
     } else if (await this.registry.canBeWhitelisted(projectObj.projectName)) {
       // can be whitelisted
       return 'Pending to Whitelist'
-    } else if (projectObj.challengeId) {
+    } else if (projectObj.challengeId && projectObj.challengeId.toNumber() !== 0) {
       if (await plcr.commitStageActive(projectObj.challengeId)) {
         return 'In Voting Commit'
       } else if (await plcr.revealStageActive(projectObj.challengeId)) {
@@ -198,11 +200,24 @@ class RegistryService {
         return 'Pending to Resolve'
       }
     }
-    if (!(this.isExpired(projectObj.applicationExpiry))) {
+    if (!(await this.isExpired(projectObj.applicationExpiry))) {
       return 'In Application'
     }
 
     throw new Error(' Cannot identify project stage for project ' + projectObj.projectName)
+  }
+
+  getProjectAction (projectObj) {
+    var actionMap = {
+      'In Application': 'challenge',
+      'In Voting Commit': 'commit',
+      'In Voting Reveal': 'reveal',
+      'Pending to Whitelist': 'whitelist',
+      'Pending to Resolve': 'resolve challenge',
+      'Unresolved': 'refresh status',
+      'In Registry': 'view'
+    }
+    return actionMap[projectObj.stage]
   }
 
   async getProjectList () {
@@ -211,6 +226,14 @@ class RegistryService {
     var next = 0
     var num
     var projectObj
+    let projectStateMap = {
+      0: 'not-exist',
+      1: 'submitted',
+      2: 'accepted',
+      3: 'token-sale',
+      4: 'milestone',
+      5: 'complete'
+    }
     do {
       next = await this.registry.getNextProjectHash.call(next)
       num = new Eth.BN(next.substring(2), 16)
@@ -219,8 +242,27 @@ class RegistryService {
       projectObj = await this.getProjectInfo(hash)
       projectObj.stage = await this.getProjectStage(hash, projectObj)
       projectObj.hash = hash
+      projectObj.didCommit = await this.didCommitForPoll(projectObj.challengeId.toNumber())
+      projectObj.hasBeenRevealed = await plcr.hasBeenRevealed(this.account, projectObj.challengeId.toNumber())
+      projectObj.action = this.getProjectAction(projectObj)
+      projectObj.isOwner = this.isOwner(projectObj.owner)
+      if (projectObj.action === 'view') {
+        projectObj.controllerStage = await projectController.getProjectState(projectObj)
+        projectObj.controllerStageStr = projectStateMap[projectObj.controllerStage.toNumber()]
+        projectObj.etherCanLock = await projectController.getProjectEther(projectObj)
+        if (projectObj.controllerStage.toNumber() >= 3) {
+          projectObj.tokenInfo = await tokenSale.getTokenInfo(projectObj.projectName)
+        }
+        projectObj.inProgress = false
+      }
+      projectObj.tokenAddress = await projectController.getTokenAddress(projectObj)
+      if (!(new Eth.BN(projectObj.tokenAddress.substring(2), 16)).eq(new Eth.BN('0'))) {
+        projectObj.token = await getERC20Token(this.account, projectObj.tokenAddress)
+        projectObj.balance = await projectObj.token.balanceOf.call(this.account)
+      }
       projectList.push(projectObj)
     }
+
     return projectList
   }
 
@@ -243,6 +285,7 @@ class RegistryService {
       for (let i = 0; i < projectData.length; i++) {
         projectObj[propertyNameMap[i]] = projectData[i]
       }
+      projectObj.applicationExpiry = projectObj.applicationExpiry.toNumber()
       return projectObj
     } catch (error) {
       throw error
@@ -250,10 +293,13 @@ class RegistryService {
   }
 
   // check if an application has expired
-  isExpired (timestamp) {
-    let t = moment.unix(timestamp)
-    let now = moment()
-    return now >= t
+  async isExpired (timestamp) {
+    let now = await currentTimestamp(false)
+    return now >= timestamp
+  }
+
+  isOwner (address) {
+    return address === this.account
   }
 
   async getListing (name) {

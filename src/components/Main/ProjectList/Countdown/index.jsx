@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import moment from 'moment'
 import pad from 'left-pad'
+import { currentTimestamp } from '../../../../utils/utils'
 
 import './styles.css'
 
@@ -10,12 +11,12 @@ class Countdown extends Component {
 
     const endDate = props.endDate
     this.state = {
-      endDate: endDate || moment(),
+      endDate: endDate || currentTimestamp(),
       countdown: '',
       isExpired: false,
 
       // expired if no endDate set on init
-      onExpireCalled: !endDate
+      onExpireCalled: !endDate || endDate.unix() <= currentTimestamp()
     }
 
     if (props.onExpire) {
@@ -43,9 +44,8 @@ class Countdown extends Component {
     const endDate = props.endDate
 
     if (endDate) {
-      const now = moment()
-      const diff = endDate.diff(now, 'seconds')
-      const isExpired = (diff <= 0)
+      const now = currentTimestamp()
+      const isExpired = (endDate.unix() <= now)
 
       if (this._isMounted) {
         this.setState({
@@ -70,7 +70,7 @@ class Countdown extends Component {
   }
 
   calculateCountdownStr (endDate) {
-    const now = moment()
+    const now = currentTimestamp()
     const diff = endDate.diff(now, 'seconds')
 
     if (diff <= 0) {
@@ -81,7 +81,7 @@ class Countdown extends Component {
         })
       }
 
-      if (!this.onExpireCalled) {
+      if (!this.state.onExpireCalled) {
         if (this._isMounted) {
           this.setState({onExpireCalled: true})
         }
