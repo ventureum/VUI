@@ -129,7 +129,7 @@ class ChallengeVoteCommit extends Component {
                 </p>
                 <p><strong>{stageEnd}</strong></p>
                 <p>Remaining time: {commitEndDate && <Countdown
-                  endDate={stageEndMoment}
+                  endDate={commitEndDate}
                   onExpire={this.onCountdownExpire.bind(this)} />}</p>
               </div>
             </div>

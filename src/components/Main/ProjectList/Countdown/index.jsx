@@ -16,7 +16,7 @@ class Countdown extends Component {
       isExpired: false,
 
       // expired if no endDate set on init
-      onExpireCalled: !endDate || endDate.unix() <= currentTimestamp()
+      onExpireCalled: !endDate || endDate <= currentTimestamp()
     }
 
     if (props.onExpire) {
@@ -45,7 +45,7 @@ class Countdown extends Component {
 
     if (endDate) {
       const now = currentTimestamp()
-      const isExpired = (endDate.unix() <= now)
+      const isExpired = (endDate <= now)
 
       if (this._isMounted) {
         this.setState({
@@ -71,7 +71,7 @@ class Countdown extends Component {
 
   calculateCountdownStr (endDate) {
     const now = currentTimestamp()
-    const diff = endDate.diff(now, 'seconds')
+    const diff = endDate - now
 
     if (diff <= 0) {
       if (this._isMounted) {

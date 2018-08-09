@@ -319,7 +319,7 @@ class ProjectProfile extends Component {
             {waitingTime &&
               <Segment>
                 <strong>Next voting poll will starts in: </strong>
-                <Countdown endDate={moment.unix(waitingTime).utc()} />
+                <Countdown endDate={waitingTime} />
               </Segment>
             }
             {project.isOwner && project.controllerStageStr === 'accepted' &&
