@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import saveFile from '../../../../utils/saveFile'
-import { Grid, Table, Button, Segment } from 'semantic-ui-react'
+import { Grid, Table, Button, Segment, Form } from 'semantic-ui-react'
 import { Scrollbars } from 'react-custom-scrollbars'
 import { Base64 } from 'js-base64'
 import ReactJson from 'react-json-view'
 import toastr from 'toastr'
+import commafy from 'commafy'
 import moment from 'moment'
 import CSSModules from 'react-css-modules'
 import styles from './styles.css'
@@ -13,6 +14,7 @@ import AddMilestone from './AddMilestone'
 import ActivateMilestone from './ActivateMilestone'
 import Refund from './Refund'
 import StartVotingPoll from './StartVotingPoll'
+import Countdown from '../Countdown'
 import milestone from '../../../../services/milestone'
 import refundManager from '../../../../services/refundManager'
 import paymentManager from '../../../../services/paymentManager'
@@ -29,6 +31,7 @@ class ProjectProfile extends Component {
       project: props.project,
       projectData: null,
       milestoneData: null,
+      waitingTime: null,
       timestamp: currentTimestamp()
     }
 
@@ -71,6 +74,7 @@ class ProjectProfile extends Component {
     try {
       let data = await milestone.getMilestoneData(this.state.project)
       if (data && this._isMounted) {
+        this.checkWait(data)
         this.setState({
           milestoneData: data
         })
@@ -186,11 +190,37 @@ class ProjectProfile extends Component {
     }
   }
 
+  getRewards () {
+    if (this.state.milestoneData) {
+      let total = 0
+      let ms = this.state.milestoneData
+      for (let i = 0; i < ms.length; i++) {
+        for (let j = 0; j < ms[i].objsStrs.length; j++) {
+          total += toStandardUnit(ms[i].objRewards[j]).toNumber()
+        }
+      }
+      return total
+    }
+  }
+
+  checkWait (data) {
+    let now = this.state.timestamp
+    let ms = data
+    for (let i = 0; i < ms.length; i++) {
+      if (ms[i].stateStr === 'ip' && !ms[i].pollExist && now < ms[i].pollInfo.minStartTime) {
+        this.setState({
+          waitingTime: ms[i].pollInfo.minStartTime
+        })
+      }
+    }
+  }
+
   render () {
     const {
       project,
       projectData,
-      milestoneData
+      milestoneData,
+      waitingTime
     } = this.state
 
     var milestoneRows = []
@@ -263,10 +293,35 @@ class ProjectProfile extends Component {
               <br />
               <strong>Your Project Token Balance: </strong>{toStandardUnit(project.balance).toNumber()}
               <br />
-              {project.etherCanLock &&
-                <span><strong>Project ETH Balance: </strong>{toStandardUnit(project.etherCanLock).toNumber()}</span>
-              }
+              <strong>Project ETH Balance: </strong>{toStandardUnit(project.etherCanLock).toNumber()}
             </Segment>
+            {project.controllerStageStr === 'token-sale' &&
+              <Segment>
+                {milestoneData &&
+                  <Form.Field>
+                    <label><strong>Total Milestone Rewards: </strong>{this.getRewards()}</label>
+                  </Form.Field>
+                }
+                <Form.Field>
+                  <label><strong>Total Token Amount: </strong>{toStandardUnit(project.tokenInfo.numTokenLeft).toNumber()}</label>
+                </Form.Field>
+                <Form.Field>
+                  <label><strong>Rate: </strong>1 ETH = {project.tokenInfo.rate.toNumber()} token</label>
+                </Form.Field>
+                <Form.Field>
+                  <label><strong>Total Token Sold: </strong>{commafy(toStandardUnit(project.tokenInfo.totalTokenSold).toNumber().toFixed(4))}</label>
+                </Form.Field>
+                <Form.Field>
+                  <label><strong>Total ETH Sold: </strong>{commafy(toStandardUnit(project.tokenInfo.totalEth).toNumber().toFixed(4))}</label>
+                </Form.Field>
+              </Segment>
+            }
+            {waitingTime &&
+              <Segment>
+                <strong>Next voting poll will starts in: </strong>
+                <Countdown endDate={moment.unix(waitingTime).utc()} />
+              </Segment>
+            }
             {project.isOwner && project.controllerStageStr === 'accepted' &&
               <AddMilestone project={project} />
             }

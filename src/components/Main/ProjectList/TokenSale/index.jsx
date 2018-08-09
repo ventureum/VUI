@@ -25,7 +25,8 @@ class TokenSale extends Component {
       tokenBalance: '',
       tokenSaleModalOpen: false,
       buyTokenAmount: '',
-      milestoneData: null
+      milestoneData: null,
+      inProgress: false
     }
 
     this.startTokenSale = this.startTokenSale.bind(this)
@@ -88,6 +89,9 @@ class TokenSale extends Component {
     try {
       await tokenSale.buyToken(project.projectName, this.state.buyTokenAmount, project.tokenInfo.rate)
       toastr.success('Token bought successfully!')
+      this.setState({
+        buyTokenAmount: ''
+      })
     } catch (error) {
       toastr.error(error.message)
     } finally {
@@ -207,7 +211,7 @@ class TokenSale extends Component {
     }
 
     return (
-      <Modal closeIcon key='modal' onClose={this.handleClose} open={this.state.tokenSaleModalOpen} size='small' trigger={<a onClick={this.handleOpen} className='ui mini button blue' href='#!'>buy token</a>}>
+      <Modal closeIcon key='modal' onClose={this.handleClose} open={this.state.tokenSaleModalOpen} size='small' trigger={<a onClick={this.handleOpen} className={'ui mini button blue' + (project.tokenInfo.numTokenLeft.toNumber() === 0 ? ' disabled' : '')} href='#!'>{project.tokenInfo.numTokenLeft.toNumber() > 0 ? 'buy token' : 'sold out'}</a>}>
         <Modal.Header>{project.projectName}</Modal.Header>
         <Modal.Content>
           <div className='ui grid stackable padded'>
@@ -365,7 +369,7 @@ class TokenSale extends Component {
   handleInputChange (name, e) {
     let obj = {}
     if (name === 'tokenRate') {
-      obj[name] = parseInt(e.target.value)
+      obj[name] = parseInt(e.target.value, 10)
     } else {
       obj[name] = e.target.value
     }

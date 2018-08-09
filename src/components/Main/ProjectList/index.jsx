@@ -172,6 +172,20 @@ class ProjectList extends Component {
     }
   }
 
+  getProjectStage (project) {
+    if (project.stage !== 'In Registry') {
+      return project.stage
+    } else if (project.controllerStageStr === 'token-sale') {
+      return 'In Tokensale'
+    } else if (project.controllerStageStr === 'milestone') {
+      return 'In Milestone'
+    } else if (project.controllerStageStr === 'complete') {
+      return 'complete'
+    } else {
+      return 'In Registry'
+    }
+  }
+
   render () {
     const {
       perPage,
@@ -188,14 +202,14 @@ class ProjectList extends Component {
         <div className='rt-tr-group' key={project.projectName}>
           <div className='rt-tr -odd'>
             <div className='rt-td' style={{flex: '200 0 auto', width: '200px'}}>
-              <Modal size='large' closeIcon trigger={<a href='#!' className='domain' title='View profile'>{project.projectName}</a>}>
-                <Modal.Header>{project.projectName}</Modal.Header>
+              <Modal size='large' closeIcon trigger={<a href='#!' className='domain' title='View profile'>{project.projectName}{project.isOwner && ' (is owner)'}</a>}>
+                <Modal.Header>{project.projectName}{project.isOwner && ' (is owner)'}</Modal.Header>
                 <Modal.Content>
                   <ProjectProfile project={project} />
                 </Modal.Content>
               </Modal>
             </div>
-            <div className='rt-td' style={{flex: '200 0 auto', width: '200px'}}><span className=''>{project.stage}</span></div>
+            <div className='rt-td' style={{flex: '200 0 auto', width: '200px'}}><span className=''>{this.getProjectStage(project)}</span></div>
             <div className='rt-td Number' style={{flex: '150 0 auto', width: '150px'}}>{moment.unix(project.applicationExpiry).utc().format('YYYY-MM-DD HH:mm:ss')}</div>
             <div className='rt-td' style={{flex: '200 0 auto', width: '200px'}}>
               {!this.actionNeedModal(project) &&

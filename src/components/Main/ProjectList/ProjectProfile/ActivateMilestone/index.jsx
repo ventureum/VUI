@@ -102,15 +102,6 @@ class ActivateMilestone extends Component {
   }
 
   handleInputChange (name, e) {
-    let nameMap = {
-      'weiLocked': 'wei',
-      'minDay': 'min',
-      'minHour': 'min',
-      'minMinute': 'min',
-      'maxDay': 'max',
-      'maxHour': 'max',
-      'maxMinute': 'max'
-    }
     this.setState({
       error: '',
       errorInput: ''
