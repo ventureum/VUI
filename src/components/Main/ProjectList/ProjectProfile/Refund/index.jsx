@@ -3,7 +3,7 @@ import CSSModules from 'react-css-modules'
 import { Button, Modal, Form, List, Message, Segment } from 'semantic-ui-react'
 import toastr from 'toastr'
 import refundManager from '../../../../../services/refundManager'
-import { stopPropagation, dayToSeconds, toStandardUnit, wrapWithTransactionInfo } from '../../../../../utils/utils'
+import { stopPropagation, toStandardUnit, wrapWithTransactionInfo } from '../../../../../utils/utils'
 import styles from './styles.css'
 
 class Refund extends Component {

@@ -1,12 +1,8 @@
 import Eth from 'ethjs'
 import web3 from 'web3'
-import { BigNumber } from 'bignumber.js'
 import { getProvider } from './provider'
 import { getRewardManager } from '../config'
 import store from '../store'
-import { toBasicUnit, equalWithPrecision } from '../utils/utils'
-
-const big = (number) => new BigNumber(number)
 
 class RewardManagerService {
   constructor () {

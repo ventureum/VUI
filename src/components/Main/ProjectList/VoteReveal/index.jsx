@@ -107,9 +107,9 @@ class VoteReveal extends Component {
                   Reveal stage ends
                 </p>
                 <p><strong>{stageEnd}</strong></p>
-                <p>Remaining time: <Countdown
-                  endDate={stageEndMoment}
-                  onExpire={this.onCountdownExpire.bind(this)} /></p>
+                <p>Remaining time: {revealEndDate && <Countdown
+                  endDate={revealEndDate}
+                  onExpire={this.onCountdownExpire.bind(this)} />}</p>
               </div>
             </div>
             <div className='ui divider' />

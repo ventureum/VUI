@@ -104,7 +104,7 @@ class ChallengeVoteReveal extends Component {
                 </p>
                 <p><strong>{stageEnd}</strong></p>
                 <p>Remaining time: {revealEndDate && <Countdown
-                  endDate={stageEndMoment}
+                  endDate={revealEndDate}
                   onExpire={this.onCountdownExpire.bind(this)} />}</p>
               </div>
             </div>

@@ -149,6 +149,7 @@ class MilestoneModal extends Component {
           <Table.Row key={milestone.id + milestone.objsStrs[i]}>
             <Table.Cell>{milestone.objsStrs[i]}</Table.Cell>
             <Table.Cell>{milestone.objTypesStrs[i]}</Table.Cell>
+            <Table.Cell>{toStandardUnit(milestone.objRewards[i]).toNumber()}</Table.Cell>
             <Table.Cell>
               {this.canCall('bid', i) &&
                 <Button onClick={wrapWithTransactionInfo('ms-bid', this.bid, i)} color={'blue'}>
@@ -241,6 +242,7 @@ class MilestoneModal extends Component {
                   <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
                     <Table.HeaderCell>Type</Table.HeaderCell>
+                    <Table.HeaderCell>MaxRewards</Table.HeaderCell>
                     <Table.HeaderCell>Action</Table.HeaderCell>
                   </Table.Row>
                 </Table.Header>

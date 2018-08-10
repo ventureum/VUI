@@ -64,9 +64,9 @@ class Challenge extends Component {
                 <div className='ui message info'>
                   <p>Challenge stage ends</p>
                   <p><strong>{stageEnd}</strong></p>
-                  <p>Remaining time: <Countdown
-                    endDate={stageEndMoment}
-                    onExpire={this.onCountdownExpire.bind(this)} /></p>
+                  <p>Remaining time: {applicationExpiry && <Countdown
+                    endDate={applicationExpiry}
+                    onExpire={this.onCountdownExpire.bind(this)} />}</p>
                 </div>
               </div>
               <div className='ui divider' />
