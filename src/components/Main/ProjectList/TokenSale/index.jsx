@@ -176,6 +176,9 @@ class TokenSale extends Component {
 
   canStop (project) {
     let rewards = this.getRewards()
+    if (!rewards) {
+      return false
+    }
     let sold = toStandardUnit(project.tokenInfo.totalTokenSold.div(project.tokenInfo.rate)).toNumber()
     let buyAmount = this.state.buyTokenAmount / (project.tokenInfo.rate.toNumber())
     if (sold + buyAmount < rewards) {
@@ -369,7 +372,7 @@ class TokenSale extends Component {
   handleInputChange (name, e) {
     let obj = {}
     if (name === 'tokenRate') {
-      obj[name] = parseInt(e.target.value, 10)
+      obj[name] = parseInt(e.target.value, 10) || ''
     } else {
       obj[name] = e.target.value
     }

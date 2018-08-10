@@ -4,8 +4,8 @@ import { getMilestoneController, getMilestoneControllerView, getCarbonVoteXCore 
 import { dayToSeconds, toBasicUnit, equalWithPrecision, currentTimestamp } from '../utils/utils'
 import store from '../store'
 import web3 from 'web3'
+import axios from 'axios'
 import repSys from './repSys'
-import token from './token'
 import regulatingRating from './regulatingRating'
 import refundManager from './refundManager'
 import rewardManager from './rewardManager'
@@ -27,6 +27,13 @@ class MilestoneService {
      * init function (rather than constructor),
      * so that injected web3 has time to load.
      */
+    this.axios = axios.create({
+      baseURL: 'https://57bnnhi7u3.execute-api.ca-central-1.amazonaws.com/alpha/',
+      timeout: 0,
+      headers: {
+        'content-type': 'application/json'
+      }
+    })
     this.eth = new Eth(getProvider())
     const accounts = await this.eth.accounts()
     this.account = accounts[0]
@@ -102,6 +109,28 @@ class MilestoneService {
     return result
   }
 
+  async getEstimateGas (pollId) {
+    return this.axios.post('/', {
+      name: 'getEstimateGas',
+      pollId: pollId,
+      address: this.account
+    }).then((res) => {
+      return Promise.resolve(res.data.body)
+    })
+  }
+
+  async sendGas (name, id, value) {
+    await this.carbonVoteXCore.sendGas(web3.utils.keccak256('ReputationSystem'), web3.utils.soliditySha3(web3.utils.keccak256(name), id), {value: value})
+  }
+
+  async writeAvailableVotes (name, id) {
+    return this.axios.post('/', {
+      name: 'writeAvailableVotes',
+      pollId: web3.utils.soliditySha3(web3.utils.keccak256(name), id),
+      address: this.account
+    })
+  }
+
   async getMilestoneData (project) {
     let name = project.projectName
     let msState = {
@@ -145,7 +174,7 @@ class MilestoneService {
       if (pollExist) {
         pollExpired = await this.carbonVoteXCore.pollExpired.call(web3.utils.keccak256('ReputationSystem'), pollId)
       }
-      let bidInfo
+      let bidInfo = null
       if (msState[ms[1].toNumber()] === 'rs') {
         bidInfo = await regulatingRating.getBidInfo(projectHash, i, objInfo[0])
       }
@@ -162,7 +191,12 @@ class MilestoneService {
         rewardInfo = await this.getRegulationRewardsForRegulator(projectHash, i, objInfo[0], objFinalized)
       }
       let refundInfo = await refundManager.getRefundInfo(projectHash, i)
+      let gasSent = await this.carbonVoteXCore.getGasSent.call(web3.utils.keccak256('ReputationSystem'), pollId, this.account)
       let voteObtained = await this.carbonVoteXCore.voteObtained.call(web3.utils.keccak256('ReputationSystem'), pollId, this.account)
+      let estimateGas = null
+      if (pollExist && !pollExpired && !voteObtained) {
+        estimateGas = await this.getEstimateGas(pollId)
+      }
       let voteRights
       if (voteObtained) {
         voteRights = await this.getVoteRights(pollId, objInfo[1])
@@ -189,6 +223,8 @@ class MilestoneService {
         weiLocked: ms[4],
         rewardInfo,
         refundInfo,
+        gasSent,
+        estimateGas,
         voteObtained,
         voteRights,
         bidInfo
@@ -236,16 +272,6 @@ class MilestoneService {
 
   async finalize (name, id) {
     await this.ms.founderFinalize(web3.utils.keccak256(name), id)
-  }
-
-  async writeAvailableVotes (name, id) {
-    let ci = web3.utils.keccak256('ReputationSystem')
-    let pollId = web3.utils.soliditySha3(web3.utils.keccak256(name), id)
-    let balance = await token.balanceOf(this.account)
-
-    // TODO: later change to call aws api
-    let rootAddr = process.env.REACT_APP_ROOT_ADDRESS
-    await this.carbonVoteXCore.writeAvailableVotes(ci, pollId, this.account, balance, {from: rootAddr})
   }
 }
 
