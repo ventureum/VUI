@@ -26,6 +26,7 @@ class MilestoneModal extends Component {
     this.backout = this.backout.bind(this)
     this.finalize = this.finalize.bind(this)
     this.finalizeAllBids = this.finalizeAllBids.bind(this)
+    this.sendGas = this.sendGas.bind(this)
     this.withdrawReward = this.withdrawReward.bind(this)
   }
 
@@ -47,8 +48,10 @@ class MilestoneModal extends Component {
     let now = this.state.timestamp
     if (name === 'vote') {
       return ms.stateStr === 'ip' && ms.pollExist && !ms.pollExpired && ms.voteObtained && ms.voteRights.canVote && ms.voteRights[ms.objTypes[i]].toNumber() > 0
+    } else if (name === 'sendGas') {
+      return ms.stateStr === 'ip' && ms.pollExist && !ms.pollExpired && !ms.voteObtained && now > ms.pollInfo.minStartTime && typeof ms.estimateGas === 'number' && ms.gasSent.lt(ms.estimateGas)
     } else if (name === 'writeAvailableVotes') {
-      return ms.stateStr === 'ip' && ms.pollExist && !ms.pollExpired && !ms.voteObtained
+      return ms.stateStr === 'ip' && ms.pollExist && !ms.pollExpired && !ms.voteObtained && now > ms.pollInfo.minStartTime && typeof ms.estimateGas === 'number' && ms.gasSent.gte(ms.estimateGas)
     } else if (name === 'bid') {
       return ms.stateStr === 'rs' && now < ms.endTime && !ms.objFinalized[i] && !ms.bidInfo[i]
     } else if (name === 'backout') {
@@ -62,10 +65,21 @@ class MilestoneModal extends Component {
     }
   }
 
+  async sendGas () {
+    try {
+      await milestone.sendGas(this.props.project.projectName, this.props.milestone.id, String(this.props.milestone.estimateGas))
+      toastr.success('Gas sent successfully!')
+    } catch (e) {
+      toastr.error(e)
+    }
+  }
+
   async writeAvailableVotes () {
     try {
+      let elem = document.querySelector('#write-votes')
+      elem.classList.add('loading')
+      elem.classList.add('disabled')
       await milestone.writeAvailableVotes(this.props.project.projectName, this.props.milestone.id)
-      toastr.success('Available votes written successfully!')
     } catch (e) {
       toastr.error(e)
     }
@@ -270,8 +284,13 @@ class MilestoneModal extends Component {
           </List>
         </Modal.Content>
         <Modal.Actions>
+          {this.canCall('sendGas') &&
+            <Button onClick={wrapWithTransactionInfo('ms-send-gas', this.sendGas)} color={'blue'}>
+              send gas
+            </Button>
+          }
           {this.canCall('writeAvailableVotes') &&
-            <Button onClick={wrapWithTransactionInfo('ms-write-available-votes', this.writeAvailableVotes)} color={'blue'}>
+            <Button id='write-votes' onClick={wrapWithTransactionInfo('ms-write-available-votes', this.writeAvailableVotes)} color={'blue'}>
               write available votes
             </Button>
           }

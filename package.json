@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.18.0",
     "babel-engine-plugin": "^0.2.1",
     "babel-eslint": "^8.2.5",
     "babel-plugin-transform-es2015-arrow-functions": "^6.22.0",

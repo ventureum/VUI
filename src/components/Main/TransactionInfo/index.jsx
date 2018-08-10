@@ -171,6 +171,12 @@ class TransactionInfo extends Component {
             desc: 'Execute a transaction to vote the regulator for the objective type.'
           }
         ],
+        'ms-send-gas': [
+          {
+            name: 'Send Gas',
+            desc: 'Execute a transaction to send gas to execute write available votes.'
+          }
+        ],
         'ms-write-available-votes': [
           {
             name: 'Write Available Votes',
