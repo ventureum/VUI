@@ -42,7 +42,7 @@ class SaleService {
   }
 
   async purchaseTokens (tokenAmount) {
-    await this.sale.purchaseTokens(1, {value: toBasicUnit(BigNumber(tokenAmount)).toString(10)})
+    await this.sale.purchaseTokens(500000, {value: toBasicUnit(BigNumber(tokenAmount)).toString(10)})
   }
 }
 
