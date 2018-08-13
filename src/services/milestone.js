@@ -191,11 +191,12 @@ class MilestoneService {
         rewardInfo = await this.getRegulationRewardsForRegulator(projectHash, i, objInfo[0], objFinalized)
       }
       let refundInfo = await refundManager.getRefundInfo(projectHash, i)
-      let gasSent = await this.carbonVoteXCore.getGasSent.call(web3.utils.keccak256('ReputationSystem'), pollId, this.account)
       let voteObtained = await this.carbonVoteXCore.voteObtained.call(web3.utils.keccak256('ReputationSystem'), pollId, this.account)
       let estimateGas = null
+      let gasSent = null
       if (pollExist && !pollExpired && !voteObtained) {
         estimateGas = await this.getEstimateGas(pollId)
+        gasSent = await this.carbonVoteXCore.getGasSent.call(web3.utils.keccak256('ReputationSystem'), pollId, this.account)
       }
       let voteRights
       if (voteObtained) {
