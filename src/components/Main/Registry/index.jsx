@@ -70,19 +70,6 @@ class Registry extends Component {
               </div>
             </div>
           </div>
-          {/* <div className="row">
-            <div className="column eight wide">
-              <VoteCommit />
-            </div>
-            <div className="column eight wide">
-              <VoteReveal />
-            </div>
-          </div>
-          <div className="row">
-            <div className="column eight wide">
-              <Challenge />
-            </div>
-          </div> */}
         </div>
       </div>
 

@@ -3,7 +3,6 @@ import saveFile from '../../../../utils/saveFile'
 import { Grid, Table, Button, Segment, Form } from 'semantic-ui-react'
 import { Scrollbars } from 'react-custom-scrollbars'
 import { Base64 } from 'js-base64'
-import ReactJson from 'react-json-view'
 import toastr from 'toastr'
 import commafy from 'commafy'
 import moment from 'moment'
@@ -15,6 +14,8 @@ import ActivateMilestone from './ActivateMilestone'
 import Refund from './Refund'
 import StartVotingPoll from './StartVotingPoll'
 import Countdown from '../Countdown'
+import ProjectPreview from '../../ProjectPreview'
+import JsonSchema from '../../Application/schema.json'
 import milestone from '../../../../services/milestone'
 import refundManager from '../../../../services/refundManager'
 import paymentManager from '../../../../services/paymentManager'
@@ -278,7 +279,7 @@ class ProjectProfile extends Component {
           <Grid.Column width={6}>
             {projectData &&
             <Scrollbars style={{ height: 300 }}>
-              <ReactJson src={projectData} displayDataTypes={false} displayObjectSize={false} enableClipboard={false} />
+              <ProjectPreview formData={projectData.application} schema={JsonSchema.schema} />
             </Scrollbars>
             }
             <div className='ui field'>

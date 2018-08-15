@@ -60,10 +60,6 @@ class TokenSaleService {
     await this.tokenSale.buyTokens(web3.utils.keccak256(name), {value: toBasicUnit(big(amount)).div(rate).toString(10).replace(/\..*/, '')})
   }
 
-  async withdrawToken (name) {
-    await this.tokenSale.withdrawToken(web3.utils.keccak256(name))
-  }
-
   async getTokenInfo (name) {
     let info = await this.tokenSale.tokenInfo.call(web3.utils.keccak256(name))
     return {
