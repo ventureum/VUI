@@ -2,6 +2,7 @@
   "schema":{
     "definitions": {
       "legalEntity": {
+        "title": "legalEntity",
         "type": "object",
         "properties": {
           "primaryEntity": {
@@ -91,17 +92,14 @@
         "minItems": 0
       },
       "managementTeamMembers": {
-        "type": "object",
+        "type": "array",
+        "minItems": 0,
+        "uniqueItems": true,
         "title": "Management Team Members",
-        "properties": {
-          "": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "title": "Name",
-              "default": ""
-            },
-            "minItems": 0
+        "items": {
+          "name": {
+            "type": "string",
+            "title": "Name"
           },
           "operatingCommittees": {
             "type": "string",
@@ -208,10 +206,8 @@
       }
     },
     "managementTeamMembers": {
-      "": {
-        "ui:options": {
-          "orderable": false
-        }
+      "ui:options": {
+        "orderable": false
       }
     },
     "tokenSaleDetails": {

@@ -89,4 +89,12 @@ function currentTimestamp (sync = true) {
   }
 }
 
-export {toStandardUnit, toBasicUnit, wrapWithTransactionInfo, stopPropagation, dayToSeconds, equalWithPrecision, currentTimestamp}
+export {
+  toStandardUnit,
+  toBasicUnit,
+  wrapWithTransactionInfo,
+  stopPropagation,
+  dayToSeconds,
+  equalWithPrecision,
+  currentTimestamp
+}
