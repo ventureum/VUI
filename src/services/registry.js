@@ -8,6 +8,7 @@ import token from './token'
 import plcr from './plcr'
 import parameterizer from './parameterizer'
 import tokenSale from './tokenSale'
+import milestone from './milestone'
 import projectController from './projectController'
 import saltHashVote from '../utils/saltHashVote'
 import { getRegistry, getERC20Token } from '../config'
@@ -246,6 +247,7 @@ class RegistryService {
       projectObj.hasBeenRevealed = await plcr.hasBeenRevealed(this.account, projectObj.challengeId.toNumber())
       projectObj.action = this.getProjectAction(projectObj)
       projectObj.isOwner = this.isOwner(projectObj.owner)
+      projectObj.minMsLength = await milestone.getMinLength()
       if (projectObj.action === 'view') {
         projectObj.controllerStage = await projectController.getProjectState(projectObj)
         projectObj.controllerStageStr = projectStateMap[projectObj.controllerStage.toNumber()]

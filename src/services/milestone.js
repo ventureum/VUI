@@ -211,7 +211,7 @@ class MilestoneService {
         objTypesStrs,
         objRewards: objInfo[2],
         objFinalized,
-        days: ms[0].toNumber() / (24 * 60 * 60),
+        len: ms[0].toNumber(),
         state: ms[1].toNumber(),
         stateStr: msState[ms[1].toNumber()],
         stateStrReadable: msStateReadable[ms[1].toNumber()],
@@ -235,6 +235,14 @@ class MilestoneService {
     return result
   }
 
+  convertToSeconds (len) {
+    let oneMinute = 60
+    let oneHour = 60 * oneMinute
+    let oneDay = 24 * oneHour
+
+    return len.day * oneDay + len.hour * oneHour + len.minute * oneMinute + len.second
+  }
+
   async addMilestone (name, data) {
     let objs = []
     let objTypes = []
@@ -244,7 +252,7 @@ class MilestoneService {
       objTypes.push(data.objs[i].type)
       objRewards.push(toBasicUnit(big(data.objs[i].reward)).toString(10))
     }
-    await this.ms.addMilestone(web3.utils.keccak256(name), dayToSeconds(data.days), objs, objTypes, objRewards)
+    await this.ms.addMilestone(web3.utils.keccak256(name), this.convertToSeconds(data.len), objs, objTypes, objRewards)
   }
 
   async activate (name, id, wei, minTime, maxTime, etherCanLock) {
@@ -273,6 +281,11 @@ class MilestoneService {
 
   async finalize (name, id) {
     await this.ms.founderFinalize(web3.utils.keccak256(name), id)
+  }
+
+  async getMinLength () {
+    let result = await this.ms.minMilestoneLength.call()
+    return result.toNumber()
   }
 }
 
