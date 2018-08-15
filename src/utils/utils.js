@@ -48,7 +48,7 @@ function equalWithPrecision (val1, val2) {
 }
 
 var timestamp = 0
-var env = 'test'
+var env = process.env.REACT_APP_ENV
 function currentTimestamp (sync = true) {
   function getTimestampFromBlockchain (sync) {
     if (sync) {
@@ -80,8 +80,8 @@ function currentTimestamp (sync = true) {
   if (env === 'test') {
     return getTimestampFromBlockchain(sync)
   } else {
+    timestamp = moment().utc().unix()
     if (sync) {
-      timestamp = moment().utc().unix()
       return timestamp
     } else {
       return Promise.resolve(timestamp)
