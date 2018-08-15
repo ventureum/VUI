@@ -101,15 +101,6 @@ class TokenSale extends Component {
     }
   }
 
-  async withdrawRestToken (project) {
-    try {
-      await tokenSale.withdrawToken(project.projectName)
-      toastr.success('Token withdrawed successfully!')
-    } catch (error) {
-      toastr.error(error.message)
-    }
-  }
-
   async getBalance () {
     let balance
     if (!this.state.tokenBalance) {
@@ -280,9 +271,6 @@ class TokenSale extends Component {
                 <div className='column sixteen wide'>
                   <Segment>
                     <strong>Note: </strong> Please make sure your total token amount is large enough, it's not allowed to change after starting token sale.
-                    <br />
-                    <br />
-                    You can withdraw reset tokens after stopping token sale.
                   </Segment>
                   <Form>
                     {this.state.milestoneData &&
@@ -324,11 +312,6 @@ class TokenSale extends Component {
           ]
         } else {
           return (this.buyTokenDOM(project))
-        }
-      } else if ((stage === 'token-sale' && project.tokenInfo.finalized) || (stage === 'milestone') || (stage === 'complete')) {
-        if (project.tokenInfo.numTokenLeft.toNumber() !== 0) {
-          return (
-            <Button primary onClick={wrapWithTransactionInfo('withdraw-rest-token', this.withdrawRestToken, project)} >withdraw rest token</Button>)
         }
       }
     } else if (stage === 'token-sale' && !project.tokenInfo.finalized) {
