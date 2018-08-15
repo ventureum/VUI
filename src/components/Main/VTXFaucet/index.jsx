@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal } from 'semantic-ui-react'
+import { Modal, Form } from 'semantic-ui-react'
 import InProgress from '../InProgress'
 import sale from '../../../services/sale'
 import toastr from 'toastr'
@@ -90,16 +90,22 @@ class VTXFaucet extends Component {
       <Modal onClose={this.handleClose} open={modalOpen} size='mini' trigger={<a onClick={this.handleOpen} href='#!'>&nbsp;(VTX Faucet)</a>}>
         <Modal.Header>VTX Faucet</Modal.Header>
         <Modal.Content>
-          <div className='ui grid stackable padded'>
-            <div className='column five wide'>
-              <div className='ui grid stackable center aligned'>
-                <div className='column sixteen wide'>
+          <div className='ui grid stackable aligned'>
+            <div className='column sixteen wide'>
+              <Form>
+                <Form.Field>
+                  <label>Rate: 1 ETH = 500,000 VTX</label>
+                </Form.Field>
+                <Form.Field>
+                  <label>Input the amount of ETH you want to transfer</label>
+                </Form.Field>
+                <Form.Field>
                   <div className='ui input action mini'>
-                    <input onKeyUp={this.onTokenAmountKeyUp} type='text' placeholder='100' />
-                    <button onClick={wrapWithTransactionInfo('vtxfaucet', this.requestToken)} className='ui button blue tiny'>Transfer VTX</button>
+                    <input onKeyUp={this.onTokenAmountKeyUp} type='text' placeholder='1 ETH' />
+                    <button onClick={wrapWithTransactionInfo('vtxfaucet', this.requestToken)} className='ui button blue tiny'>Transfer to VTX</button>
                   </div>
-                </div>
-              </div>
+                </Form.Field>
+              </Form>
             </div>
             {inProgress ? <InProgress /> : null}
           </div>
