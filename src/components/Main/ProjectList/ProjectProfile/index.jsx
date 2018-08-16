@@ -21,7 +21,7 @@ import refundManager from '../../../../services/refundManager'
 import paymentManager from '../../../../services/paymentManager'
 import repSys from '../../../../services/repSys'
 import store from '../../../../store'
-import { dayToSeconds, wrapWithTransactionInfo, toStandardUnit, currentTimestamp } from '../../../../utils/utils'
+import { wrapWithTransactionInfo, toStandardUnit, currentTimestamp } from '../../../../utils/utils'
 
 var basePath = 'https://15mw7pha3h.execute-api.us-west-1.amazonaws.com/alpha'
 
@@ -123,9 +123,9 @@ class ProjectProfile extends Component {
     } else if (name === 'startPoll') {
       return ms.stateStr === 'ip' && !ms.pollExist && now >= ms.pollInfo.minStartTime && now < ms.pollInfo.maxStartTime
     } else if (name === 'startRatingStage') {
-      return project.isOwner && ms.stateStr === 'ip' && ms.pollExist && now >= ms.startTime && now < ms.endTime - dayToSeconds(30)
+      return project.isOwner && ms.stateStr === 'ip' && ms.pollExist && now >= ms.startTime && now < ms.endTime - project.ratingStageMaxStartTime
     } else if (name === 'startRefund') {
-      return ms.stateStr !== 'rp' && ms.endTime !== 0 && now >= ms.endTime - dayToSeconds(7) && now < ms.endTime
+      return ms.stateStr !== 'rp' && ms.endTime !== 0 && now >= ms.endTime - project.refundStageMinStartTime && now < ms.endTime
     } else if (name === 'refund') {
       return ms.stateStr === 'rp' && project.balance.toNumber() > 0 && ms.restWeiLock.toNumber() > 0 && this.canRefund(ms)
     } else if (name === 'withdrawRefund') {

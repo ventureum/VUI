@@ -287,6 +287,16 @@ class MilestoneService {
     let result = await this.ms.minMilestoneLength.call()
     return result.toNumber()
   }
+
+  async getRatingStageMaxStartTime () {
+    let result = await this.ms.ratingStageMaxStartTimeFromEnd.call()
+    return result.toNumber()
+  }
+
+  async getRefundStageMinStartTime () {
+    let result = await this.ms.refundStageMinStartTimeFromEnd.call()
+    return result.toNumber()
+  }
 }
 
 export default new MilestoneService()
