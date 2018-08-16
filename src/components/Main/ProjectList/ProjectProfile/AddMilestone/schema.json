@@ -25,13 +25,38 @@
     }
   },
   "type": "object",
-  "required": ["days", "objs"],
+  "required": ["len", "objs"],
   "properties": {
-    "days": {
-      "type": "number",
-      "title":"Length in days",
-      "default": 60,
-      "minimum": 60
+    "len": {
+      "type": "object",
+      "title": "Milestone Length",
+      "required": ["day", "hour", "minute", "second"],
+      "properties": {
+        "day": {
+          "type": "number",
+          "title":"day(s)",
+          "default": 0,
+          "minimum": 0
+        },
+        "hour": {
+          "type": "number",
+          "title":"hour(s)",
+          "default": 0,
+          "minimum": 0
+        },
+        "minute": {
+          "type": "number",
+          "title":"minute(s)",
+          "default": 0,
+          "minimum": 0
+        },
+        "second": {
+          "type": "number",
+          "title":"second(s)",
+          "default": 0,
+          "minimum": 0
+        }
+      }
     },
     "objs": {
       "type": "array",

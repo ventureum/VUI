@@ -30,6 +30,36 @@ class MilestoneModal extends Component {
     this.withdrawReward = this.withdrawReward.bind(this)
   }
 
+  getReadableLength (seconds) {
+    let result = {
+      day: 0,
+      hour: 0,
+      minute: 0,
+      second: 0
+    }
+
+    let oneMinute = 60
+    let oneHour = 60 * oneMinute
+    let oneDay = 24 * oneHour
+
+    if (seconds >= oneDay) {
+      result.day = Math.floor(seconds / oneDay)
+      seconds = seconds % oneDay
+    }
+    if (seconds >= oneHour) {
+      result.hour = Math.floor(seconds / oneHour)
+      seconds = seconds % oneHour
+    }
+    if (seconds >= oneMinute) {
+      result.minute = Math.floor(seconds / oneMinute)
+      seconds = seconds % oneMinute
+    }
+    result.second = seconds
+    return Object.keys(result)
+      .filter(key => result[key] > 0)
+      .reduce((str, key) => [str, result[key], key + '(s)'].join(' '), '')
+  }
+
   open () {
     this.setState({
       open: true
@@ -224,7 +254,7 @@ class MilestoneModal extends Component {
               <strong>State: </strong>{milestone.stateStrReadable}
             </List.Item>
             <List.Item>
-              <strong>Length: </strong>{milestone.days} days
+              <strong>Length: </strong>{this.getReadableLength(milestone.len)}
             </List.Item>
             <List.Item>
               <strong>Token Locked: </strong>{toStandardUnit(milestone.weiLocked).toNumber()} ETH
