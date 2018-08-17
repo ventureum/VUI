@@ -225,19 +225,6 @@ class PlcrService {
     })
   }
 
-  async pollEnded (pollId) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const result = await this.plcr.pollEnded(pollId.toString())
-        resolve(result)
-        return false
-      } catch (error) {
-        reject(error)
-        return false
-      }
-    })
-  }
-
   async getCommitHash (voter, pollId) {
     return new Promise(async (resolve, reject) => {
       try {
