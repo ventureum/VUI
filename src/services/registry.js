@@ -544,7 +544,6 @@ class RegistryService {
 
     try {
       await plcr.reveal(challengeId, voteOption, salt)
-      return this.didRevealForPoll(challengeId)
     } catch (error) {
       throw error
     }

@@ -293,7 +293,7 @@ class ChallengeVoteReveal extends Component {
 
     try {
       const projectName = this.props.project.projectName
-      const revealed = await registry.revealVote(projectName, voteOption, salt)
+      await registry.revealVote(projectName, voteOption, salt)
 
       if (this._isMounted) {
         this.setState({
@@ -301,16 +301,12 @@ class ChallengeVoteReveal extends Component {
         })
       }
 
-      if (revealed) {
-        toastr.success('Successfully revealed')
+      toastr.success('Successfully revealed')
 
-        // TODO: better way of resetting state
-        setTimeout(() => {
-          window.location.reload()
-        }, 2e3)
-      } else {
-        toastr.error('Reveal did not go through')
-      }
+      // TODO: better way of resetting state
+      setTimeout(() => {
+        window.location.reload()
+      }, 2e3)
     } catch (error) {
       toastr.error(error.message)
 
