@@ -131,7 +131,7 @@ class ProjectProfile extends Component {
     } else if (name === 'withdrawRefund') {
       return ms.refundInfo.canWithdraw
     } else if (name === 'finalize') {
-      return project.isOwner && ms.id === this.state.milestoneData.length && ms.endTime !== 0 && now >= ms.endTime
+      return project.isOwner && ms.id === this.state.milestoneData.length && ms.endTime !== 0 && now >= ms.endTime && ms.stateStr !== 'completion'
     } else if (name === 'withdrawWeiLocked') {
       return project.isOwner && ms.stateStr === 'completion' && ms.restWeiLock.toNumber() > 0
     }
