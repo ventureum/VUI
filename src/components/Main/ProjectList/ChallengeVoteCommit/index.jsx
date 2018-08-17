@@ -393,7 +393,7 @@ class ChallengeVoteCommit extends Component {
 
     try {
       const tokens = toBasicUnit(new BigNumber(votes))
-      const commited = await registry.commitVote(projectName, tokens, voteOption, salt)
+      await registry.commitVote(projectName, tokens, voteOption, salt)
 
       if (this._isMounted) {
         this.setState({
@@ -401,16 +401,12 @@ class ChallengeVoteCommit extends Component {
         })
       }
 
-      if (commited) {
-        toastr.success('Successfully committed')
+      toastr.success('Successfully committed')
 
-        // TODO: better way of resetting state
-        setTimeout(() => {
-          window.location.reload()
-        }, 1e3)
-      } else {
-        toastr.error('Commit did not go through')
-      }
+      // TODO: better way of resetting state
+      setTimeout(() => {
+        window.location.reload()
+      }, 1e3)
     } catch (error) {
       toastr.error(error.message)
       if (this._isMounted) {

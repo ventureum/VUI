@@ -11,6 +11,8 @@ import DelegateVotes from './DelegateVotes'
 import { stopPropagation, toStandardUnit, wrapWithTransactionInfo, currentTimestamp } from '../../../../../utils/utils'
 import styles from './styles.css'
 
+let env = process.env.REACT_APP_ENV
+
 class MilestoneModal extends Component {
   constructor (props) {
     super(props)
@@ -82,6 +84,8 @@ class MilestoneModal extends Component {
       return ms.stateStr === 'ip' && ms.pollExist && !ms.pollExpired && !ms.voteObtained && now > ms.pollInfo.minStartTime && typeof ms.estimateGas === 'number' && ms.gasSent.lt(ms.estimateGas)
     } else if (name === 'writeAvailableVotes') {
       return ms.stateStr === 'ip' && ms.pollExist && !ms.pollExpired && !ms.voteObtained && now > ms.pollInfo.minStartTime && typeof ms.estimateGas === 'number' && ms.gasSent.gte(ms.estimateGas)
+    } else if (name === 'test-writeAvailableVotes') {
+      return ms.stateStr === 'ip' && ms.pollExist && !ms.pollExpired && !ms.voteObtained
     } else if (name === 'bid') {
       return ms.stateStr === 'rs' && now < ms.endTime && !ms.objFinalized[i] && !ms.bidInfo[i]
     } else if (name === 'backout') {
@@ -314,12 +318,17 @@ class MilestoneModal extends Component {
           </List>
         </Modal.Content>
         <Modal.Actions>
-          {this.canCall('sendGas') &&
+          {env !== 'test' && this.canCall('sendGas') &&
             <Button onClick={wrapWithTransactionInfo('ms-send-gas', this.sendGas)} color={'blue'}>
               send gas
             </Button>
           }
-          {this.canCall('writeAvailableVotes') &&
+          {env !== 'test' && this.canCall('writeAvailableVotes') &&
+            <Button id='write-votes' onClick={wrapWithTransactionInfo('ms-write-available-votes', this.writeAvailableVotes)} color={'blue'}>
+              write available votes
+            </Button>
+          }
+          {env === 'test' && this.canCall('test-writeAvailableVotes') &&
             <Button id='write-votes' onClick={wrapWithTransactionInfo('ms-write-available-votes', this.writeAvailableVotes)} color={'blue'}>
               write available votes
             </Button>

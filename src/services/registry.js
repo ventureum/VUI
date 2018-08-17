@@ -528,7 +528,6 @@ class RegistryService {
       const hash = saltHashVote(voteOption, salt)
 
       await plcr.commit(challengeId, hash, votes)
-      return this.didCommitForPoll(challengeId)
     } catch (error) {
       throw error
     }
