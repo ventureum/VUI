@@ -218,6 +218,7 @@ class ProjectProfile extends Component {
 
   render () {
     const {
+      timestamp,
       project,
       projectData,
       milestoneData,
@@ -317,7 +318,7 @@ class ProjectProfile extends Component {
                 </Form.Field>
               </Segment>
             }
-            {waitingTime &&
+            {timestamp <= waitingTime &&
               <Segment>
                 <strong>Next voting poll will starts in: </strong>
                 <Countdown endDate={waitingTime} />

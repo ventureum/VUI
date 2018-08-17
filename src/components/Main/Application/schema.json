@@ -97,17 +97,21 @@
         "uniqueItems": true,
         "title": "Management Team Members",
         "items": {
-          "name": {
-            "type": "string",
-            "title": "Name"
-          },
-          "operatingCommittees": {
-            "type": "string",
-            "title": "Operating Committees (Audit Committee, Compensation Committee, etc.)"
-          },
-          "legalCounselContact": {
-            "type": "string",
-            "title": "Legal Counsel Contact"
+          "type": "object",
+          "title": "Member Info",
+          "properties" : {
+            "name": {
+              "type": "string",
+              "title": "Name"
+            },
+            "operatingCommittees": {
+              "type": "string",
+              "title": "Operating Committees (Audit Committee, Compensation Committee, etc.)"
+            },
+            "legalCounselContact": {
+              "type": "string",
+              "title": "Legal Counsel Contact"
+            }
           }
         }
       },

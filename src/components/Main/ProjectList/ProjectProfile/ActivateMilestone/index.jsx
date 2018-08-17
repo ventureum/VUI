@@ -4,7 +4,7 @@ import { Button, Modal, Form, List, Message, Segment } from 'semantic-ui-react'
 import toastr from 'toastr'
 import milestone from '../../../../../services/milestone'
 import regulatingRating from '../../../../../services/regulatingRating'
-import { stopPropagation, dayToSeconds, wrapWithTransactionInfo, toStandardUnit } from '../../../../../utils/utils'
+import { stopPropagation, wrapWithTransactionInfo, toStandardUnit } from '../../../../../utils/utils'
 import styles from './styles.css'
 
 class ActivateMilestone extends Component {
@@ -53,13 +53,7 @@ class ActivateMilestone extends Component {
   checkInput () {
     let minTime = this.getSeconds('min')
     let maxTime = this.getSeconds('max')
-    if (!this.state.weiLocked) {
-      this.setState({
-        error: 'Please enter ETH amount.',
-        errorInput: 'wei'
-      })
-      return false
-    } else if (this.state.weiLocked > toStandardUnit(this.props.project.etherCanLock).toNumber()) {
+    if (this.state.weiLocked > toStandardUnit(this.props.project.etherCanLock).toNumber()) {
       this.setState({
         error: 'Locked ETH amount exceeds project ETH balance.',
         errorInput: 'wei'
@@ -71,7 +65,7 @@ class ActivateMilestone extends Component {
         errorInput: 'min'
       })
       return false
-    } else if (maxTime > dayToSeconds(this.props.milestone.days)) {
+    } else if (maxTime > this.props.milestone.len) {
       this.setState({
         error: 'Maximum time exceeds the length of milestone.',
         errorInput: 'max'
@@ -121,6 +115,36 @@ class ActivateMilestone extends Component {
     })
   }
 
+  getReadableLength (seconds) {
+    let result = {
+      day: 0,
+      hour: 0,
+      minute: 0,
+      second: 0
+    }
+
+    let oneMinute = 60
+    let oneHour = 60 * oneMinute
+    let oneDay = 24 * oneHour
+
+    if (seconds >= oneDay) {
+      result.day = Math.floor(seconds / oneDay)
+      seconds = seconds % oneDay
+    }
+    if (seconds >= oneHour) {
+      result.hour = Math.floor(seconds / oneHour)
+      seconds = seconds % oneHour
+    }
+    if (seconds >= oneMinute) {
+      result.minute = Math.floor(seconds / oneMinute)
+      seconds = seconds % oneMinute
+    }
+    result.second = seconds
+    return Object.keys(result)
+      .filter(key => result[key] > 0)
+      .reduce((str, key) => [str, result[key], key + '(s)'].join(' '), '')
+  }
+
   render () {
     const {
       open,
@@ -159,7 +183,7 @@ class ActivateMilestone extends Component {
                   <strong>ID: </strong>{this.props.milestone.id}
                 </List.Item>
                 <List.Item>
-                  <strong>Length: </strong>{this.props.milestone.days} days
+                  <strong>Length: </strong>{this.getReadableLength(this.props.milestone.len)}
                 </List.Item>
                 <List.Item>
                   <strong>Project ETH Balance: </strong>{toStandardUnit(this.props.project.etherCanLock).toNumber()}

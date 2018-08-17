@@ -1,11 +1,12 @@
 import Eth from 'ethjs'
 import { getProvider } from './provider'
 import { getMilestoneController, getMilestoneControllerView, getCarbonVoteXCore } from '../config'
-import { dayToSeconds, toBasicUnit, equalWithPrecision, currentTimestamp } from '../utils/utils'
+import { toBasicUnit, equalWithPrecision, currentTimestamp } from '../utils/utils'
 import store from '../store'
 import web3 from 'web3'
 import axios from 'axios'
 import repSys from './repSys'
+import token from './token'
 import regulatingRating from './regulatingRating'
 import refundManager from './refundManager'
 import rewardManager from './rewardManager'
@@ -124,11 +125,20 @@ class MilestoneService {
   }
 
   async writeAvailableVotes (name, id) {
-    return this.axios.post('/', {
-      name: 'writeAvailableVotes',
-      pollId: web3.utils.soliditySha3(web3.utils.keccak256(name), id),
-      address: this.account
-    })
+    let env = process.env.REACT_APP_ENV
+    if (env === 'test') {
+      let ci = web3.utils.keccak256('ReputationSystem')
+      let pollId = web3.utils.soliditySha3(web3.utils.keccak256(name), id)
+      let balance = await token.balanceOf(this.account)
+      let rootAddr = process.env.REACT_APP_ROOT_ADDRESS
+      await this.carbonVoteXCore.writeAvailableVotes(ci, pollId, this.account, balance, {from: rootAddr})
+    } else {
+      return this.axios.post('/', {
+        name: 'writeAvailableVotes',
+        pollId: web3.utils.soliditySha3(web3.utils.keccak256(name), id),
+        address: this.account
+      })
+    }
   }
 
   async getMilestoneData (project) {
