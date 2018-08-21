@@ -185,7 +185,7 @@ class ChallengeClaimReward extends Component {
         window.location.reload()
       }, 1e3)
     } catch (error) {
-      toastr.error(error.message)
+      toastr.error(error)
     }
 
     if (this._isMounted) {

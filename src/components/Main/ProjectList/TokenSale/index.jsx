@@ -62,7 +62,7 @@ class TokenSale extends Component {
       toastr.success('Token sale started successfully!')
       this.handleClose()
     } catch (error) {
-      toastr.error(error.message)
+      toastr.error(error)
     } finally {
       this.setState({
         inProgress: false
@@ -76,7 +76,7 @@ class TokenSale extends Component {
       await tokenSale.stopTokenSale(name)
       toastr.success('Token sale stopped successfully!')
     } catch (error) {
-      toastr.error(error.message)
+      toastr.error(error)
     } finally {
       this.props.projectInProgress(name, false)
     }
@@ -93,7 +93,7 @@ class TokenSale extends Component {
         buyTokenAmount: ''
       })
     } catch (error) {
-      toastr.error(error.message)
+      toastr.error(error)
     } finally {
       this.setState({
         inProgress: false

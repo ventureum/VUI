@@ -69,6 +69,14 @@ async function init () {
     })
     toastr.options.preventDuplicates = true
     toastr.options.escapeHtml = false
+    const oriError = toastr.error
+    toastr.error = (e) => {
+      if (e.message && e.message.indexOf('Error: VM Exception while processing transaction: revert' >= 0)) {
+        oriError('Error: Transaction is reverted, please try to refresh the page and submit again.')
+      } else {
+        oriError(e.message || e)
+      }
+    }
     currentTimestamp() // init timestamp
   } catch (error) {
     toastr.error(error)

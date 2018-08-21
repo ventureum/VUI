@@ -45,7 +45,7 @@ class ProjectList extends Component {
       await registry.updateStatus(project.projectName)
       toastr.success('Transaction successfully sent')
     } catch (error) {
-      toastr.error(error.message)
+      toastr.error(error)
     }
   }
 
@@ -132,7 +132,7 @@ class ProjectList extends Component {
         setTimeout(this.updatePerPage, 0)
       }
     } catch (error) {
-      toastr.error(error.message)
+      toastr.error(error)
     }
   }
 
@@ -161,7 +161,7 @@ class ProjectList extends Component {
       await plcr.unlock(project.challengeId)
       toastr.success('Token unlocked successfully.')
     } catch (error) {
-      toastr.error(error.message)
+      toastr.error(error)
     }
   }
 

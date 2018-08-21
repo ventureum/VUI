@@ -55,7 +55,7 @@ class WithdrawVotingRights extends Component {
         })
       }
     } catch (error) {
-      toastr.error(error.message)
+      toastr.error(error)
     }
   }
 
@@ -76,7 +76,7 @@ class WithdrawVotingRights extends Component {
       await registry.withdrawVotingRights(availableTokens)
       toastr.success('Success')
     } catch (error) {
-      toastr.error(error.message)
+      toastr.error(error)
     }
 
     if (this._isMounted) {
