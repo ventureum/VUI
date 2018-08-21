@@ -59,6 +59,16 @@ async function init () {
     ])
     ReactDOM.render(<App />, document.getElementById('root'))
     await initAccountPoll()
+    let filter = window.web3.eth.filter('pending')
+    filter.watch((err, hash) => {
+      if (err) {
+        console.log(err)
+      } else {
+        toastr.success('Follow transaction in Etherscan, Click this hash: <a style="color: blue; text-decoration: underline;" target="_blank" href="https://etherscan.io/tx/' + hash + '">' + hash + '</a>')
+      }
+    })
+    toastr.options.preventDuplicates = true
+    toastr.options.escapeHtml = false
     currentTimestamp() // init timestamp
   } catch (error) {
     toastr.error(error)
