@@ -5,6 +5,7 @@ import { getProvider } from './provider'
 import { getTokenSale } from '../config'
 import { toBasicUnit } from '../utils/utils'
 import store from '../store'
+import token from './token'
 
 const big = (number) => new BigNumber(number)
 
@@ -57,6 +58,8 @@ class TokenSaleService {
   }
 
   async buyToken (name, amount, rate) {
+    let vtxBase = await this.tokenSale.vtxBase.call()
+    await token.approve(this.address, toBasicUnit(big(amount)).div(vtxBase))
     await this.tokenSale.buyTokens(web3.utils.keccak256(name), {value: toBasicUnit(big(amount)).div(rate).toString(10).replace(/\..*/, '')})
   }
 
