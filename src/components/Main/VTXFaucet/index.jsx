@@ -72,7 +72,7 @@ class VTXFaucet extends Component {
 
       toastr.success('Success')
     } catch (error) {
-      toastr.error(error.message)
+      toastr.error(error)
     }
 
     this.setState({

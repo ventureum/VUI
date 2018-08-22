@@ -84,7 +84,7 @@ class Application extends Component {
       })
       toastr.success('Success')
     } catch (error) {
-      toastr.error('Failure:' + error)
+      toastr.error(error)
     }
   }
 

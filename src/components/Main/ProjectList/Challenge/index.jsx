@@ -163,7 +163,7 @@ class Challenge extends Component {
           window.location.reload()
         }, 2e3)
       } catch (error) {
-        toastr.error(error.message)
+        toastr.error(error)
         if (this._isMounted) {
           this.setState({
             inProgress: false

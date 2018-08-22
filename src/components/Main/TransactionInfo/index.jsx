@@ -97,6 +97,10 @@ class TransactionInfo extends Component {
         ],
         'buy-token': [
           {
+            name: 'Approve Token Transfer',
+            desc: 'Execute a transaction to approve the transfer of VTX gas fee.'
+          },
+          {
             name: 'Buy Token',
             desc: 'Execute a transaction to buy token.'
           }

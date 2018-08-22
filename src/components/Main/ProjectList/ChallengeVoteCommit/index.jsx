@@ -339,7 +339,7 @@ class ChallengeVoteCommit extends Component {
         })
       }
     } catch (error) {
-      toastr.error(error.message)
+      toastr.error(error)
     }
   }
 
@@ -354,7 +354,7 @@ class ChallengeVoteCommit extends Component {
         })
       }
     } catch (error) {
-      toastr.error(error.message)
+      toastr.error(error)
     }
   }
 
@@ -368,7 +368,7 @@ class ChallengeVoteCommit extends Component {
         })
       }
     } catch (error) {
-      toastr.error(error.message)
+      toastr.error(error)
     }
   }
 
@@ -408,7 +408,7 @@ class ChallengeVoteCommit extends Component {
         window.location.reload()
       }, 1e3)
     } catch (error) {
-      toastr.error(error.message)
+      toastr.error(error)
       if (this._isMounted) {
         this.setState({
           inProgress: false
