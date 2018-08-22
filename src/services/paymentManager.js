@@ -3,6 +3,7 @@ import web3 from 'web3'
 import { getProvider } from './provider'
 import { getPaymentManager } from '../config'
 import store from '../store'
+import { wrapSend } from '../utils/utils'
 
 
 class PaymentManagerService {
@@ -21,6 +22,7 @@ class PaymentManagerService {
     this.pm = await getPaymentManager(accounts[0])
     this.address = this.pm.address
     this.setUpEvents()
+    wrapSend(this, ['pm'])
 
     store.dispatch({
       type: 'PAYMENT_MANAGER_CONTRACT_INIT'

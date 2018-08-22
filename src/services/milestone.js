@@ -1,7 +1,7 @@
 import Eth from 'ethjs'
 import { getProvider } from './provider'
 import { getMilestoneController, getMilestoneControllerView, getCarbonVoteXCore } from '../config'
-import { toBasicUnit, equalWithPrecision, currentTimestamp } from '../utils/utils'
+import { toBasicUnit, equalWithPrecision, currentTimestamp, wrapSend } from '../utils/utils'
 import store from '../store'
 import web3 from 'web3'
 import axios from 'axios'
@@ -42,6 +42,7 @@ class MilestoneService {
     this.msview = await getMilestoneControllerView(accounts[0])
     this.carbonVoteXCore = await getCarbonVoteXCore(accounts[0])
     this.setUpEvents()
+    wrapSend(this, ['ms', 'carbonVoteXCore'])
 
     store.dispatch({
       type: 'MILESTONE_CONTRACT_INIT'

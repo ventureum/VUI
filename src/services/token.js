@@ -2,6 +2,7 @@ import Eth from 'ethjs'
 import { getProvider } from './provider'
 import { getToken } from '../config'
 import store from '../store'
+import { wrapSend } from '../utils/utils'
 
 class TokenService {
   constructor () {
@@ -25,6 +26,7 @@ class TokenService {
     this.getDecimals()
     this.getName()
     this.getSymbol()
+    wrapSend(this, ['token'])
 
     store.dispatch({
       type: 'TOKEN_CONTRACT_INIT'
@@ -48,7 +50,7 @@ class TokenService {
   getName () {
     return new Promise(async (resolve, reject) => {
       try {
-        const name = await this.token.name()
+        const name = await this.token.name.call()
         this.name = name
         resolve(name)
         return false
@@ -62,7 +64,7 @@ class TokenService {
   getSymbol () {
     return new Promise(async (resolve, reject) => {
       try {
-        const symbol = await this.token.symbol()
+        const symbol = await this.token.symbol.call()
         this.symbol = symbol
         resolve(symbol)
         return false
@@ -76,7 +78,7 @@ class TokenService {
   getDecimals () {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.token.decimals()
+        const result = await this.token.decimals.call()
         const decimals = result.toNumber()
 
         if (decimals) {
@@ -100,7 +102,7 @@ class TokenService {
       }
 
       try {
-        const balance = await this.token.balanceOf(account)
+        const balance = await this.token.balanceOf.call(account)
         resolve(balance)
         return false
       } catch (error) {

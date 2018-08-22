@@ -4,7 +4,7 @@ import { BigNumber } from 'bignumber.js'
 import { getProvider } from './provider'
 import { getRefundManager } from '../config'
 import store from '../store'
-import { toBasicUnit, equalWithPrecision } from '../utils/utils'
+import { toBasicUnit, equalWithPrecision, wrapSend } from '../utils/utils'
 
 const big = (number) => new BigNumber(number)
 
@@ -24,6 +24,7 @@ class RefundManagerService {
     this.rm = await getRefundManager(accounts[0])
     this.address = this.rm.address
     this.setUpEvents()
+    wrapSend(this, ['rm'])
 
     store.dispatch({
       type: 'REFUND_MANAGER_CONTRACT_INIT'

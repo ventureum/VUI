@@ -3,6 +3,7 @@ import web3 from 'web3'
 import { getProvider } from './provider'
 import { getRewardManager } from '../config'
 import store from '../store'
+import { wrapSend } from '../utils/utils'
 
 class RewardManagerService {
   constructor () {
@@ -20,6 +21,7 @@ class RewardManagerService {
     this.rm = await getRewardManager(accounts[0])
     this.address = this.rm.address
     this.setUpEvents()
+    wrapSend(this, ['rm'])
 
     store.dispatch({
       type: 'REWARD_MANAGER_CONTRACT_INIT'

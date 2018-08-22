@@ -1,6 +1,7 @@
 import { BigNumber } from 'bignumber.js'
 import store from '../store.js'
 import moment from 'moment'
+import toastr from 'toastr'
 
 const big = (number) => new BigNumber(number.toString(10))
 const tenToTheEighteenth = big(10).pow(big(18))
@@ -89,6 +90,38 @@ function currentTimestamp (sync = true) {
   }
 }
 
+function wrapSend (target, contracts) {
+  var handler = {
+    get: function(obj, prop) {
+      let oriVal = obj[prop]
+      if (typeof oriVal === 'function') {
+        let wrapper = function () {
+          return oriVal.apply(obj, arguments).then(({ tx }) => {
+            toastr.success('Follow transaction in Etherscan, Click this hash: <a style="color: blue; text-decoration: underline;" target="_blank" href="https://etherscan.io/tx/' + tx + '">' + tx + '</a>')
+            return Promise.resolve(tx)
+          })
+        }
+        let handler = {
+          get: function(obj, prop) {
+            return oriVal[prop]
+          }
+        }
+        return new Proxy(wrapper, handler)
+      } else {
+        return oriVal
+      }
+    },
+    set: function(obj, key, val) {
+      obj[key] = val
+      return val
+    }
+  }
+  for (let i = 0; i < contracts.length; i++) {
+    target['ori' + contracts[i]] = target[contracts[i]]
+    target[contracts[i]] = new Proxy(target[contracts[i]], handler)
+  }
+}
+
 export {
   toStandardUnit,
   toBasicUnit,
@@ -96,5 +129,6 @@ export {
   stopPropagation,
   dayToSeconds,
   equalWithPrecision,
-  currentTimestamp
+  currentTimestamp,
+  wrapSend
 }

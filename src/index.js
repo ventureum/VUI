@@ -59,20 +59,12 @@ async function init () {
     ])
     ReactDOM.render(<App />, document.getElementById('root'))
     await initAccountPoll()
-    let filter = window.web3.eth.filter('pending')
-    filter.watch((err, hash) => {
-      if (err) {
-        console.log(err)
-      } else {
-        toastr.success('Follow transaction in Etherscan, Click this hash: <a style="color: blue; text-decoration: underline;" target="_blank" href="https://etherscan.io/tx/' + hash + '">' + hash + '</a>')
-      }
-    })
     toastr.options.preventDuplicates = true
     toastr.options.escapeHtml = false
     const oriError = toastr.error
     toastr.error = (e) => {
       console.error(e)
-      if (e.message && e.message.indexOf('Error: VM Exception while processing transaction: revert' >= 0)) {
+      if (e.message && e.message.indexOf('Error: VM Exception while processing transaction: revert') >= 0) {
         oriError('Error: Transaction is reverted, please try to refresh the page and submit again.')
       } else {
         oriError(e.message || e)

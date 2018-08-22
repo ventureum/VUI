@@ -3,6 +3,7 @@ import { getProvider } from './provider'
 import { getProjectController } from '../config'
 import store from '../store'
 import web3 from 'web3'
+import { wrapSend } from '../utils/utils'
 
 class ProjectControllerService {
   constructor () {
@@ -20,6 +21,7 @@ class ProjectControllerService {
     this.projectController = await getProjectController(accounts[0])
     this.address = this.projectController.address
     this.setUpEvents()
+    wrapSend(this, ['projectController'])
 
     store.dispatch({
       type: 'PROJECT_CONTROLLER_CONTRACT_INIT'
