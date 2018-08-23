@@ -226,16 +226,20 @@ class MilestoneModal extends Component {
 
     var objTypes = []
     if (milestone.objTypes) {
+      let typeRecord = {}
       for (let i = 0; i < milestone.objTypes.length; i++) {
-        objTypes.push(
-          <Table.Row key={milestone.id + milestone.objTypesStrs[i]}>
-            <Table.Cell>{milestone.objTypesStrs[i]}</Table.Cell>
-            <Table.Cell>
-              {this.canCall('vote', i) &&
-                <DelegateVotes project={this.props.project} milestone={milestone} index={i} />
-              }
-            </Table.Cell>
-          </Table.Row>)
+        if (!typeRecord[milestone.objTypesStrs[i]]) {
+          typeRecord[milestone.objTypesStrs[i]] = true
+          objTypes.push(
+            <Table.Row key={milestone.id + milestone.objTypesStrs[i]}>
+              <Table.Cell>{milestone.objTypesStrs[i]}</Table.Cell>
+              <Table.Cell>
+                {this.canCall('vote', i) &&
+                  <DelegateVotes project={this.props.project} milestone={milestone} index={i} />
+                }
+              </Table.Cell>
+            </Table.Row>)
+        }
       }
     }
 
