@@ -3,7 +3,7 @@ import web3 from 'web3'
 import { BigNumber } from 'bignumber.js'
 import { getProvider } from './provider'
 import { getTokenSale } from '../config'
-import { toBasicUnit } from '../utils/utils'
+import { toBasicUnit, wrapSend } from '../utils/utils'
 import store from '../store'
 import token from './token'
 
@@ -27,6 +27,7 @@ class TokenSaleService {
     this.tokenSale = await getTokenSale(accounts[0])
     this.address = this.tokenSale.address
     this.setUpEvents()
+    wrapSend(this, ['tokenSale'])
 
     store.dispatch({
       type: 'TOKEN_SALE_CONTRACT_INIT'

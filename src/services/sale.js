@@ -3,7 +3,7 @@ import { getProvider } from './provider'
 import { getSale } from '../config'
 import store from '../store'
 import { BigNumber } from 'bignumber.js'
-import { toBasicUnit } from '../utils/utils'
+import { toBasicUnit, wrapSend } from '../utils/utils'
 
 class SaleService {
   constructor () {
@@ -21,6 +21,7 @@ class SaleService {
     this.sale = await getSale(accounts[0])
     this.address = this.sale.address
     this.setUpEvents()
+    wrapSend(this, ['sale'])
 
     store.dispatch({
       type: 'SALE_CONTRACT_INIT'

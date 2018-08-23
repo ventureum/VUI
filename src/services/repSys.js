@@ -4,7 +4,7 @@ import { getProvider } from './provider'
 import { getRepSys } from '../config'
 import store from '../store'
 import moment from 'moment'
-import { toBasicUnit, equalWithPrecision, currentTimestamp } from '../utils/utils'
+import { toBasicUnit, equalWithPrecision, currentTimestamp, wrapSend } from '../utils/utils'
 import { BigNumber } from 'bignumber.js'
 
 const big = (number) => new BigNumber(number)
@@ -27,6 +27,7 @@ class RepSysService {
     this.rs = await getRepSys(accounts[0])
     this.address = this
     this.setUpEvents()
+    wrapSend(this, ['rs'])
 
     store.dispatch({
       type: 'REP_SYS_CONTRACT_INIT'

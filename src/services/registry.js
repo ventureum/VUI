@@ -13,7 +13,7 @@ import projectController from './projectController'
 import saltHashVote from '../utils/saltHashVote'
 import { getRegistry, getERC20Token } from '../config'
 import { getProvider } from './provider'
-import { currentTimestamp } from '../utils/utils'
+import { currentTimestamp, wrapSend } from '../utils/utils'
 
 const parameters = keyMirror({
   minDeposit: null,
@@ -47,6 +47,7 @@ class RegistryService {
 
     this.setUpEvents()
     this.setAccount()
+    wrapSend(this, ['registry'])
 
     store.dispatch({
       type: 'REGISTRY_CONTRACT_INIT'
@@ -179,7 +180,7 @@ class RegistryService {
     }
 
     try {
-      return this.registry.appWasMade(name)
+      return this.registry.appWasMade.call(name)
     } catch (error) {
       throw error
     }
@@ -188,7 +189,7 @@ class RegistryService {
   async getProjectStage (hash, projectObj) {
     if (projectObj.whitelisted) {
       return 'In Registry'
-    } else if (await this.registry.canBeWhitelisted(projectObj.projectName)) {
+    } else if (await this.registry.canBeWhitelisted.call(projectObj.projectName)) {
       // can be whitelisted
       return 'Pending to Whitelist'
     } else if (projectObj.challengeId && projectObj.challengeId.toNumber() !== 0) {
@@ -196,7 +197,7 @@ class RegistryService {
         return 'In Voting Commit'
       } else if (await plcr.revealStageActive(projectObj.challengeId)) {
         return 'In Voting Reveal'
-      } else if (await this.registry.challengeCanBeResolved(projectObj.projectName)) {
+      } else if (await this.registry.challengeCanBeResolved.call(projectObj.projectName)) {
         return 'Pending to Resolve'
       }
     }
@@ -576,7 +577,7 @@ class RegistryService {
   didClaimForPoll (challengeId) {
     return new Promise(async (resolve, reject) => {
       try {
-        const hasClaimed = await this.registry.tokenClaims(challengeId.toString(), this.account)
+        const hasClaimed = await this.registry.tokenClaims.call(challengeId.toString(), this.account)
         resolve(hasClaimed)
       } catch (error) {
         reject(error)
@@ -610,7 +611,7 @@ class RegistryService {
   calculateVoterReward (voter, challengeId, salt) {
     return new Promise(async (resolve, reject) => {
       try {
-        const reward = await this.registry.voterReward(voter, challengeId, salt)
+        const reward = await this.registry.voterReward.call(voter, challengeId, salt)
 
         resolve(reward)
       } catch (error) {

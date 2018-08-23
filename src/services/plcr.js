@@ -5,6 +5,7 @@ import { promisify as pify } from 'bluebird'
 import { getPLCR } from '../config'
 import token from './token'
 import store from '../store'
+import { wrapSend } from '../utils/utils'
 
 /**
  * PollId = ChallengeId
@@ -27,6 +28,7 @@ class PlcrService {
     this.plcr = await getPLCR(this.account)
     this.address = this.plcr.address
     this.setUpEvents()
+    wrapSend(this, ['plcr'])
 
     store.dispatch({
       type: 'PLCR_CONTRACT_INIT'
@@ -55,7 +57,7 @@ class PlcrService {
       }
 
       try {
-        const result = await this.plcr.pollMap(pollId.toString())
+        const result = await this.plcr.pollMap.call(pollId.toString())
 
         const map = {
           // expiration date of commit stage for poll
@@ -86,7 +88,7 @@ class PlcrService {
       }
 
       try {
-        const result = await this.plcr.commitStageActive(pollId.toString())
+        const result = await this.plcr.commitStageActive.call(pollId.toString())
         resolve(result)
         return false
       } catch (error) {
@@ -104,7 +106,7 @@ class PlcrService {
       }
 
       try {
-        const result = await this.plcr.revealStageActive(pollId.toString())
+        const result = await this.plcr.revealStageActive.call(pollId.toString())
         resolve(result)
         return false
       } catch (error) {
@@ -145,7 +147,7 @@ class PlcrService {
         return false
       }
 
-      const voteTokenBalance = await this.plcr.voteTokenBalance(this.getAccount())
+      const voteTokenBalance = await this.plcr.voteTokenBalance.call(this.getAccount())
       const requiredVotes = tokens.minus(voteTokenBalance)
 
       if (tokens.gt(voteTokenBalance)) {
@@ -215,7 +217,7 @@ class PlcrService {
   async getTokensCommited (pollId) {
     return new Promise(async (resolve, reject) => {
       try {
-        const numTokens = await this.plcr.getNumTokens(this.account, pollId.toString())
+        const numTokens = await this.plcr.getNumTokens.call(this.account, pollId.toString())
         resolve(numTokens)
         return false
       } catch (error) {
@@ -228,7 +230,7 @@ class PlcrService {
   async getCommitHash (voter, pollId) {
     return new Promise(async (resolve, reject) => {
       try {
-        const hash = await this.plcr.getCommitHash(voter, pollId.toString())
+        const hash = await this.plcr.getCommitHash.call(voter, pollId.toString())
         resolve(hash)
       } catch (error) {
         reject(error)
@@ -244,7 +246,7 @@ class PlcrService {
       }
 
       try {
-        const didReveal = await this.plcr.hasBeenRevealed(voter, pollId.toString())
+        const didReveal = await this.plcr.hasBeenRevealed.call(voter, pollId.toString())
 
         resolve(didReveal)
       } catch (error) {
@@ -281,7 +283,7 @@ class PlcrService {
 
   async getAvailableTokensToWithdraw () {
     const balance = await this.plcr.voteTokenBalance.call(this.account)
-    const lockedTokens = await this.plcr.getLockedTokens(this.account)
+    const lockedTokens = await this.plcr.getLockedTokens.call(this.account)
     const availableTokens = balance.sub(lockedTokens)
 
     // return the number of available tokens in BN
@@ -289,7 +291,7 @@ class PlcrService {
   }
 
   async getLockedTokens () {
-    const lockedTokens = await this.plcr.getLockedTokens(this.account)
+    const lockedTokens = await this.plcr.getLockedTokens.call(this.account)
 
     return lockedTokens
   }

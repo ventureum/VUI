@@ -3,6 +3,7 @@ import web3 from 'web3'
 import { getProvider } from './provider'
 import { getRegulatingRating } from '../config'
 import store from '../store'
+import { wrapSend } from '../utils/utils'
 
 class RegulatingRatingService {
   constructor () {
@@ -22,6 +23,7 @@ class RegulatingRatingService {
     this.address = this.rr.address
     this.account = accounts[0]
     this.setUpEvents()
+    wrapSend(this, ['rr'])
 
     store.dispatch({
       type: 'REGULATING_RATING_CONTRACT_INIT'
