@@ -23,7 +23,7 @@ import repSys from '../../../../services/repSys'
 import store from '../../../../store'
 import { wrapWithTransactionInfo, toStandardUnit, currentTimestamp } from '../../../../utils/utils'
 
-var basePath = 'https://15mw7pha3h.execute-api.us-west-1.amazonaws.com/alpha'
+var basePath = process.env.REACT_APP_APPLICATION_API_GATEWAY
 
 class ProjectProfile extends Component {
   constructor (props) {

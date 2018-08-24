@@ -2,6 +2,9 @@
   overflow: auto;
   max-height: 90vh;
 }
+:root:root .add-ms-modal .content {
+  position: relative;
+}
 :root:root .add-ms-modal .form-group.field.field-number {
   float: left;
   max-width: 22%;

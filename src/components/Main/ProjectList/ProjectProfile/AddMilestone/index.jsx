@@ -6,6 +6,7 @@ import schema from './schema.json'
 import toastr from 'toastr'
 import milestone from '../../../../../services/milestone'
 import { stopPropagation, wrapWithTransactionInfo } from '../../../../../utils/utils'
+import InProgress from '../../../InProgress'
 import styles from './styles.css'
 
 const objTypes = JSON.parse(process.env.REACT_APP_OBJECTIVE_TYPES)
@@ -19,6 +20,7 @@ class AddMilestone extends Component {
     this.state = {
       open: false,
       schema,
+      inProgress: false,
       formData: {
         len: this.getDefaultLength(props.project.minMsLength),
         objs: [
@@ -106,10 +108,19 @@ class AddMilestone extends Component {
 
   async submit () {
     try {
+      this.setState({
+        inProgress: true
+      })
       await milestone.addMilestone(this.props.project.projectName, this.state.formData)
       toastr.success('Milestone added successfully!')
+      this.setState({
+        inProgress: false
+      })
       this.close()
     } catch (error) {
+      this.setState({
+        inProgress: false
+      })
       toastr.error(error)
     }
   }
@@ -118,6 +129,7 @@ class AddMilestone extends Component {
     const {
       open,
       schema,
+      inProgress,
       formData
     } = this.state
 
@@ -146,6 +158,7 @@ class AddMilestone extends Component {
               <Button onClick={stopPropagation(this.close)}>Cancel</Button>
             </Form>
           </div>
+          {inProgress ? <InProgress /> : null}
         </Modal.Content>
       </Modal>
     )

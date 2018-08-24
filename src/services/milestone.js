@@ -1,12 +1,13 @@
 import Eth from 'ethjs'
 import { getProvider } from './provider'
 import { getMilestoneController, getMilestoneControllerView, getCarbonVoteXCore } from '../config'
-import { toBasicUnit, equalWithPrecision, currentTimestamp, wrapSend } from '../utils/utils'
+import { toBasicUnit, equalWithPrecision, currentTimestamp, wrapSend, hashToByte32, byte32ToHash } from '../utils/utils'
 import store from '../store'
 import web3 from 'web3'
 import axios from 'axios'
 import repSys from './repSys'
 import token from './token'
+import ipfs from './ipfs'
 import regulatingRating from './regulatingRating'
 import refundManager from './refundManager'
 import rewardManager from './rewardManager'
@@ -29,7 +30,7 @@ class MilestoneService {
      * so that injected web3 has time to load.
      */
     this.axios = axios.create({
-      baseURL: 'https://57bnnhi7u3.execute-api.ca-central-1.amazonaws.com/alpha/',
+      baseURL: process.env.REACT_APP_API_GATEWAY,
       timeout: 0,
       headers: {
         'content-type': 'application/json'
@@ -169,9 +170,9 @@ class MilestoneService {
       let ms = await this.msview.getMilestoneInfo.call(projectHash, i)
       let objInfo = await this.msview.getMilestoneObjInfo.call(projectHash, i)
       let objsStrs = []
-      objInfo[0].forEach((hash) => {
-        objsStrs.push(web3.utils.toAscii(hash))
-      })
+      for (let j = 0; j < objInfo[0].length; j++) {
+        objsStrs.push(await ipfs.get(byte32ToHash(objInfo[0][j])))
+      }
       let objTypesStrs = []
       objInfo[1].forEach((hash) => {
         objTypesStrs.push(web3.utils.toAscii(hash))
@@ -255,11 +256,11 @@ class MilestoneService {
   }
 
   async addMilestone (name, data) {
-    let objs = []
     let objTypes = []
     let objRewards = []
+    let objs = []
     for (let i = 0; i < data.objs.length; i++) {
-      objs.push(data.objs[i].name)
+      objs.push(await ipfs.add(data.objs[i].name).then((hash) => {return Promise.resolve(hashToByte32(hash))}))
       objTypes.push(data.objs[i].type)
       objRewards.push(toBasicUnit(big(data.objs[i].reward)).toString(10))
     }
