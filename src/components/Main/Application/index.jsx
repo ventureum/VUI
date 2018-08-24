@@ -71,7 +71,7 @@ class Application extends Component {
 
     try {
       await registry.apply(projectName)
-      await fetch('https://15mw7pha3h.execute-api.us-west-1.amazonaws.com/alpha/project', { // eslint-disable-line
+      await fetch(process.env.REACT_APP_APPLICATION_API_GATEWAY + '/project', { // eslint-disable-line
         method: 'POST',
         headers: {
           'Accept': 'application/json',

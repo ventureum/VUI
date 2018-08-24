@@ -29,7 +29,7 @@ class MilestoneService {
      * so that injected web3 has time to load.
      */
     this.axios = axios.create({
-      baseURL: 'https://57bnnhi7u3.execute-api.ca-central-1.amazonaws.com/alpha/',
+      baseURL: process.env.REACT_APP_API_GATEWAY,
       timeout: 0,
       headers: {
         'content-type': 'application/json'
