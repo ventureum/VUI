@@ -2,6 +2,7 @@ import { BigNumber } from 'bignumber.js'
 import store from '../store.js'
 import moment from 'moment'
 import toastr from 'toastr'
+import bs58 from 'bs58'
 
 const big = (number) => new BigNumber(number.toString(10))
 const tenToTheEighteenth = big(10).pow(big(18))
@@ -122,6 +123,17 @@ function wrapSend (target, contracts) {
   }
 }
 
+function hashToByte32 (hash) {
+  return '0x' + bs58.decode(hash).slice(2).toString('hex')
+}
+
+function byte32ToHash (input) {
+  const hashHex = "1220" + input.slice(2)
+  const hashBytes = Buffer.from(hashHex, 'hex');
+  const hashStr = bs58.encode(hashBytes)
+  return hashStr
+}
+
 export {
   toStandardUnit,
   toBasicUnit,
@@ -130,5 +142,7 @@ export {
   dayToSeconds,
   equalWithPrecision,
   currentTimestamp,
-  wrapSend
+  wrapSend,
+  hashToByte32,
+  byte32ToHash
 }

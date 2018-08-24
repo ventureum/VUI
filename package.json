@@ -9,6 +9,7 @@
     "babel-plugin-transform-es2015-arrow-functions": "^6.22.0",
     "bignumber.js": "^7.0.1",
     "bluebird": "^3.5.1",
+    "bs58": "^4.0.1",
     "commafy": "0.0.5",
     "ethereumjs-abi": "^0.6.5",
     "ethjs": "^0.3.3",

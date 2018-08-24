@@ -5,13 +5,25 @@ class IpfsService {
     this.ipfs = ipfsAPI('ipfs.infura.io', '5001', {protocol: 'https'})
   }
 
-  getAPI (hash) {
-    return new Promise(async (resolve, reject) => {
-      this.ipfs.files.get(hash, (err, res) => {
+  get (hash) {
+    return new Promise((resolve, reject) => {
+      this.ipfs.files.get(hash, (err, files) => {
         if (err) {
           reject(err)
         } else {
-          resolve(res)
+          resolve(files[0].content.toString('utf8'))
+        }
+      })
+    })
+  }
+
+  add (str) {
+    return new Promise((resolve, reject) => {
+      this.ipfs.files.add(Buffer.from(str), (err, res) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(res[0].hash)
         }
       })
     })
