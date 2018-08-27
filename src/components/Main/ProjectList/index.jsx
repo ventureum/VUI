@@ -227,7 +227,7 @@ class ProjectList extends Component {
                 </Modal>
               }
               {this.canCall('unlock', project) && <a onClick={wrapWithTransactionInfo('unlock-token', this.unlock, project)} className='ui mini button blue' href='#!'>unlock token</a>}
-              {project.action === 'view' && <TokenSale projectInProgress={this.projectInProgress} project={project} />}
+              {project.action === 'view' && (project.controllerStageStr === 'accepted' || (project.controllerStageStr === 'token-sale' && !project.tokenInfo.finalized)) && <TokenSale projectInProgress={this.projectInProgress} project={project} />}
             </div>
           </div>
         </div>

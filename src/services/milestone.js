@@ -143,6 +143,30 @@ class MilestoneService {
     }
   }
 
+  async getStateStrReadable (ms) {
+    let now = await currentTimestamp()
+    if (ms.state === 0) {
+      return 'inactive'
+    }
+    if (now < ms.startTime + ms.ratingStageMinStartTimeFromBegin) {
+      if (ms.pollExist) {
+        return 'vote'
+      } else {
+        return 'in progress'
+      }
+    }
+    if (now < ms.endTime - ms.ratingStageMaxStartTimeFromEnd) {
+      return 'rating'
+    }
+    if (now < ms.endTime - ms.refundStageMinStartTimeFromEnd) {
+      return 'regulator voting'
+    }
+    if (now < ms.endTime) {
+      return 'refund'
+    }
+    return 'completion'
+  }
+
   async getMilestoneData (project) {
     let name = project.projectName
     let msState = {
@@ -150,13 +174,6 @@ class MilestoneService {
       1: 'ip',
       2: 'rs',
       3: 'rp',
-      4: 'completion'
-    }
-    let msStateReadable = {
-      0: 'inactive',
-      1: 'in progress',
-      2: 'rating stage',
-      3: 'refund period',
       4: 'completion'
     }
     let data = await this.msview.getNumberOfMilestones.call(web3.utils.keccak256(name))
@@ -215,7 +232,7 @@ class MilestoneService {
         voteRights = await this.getVoteRights(pollId, objInfo[1])
       }
 
-      result.push({
+      let msInfo = {
         id: i,
         objs: objInfo[0],
         objsStrs,
@@ -226,7 +243,6 @@ class MilestoneService {
         len: ms[0].toNumber(),
         state: ms[1].toNumber(),
         stateStr: msState[ms[1].toNumber()],
-        stateStrReadable: msStateReadable[ms[1].toNumber()],
         startTime: ms[2].toNumber(),
         endTime: ms[3].toNumber(),
         pollExist,
@@ -240,8 +256,13 @@ class MilestoneService {
         estimateGas,
         voteObtained,
         voteRights,
-        bidInfo
-      })
+        bidInfo,
+        ratingStageMinStartTimeFromBegin: await this.getRatingStageMinStartTime(),
+        ratingStageMaxStartTimeFromEnd: await this.getRatingStageMaxStartTime(),
+        refundStageMinStartTimeFromEnd: await this.getRefundStageMinStartTime()
+      }
+      msInfo.stateStrReadable = await this.getStateStrReadable(msInfo)
+      result.push(msInfo)
     }
 
     return result
@@ -297,6 +318,11 @@ class MilestoneService {
 
   async getMinLength () {
     let result = await this.ms.minMilestoneLength.call()
+    return result.toNumber()
+  }
+
+  async getRatingStageMinStartTime () {
+    let result = await this.ms.ratingStageMinStartTimeFromBegin.call()
     return result.toNumber()
   }
 

@@ -4,7 +4,7 @@ import { Button, Modal, Form, List, Message, Segment } from 'semantic-ui-react'
 import toastr from 'toastr'
 import milestone from '../../../../../services/milestone'
 import regulatingRating from '../../../../../services/regulatingRating'
-import { stopPropagation, wrapWithTransactionInfo, toStandardUnit } from '../../../../../utils/utils'
+import { stopPropagation, wrapWithTransactionInfo, toStandardUnit, getReadableLength } from '../../../../../utils/utils'
 import styles from './styles.css'
 
 class ActivateMilestone extends Component {
@@ -115,36 +115,6 @@ class ActivateMilestone extends Component {
     })
   }
 
-  getReadableLength (seconds) {
-    let result = {
-      day: 0,
-      hour: 0,
-      minute: 0,
-      second: 0
-    }
-
-    let oneMinute = 60
-    let oneHour = 60 * oneMinute
-    let oneDay = 24 * oneHour
-
-    if (seconds >= oneDay) {
-      result.day = Math.floor(seconds / oneDay)
-      seconds = seconds % oneDay
-    }
-    if (seconds >= oneHour) {
-      result.hour = Math.floor(seconds / oneHour)
-      seconds = seconds % oneHour
-    }
-    if (seconds >= oneMinute) {
-      result.minute = Math.floor(seconds / oneMinute)
-      seconds = seconds % oneMinute
-    }
-    result.second = seconds
-    return Object.keys(result)
-      .filter(key => result[key] > 0)
-      .reduce((str, key) => [str, result[key], key + '(s)'].join(' '), '')
-  }
-
   render () {
     const {
       open,
@@ -183,7 +153,7 @@ class ActivateMilestone extends Component {
                   <strong>ID: </strong>{this.props.milestone.id}
                 </List.Item>
                 <List.Item>
-                  <strong>Length: </strong>{this.getReadableLength(this.props.milestone.len)}
+                  <strong>Length: </strong>{getReadableLength(this.props.milestone.len)}
                 </List.Item>
                 <List.Item>
                   <strong>Project ETH Balance: </strong>{toStandardUnit(this.props.project.etherCanLock).toNumber()}

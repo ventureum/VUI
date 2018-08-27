@@ -248,6 +248,7 @@ class RegistryService {
       projectObj.action = this.getProjectAction(projectObj)
       projectObj.isOwner = this.isOwner(projectObj.owner)
       projectObj.minMsLength = await milestone.getMinLength()
+      projectObj.ratingStageMinStartTime = await milestone.getRatingStageMinStartTime()
       projectObj.ratingStageMaxStartTime = await milestone.getRatingStageMaxStartTime()
       projectObj.refundStageMinStartTime = await milestone.getRefundStageMinStartTime()
       if (projectObj.action === 'view') {

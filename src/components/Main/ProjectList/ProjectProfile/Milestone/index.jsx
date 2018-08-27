@@ -8,7 +8,7 @@ import milestone from '../../../../../services/milestone'
 import regulatingRating from '../../../../../services/regulatingRating'
 import rewardManager from '../../../../../services/rewardManager'
 import DelegateVotes from './DelegateVotes'
-import { stopPropagation, toStandardUnit, wrapWithTransactionInfo, currentTimestamp } from '../../../../../utils/utils'
+import { stopPropagation, toStandardUnit, wrapWithTransactionInfo, currentTimestamp, getReadableLength } from '../../../../../utils/utils'
 import styles from './styles.css'
 
 let env = process.env.REACT_APP_ENV
@@ -30,36 +30,6 @@ class MilestoneModal extends Component {
     this.finalizeAllBids = this.finalizeAllBids.bind(this)
     this.sendGas = this.sendGas.bind(this)
     this.withdrawReward = this.withdrawReward.bind(this)
-  }
-
-  getReadableLength (seconds) {
-    let result = {
-      day: 0,
-      hour: 0,
-      minute: 0,
-      second: 0
-    }
-
-    let oneMinute = 60
-    let oneHour = 60 * oneMinute
-    let oneDay = 24 * oneHour
-
-    if (seconds >= oneDay) {
-      result.day = Math.floor(seconds / oneDay)
-      seconds = seconds % oneDay
-    }
-    if (seconds >= oneHour) {
-      result.hour = Math.floor(seconds / oneHour)
-      seconds = seconds % oneHour
-    }
-    if (seconds >= oneMinute) {
-      result.minute = Math.floor(seconds / oneMinute)
-      seconds = seconds % oneMinute
-    }
-    result.second = seconds
-    return Object.keys(result)
-      .filter(key => result[key] > 0)
-      .reduce((str, key) => [str, result[key], key + '(s)'].join(' '), '')
   }
 
   open () {
@@ -262,7 +232,7 @@ class MilestoneModal extends Component {
               <strong>State: </strong>{milestone.stateStrReadable}
             </List.Item>
             <List.Item>
-              <strong>Length: </strong>{this.getReadableLength(milestone.len)}
+              <strong>Length: </strong>{getReadableLength(milestone.len)}
             </List.Item>
             <List.Item>
               <strong>Token Locked: </strong>{toStandardUnit(milestone.weiLocked).toNumber()} ETH
