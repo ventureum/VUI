@@ -1,8 +1,6 @@
-import ipfsAPI from 'ipfs-api'
-
 class IpfsService {
   constructor () {
-    this.ipfs = ipfsAPI('ipfs.infura.io', '5001', {protocol: 'https'})
+    this.ipfs = window.IpfsApi('ipfs.infura.io', '5001', {protocol: 'https'})
   }
 
   get (hash) {
