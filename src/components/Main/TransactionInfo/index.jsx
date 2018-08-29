@@ -175,6 +175,12 @@ class TransactionInfo extends Component {
             desc: 'Execute a transaction to vote the regulator for the objective type.'
           }
         ],
+        'ms-regulator-vote': [
+          {
+            name: 'Regulator Vote',
+            desc: 'Execute a transaction to vote the objective.'
+          }
+        ],
         'ms-send-gas': [
           {
             name: 'Send Gas',

@@ -123,7 +123,7 @@ class ProjectProfile extends Component {
     } else if (name === 'startPoll') {
       return ms.stateStr === 'ip' && !ms.pollExist && now >= ms.pollInfo.minStartTime && now < ms.pollInfo.maxStartTime
     } else if (name === 'startRatingStage') {
-      return project.isOwner && ms.stateStr === 'ip' && ms.pollExist && now >= ms.startTime + project.ratingStageMaxStartTime && now < ms.endTime
+      return project.isOwner && ms.stateStr === 'ip' && ms.pollExist && now >= ms.startTime + project.ratingStageMinStartTime && now < ms.endTime - project.ratingStageMaxStartTime
     } else if (name === 'startRefund') {
       return ms.stateStr !== 'rp' && ms.endTime !== 0 && now >= ms.endTime - project.refundStageMinStartTime && now < ms.endTime
     } else if (name === 'refund') {

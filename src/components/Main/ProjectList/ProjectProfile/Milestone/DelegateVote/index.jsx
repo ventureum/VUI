@@ -12,7 +12,7 @@ import styles from './styles.css'
 var mockRegulatorName = JSON.parse(process.env.REACT_APP_MOCK_REGULATOR_NAME)
 var mockRegulatorAddress = JSON.parse(process.env.REACT_APP_MOCK_REGULATOR_ADDRESS)
 
-class DelegateVotes extends Component {
+class DelegateVote extends Component {
   constructor (props) {
     super(props)
 
@@ -190,4 +190,4 @@ class DelegateVotes extends Component {
   }
 }
 
-export default CSSModules(DelegateVotes, styles)
+export default CSSModules(DelegateVote, styles)

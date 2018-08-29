@@ -136,6 +136,15 @@ export const getRegulatingRating = async (account) => {
   return RegulatingRating.deployed().catch(createErrorHandler('RegulatingRating'))
 }
 
+export const getRegulatingRatingView = async (account) => {
+  const pArtifact = await getAbi('RegulatingRatingView')
+  const RegulatingRatingView = contract(pArtifact)
+  RegulatingRatingView.defaults({from: account})
+  RegulatingRatingView.setProvider(getProvider())
+
+  return RegulatingRatingView.deployed().catch(createErrorHandler('RegulatingRatingView'))
+}
+
 export const getRefundManager = async (account) => {
   const pArtifact = await getAbi('RefundManager')
   const RefundManager = contract(pArtifact)
