@@ -9,6 +9,7 @@ import plcr from './plcr'
 import parameterizer from './parameterizer'
 import tokenSale from './tokenSale'
 import milestone from './milestone'
+import regulatingRating from './regulatingRating'
 import projectController from './projectController'
 import saltHashVote from '../utils/saltHashVote'
 import { getRegistry, getERC20Token } from '../config'
@@ -248,8 +249,10 @@ class RegistryService {
       projectObj.action = this.getProjectAction(projectObj)
       projectObj.isOwner = this.isOwner(projectObj.owner)
       projectObj.minMsLength = await milestone.getMinLength()
+      projectObj.ratingStageMinStartTime = await milestone.getRatingStageMinStartTime()
       projectObj.ratingStageMaxStartTime = await milestone.getRatingStageMaxStartTime()
       projectObj.refundStageMinStartTime = await milestone.getRefundStageMinStartTime()
+      projectObj.maxScore = await regulatingRating.maxScore()
       if (projectObj.action === 'view') {
         projectObj.controllerStage = await projectController.getProjectState(projectObj)
         projectObj.controllerStageStr = projectStateMap[projectObj.controllerStage.toNumber()]

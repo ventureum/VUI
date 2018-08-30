@@ -7,8 +7,9 @@ import store from '../../../../../store'
 import milestone from '../../../../../services/milestone'
 import regulatingRating from '../../../../../services/regulatingRating'
 import rewardManager from '../../../../../services/rewardManager'
-import DelegateVotes from './DelegateVotes'
-import { stopPropagation, toStandardUnit, wrapWithTransactionInfo, currentTimestamp } from '../../../../../utils/utils'
+import DelegateVote from './DelegateVote'
+import RegulatorVote from './RegulatorVote'
+import { stopPropagation, toStandardUnit, wrapWithTransactionInfo, currentTimestamp, getReadableLength } from '../../../../../utils/utils'
 import styles from './styles.css'
 
 let env = process.env.REACT_APP_ENV
@@ -30,36 +31,6 @@ class MilestoneModal extends Component {
     this.finalizeAllBids = this.finalizeAllBids.bind(this)
     this.sendGas = this.sendGas.bind(this)
     this.withdrawReward = this.withdrawReward.bind(this)
-  }
-
-  getReadableLength (seconds) {
-    let result = {
-      day: 0,
-      hour: 0,
-      minute: 0,
-      second: 0
-    }
-
-    let oneMinute = 60
-    let oneHour = 60 * oneMinute
-    let oneDay = 24 * oneHour
-
-    if (seconds >= oneDay) {
-      result.day = Math.floor(seconds / oneDay)
-      seconds = seconds % oneDay
-    }
-    if (seconds >= oneHour) {
-      result.hour = Math.floor(seconds / oneHour)
-      seconds = seconds % oneHour
-    }
-    if (seconds >= oneMinute) {
-      result.minute = Math.floor(seconds / oneMinute)
-      seconds = seconds % oneMinute
-    }
-    result.second = seconds
-    return Object.keys(result)
-      .filter(key => result[key] > 0)
-      .reduce((str, key) => [str, result[key], key + '(s)'].join(' '), '')
   }
 
   open () {
@@ -87,13 +58,17 @@ class MilestoneModal extends Component {
     } else if (name === 'test-writeAvailableVotes') {
       return ms.stateStr === 'ip' && ms.pollExist && !ms.pollExpired && !ms.voteObtained
     } else if (name === 'bid') {
-      return ms.stateStr === 'rs' && now < ms.endTime && !ms.objFinalized[i] && !ms.bidInfo[i]
+      return ms.stateStr === 'rs' && now < ms.endTime - project.ratingStageMaxStartTime && !ms.objFinalized[i] && !ms.bidInfo[i]
     } else if (name === 'backout') {
-      return ms.stateStr === 'rs' && now < ms.endTime && !ms.objFinalized[i] && ms.bidInfo[i]
+      return ms.stateStr === 'rs' && now < ms.endTime - project.ratingStageMaxStartTime && !ms.objFinalized[i] && ms.bidInfo[i]
+    } else if (name === 'vote score') {
+      let isRVStage = ms.stateStr !== 'completion' && now >= ms.endTime - project.ratingStageMaxStartTime && now < ms.endTime - project.refundStageMinStartTime
+      let RVStageExpire = now >= ms.endTime - project.refundStageMinStartTime
+      return ms.objIsRegulators[i] && ms.bidInfo[i] && ((ms.objFinalized[i] && !RVStageExpire) || isRVStage)
     } else if (name === 'finalizeBid') {
-      return project.isOwner && ms.pollExist && ms.pollExpired && !ms.objFinalized[i]
+      return project.isOwner && !['inactive', 'ip'].includes(ms.stateStr) && !ms.objFinalized[i]
     } else if (name === 'finalizeAllBids') {
-      return project.isOwner && ms.pollExist && ms.pollExpired && ms.objFinalized.includes(false)
+      return project.isOwner && !['inactive', 'ip'].includes(ms.stateStr) && ms.objFinalized.includes(false)
     } else if (name === 'withdrawReward') {
       return ms.objFinalized[i] && ms.rewardInfo[i] && ms.rewardInfo[i].isRegulator && ms.rewardInfo[i].finalized && ms.rewardInfo[i].rewards.toNumber() > 0
     }
@@ -199,6 +174,15 @@ class MilestoneModal extends Component {
             <Table.Cell>{milestone.objTypesStrs[i]}</Table.Cell>
             <Table.Cell>{toStandardUnit(milestone.objRewards[i]).toNumber()}</Table.Cell>
             <Table.Cell>
+              {milestone.objScores[i] !== undefined &&
+                <span key='totalscore'>total score: {milestone.objScores[i]}</span>
+              }
+              {milestone.yourScores[i] !== undefined && [
+                <br key='br' />,
+                <span key='yourscore'>your score: {milestone.yourScores[i]}</span>
+              ]}
+            </Table.Cell>
+            <Table.Cell>
               {this.canCall('bid', i) &&
                 <Button onClick={wrapWithTransactionInfo('ms-bid', this.bid, i)} color={'blue'}>
                   bid
@@ -219,6 +203,9 @@ class MilestoneModal extends Component {
                   withdraw reward({toStandardUnit(milestone.rewardInfo[i].rewards).toString() + ' ETH'})
                 </Button>
               }
+              {this.canCall('vote score', i) &&
+                  <RegulatorVote project={this.props.project} milestone={milestone} index={i} />
+                }
             </Table.Cell>
           </Table.Row>)
       }
@@ -235,7 +222,7 @@ class MilestoneModal extends Component {
               <Table.Cell>{milestone.objTypesStrs[i]}</Table.Cell>
               <Table.Cell>
                 {this.canCall('vote', i) &&
-                  <DelegateVotes project={this.props.project} milestone={milestone} index={i} />
+                  <DelegateVote project={this.props.project} milestone={milestone} index={i} />
                 }
               </Table.Cell>
             </Table.Row>)
@@ -249,7 +236,6 @@ class MilestoneModal extends Component {
         onOpen={this.open}
         onClose={stopPropagation(this.close)}
         closeIcon
-        size='small'
         trigger={<a href='#!'>{milestone.id}</a>}
       >
         <Modal.Header>Milestone Info</Modal.Header>
@@ -262,7 +248,7 @@ class MilestoneModal extends Component {
               <strong>State: </strong>{milestone.stateStrReadable}
             </List.Item>
             <List.Item>
-              <strong>Length: </strong>{this.getReadableLength(milestone.len)}
+              <strong>Length: </strong>{getReadableLength(milestone.len)}
             </List.Item>
             <List.Item>
               <strong>Token Locked: </strong>{toStandardUnit(milestone.weiLocked).toNumber()} ETH
@@ -295,6 +281,7 @@ class MilestoneModal extends Component {
                     <Table.HeaderCell>Name</Table.HeaderCell>
                     <Table.HeaderCell>Type</Table.HeaderCell>
                     <Table.HeaderCell>MaxRewards</Table.HeaderCell>
+                    <Table.HeaderCell>Score</Table.HeaderCell>
                     <Table.HeaderCell>Action</Table.HeaderCell>
                   </Table.Row>
                 </Table.Header>

@@ -5,7 +5,7 @@ import web3 from 'web3'
 import commafy from 'commafy'
 import { getERC20Token } from '../../../../config'
 import { Modal, Form, Button, Segment, Table, List } from 'semantic-ui-react'
-import { wrapWithTransactionInfo, toStandardUnit } from '../../../../utils/utils'
+import { wrapWithTransactionInfo, toStandardUnit, getReadableLength } from '../../../../utils/utils'
 import InProgress from '../../InProgress'
 import tokenSale from '../../../../services/tokenSale'
 import milestone from '../../../../services/milestone'
@@ -196,7 +196,7 @@ class TokenSale extends Component {
         milestoneRows.push(
           <Table.Row key={milestoneData[i].id}>
             <Table.Cell>{i + 1}</Table.Cell>
-            <Table.Cell>{milestoneData[i].days}</Table.Cell>
+            <Table.Cell>{getReadableLength(milestoneData[i].len)}</Table.Cell>
             <Table.Cell>
               <List>{objList}</List>
             </Table.Cell>
@@ -215,7 +215,7 @@ class TokenSale extends Component {
                   <Table.Header>
                     <Table.Row>
                       <Table.HeaderCell>Milestone ID</Table.HeaderCell>
-                      <Table.HeaderCell>Days</Table.HeaderCell>
+                      <Table.HeaderCell>Length</Table.HeaderCell>
                       <Table.HeaderCell>Objectives</Table.HeaderCell>
                     </Table.Row>
                   </Table.Header>

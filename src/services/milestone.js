@@ -1,7 +1,7 @@
 import Eth from 'ethjs'
 import { getProvider } from './provider'
 import { getMilestoneController, getMilestoneControllerView, getCarbonVoteXCore } from '../config'
-import { toBasicUnit, equalWithPrecision, currentTimestamp, wrapSend, hashToByte32, byte32ToHash } from '../utils/utils'
+import { toStandardUnit, toBasicUnit, equalWithPrecision, currentTimestamp, wrapSend, hashToByte32, byte32ToHash } from '../utils/utils'
 import store from '../store'
 import web3 from 'web3'
 import axios from 'axios'
@@ -75,12 +75,11 @@ class MilestoneService {
       })
   }
 
-  async getRegulationRewardsForRegulator (hash, id, objs, objFinalized) {
+  async getRegulationRewardsForRegulator (hash, id, objs, objFinalized, objIsRegulators) {
     let result = {}
     for (let i = 0; i < objs.length; i++) {
       if (objFinalized[i]) {
-        let isRegulator = await regulatingRating.isRegulator(hash, id, objs[i], this.account)
-        if (isRegulator) {
+        if (objIsRegulators[i]) {
           let temp = await rewardManager.getRegulationRewardsInfo(hash, id, objs[i])
           result[i] = {
             isRegulator: true,
@@ -143,6 +142,64 @@ class MilestoneService {
     }
   }
 
+  async getStateStrReadable (ms) {
+    let now = await currentTimestamp()
+    if (ms.state === 0) {
+      return 'inactive'
+    }
+    if (now < ms.startTime + ms.ratingStageMinStartTimeFromBegin) {
+      if (ms.pollExist) {
+        return 'vote'
+      } else {
+        return 'in progress'
+      }
+    }
+    if (now < ms.endTime - ms.ratingStageMaxStartTimeFromEnd) {
+      return 'rating'
+    }
+    if (now < ms.endTime - ms.refundStageMinStartTimeFromEnd) {
+      return 'regulator voting'
+    }
+    if (now < ms.endTime) {
+      return 'refund'
+    }
+    return 'completion'
+  }
+
+  async isRegulators (hash, id, objs, addr) {
+    let result = []
+    for (let i = 0; i < objs.length; i++) {
+      result.push(await regulatingRating.isRegulator(hash, id, objs[i], addr))
+    }
+    return result
+  }
+
+  async getObjScore (hash, id, obj) {
+    let regulatorList = await regulatingRating.getRegulatorList(hash, id, obj)
+    let score = 0
+    for (let i = 0; i < regulatorList.length; i++) {
+      let info = await regulatingRating.getRegulatorVoteInfo(hash, id, obj, regulatorList[i])
+      score += toStandardUnit(info.weight.times(info.score)).toNumber()
+    }
+    return score.toFixed(2).replace(/[.,]00$/, "")
+  }
+
+  async getObjScores (hash, id, objs, objIsRegulators) {
+    let yourScores = []
+    let objScores = []
+    for (let i = 0; i < objs.length; i++) {
+      if (objIsRegulators[i]) {
+        let info = await regulatingRating.getRegulatorVoteInfo(hash, id, objs[i], this.account)
+        yourScores.push(info.score)
+      }
+      objScores.push(await this.getObjScore(hash, id, objs[i]))
+    }
+    return {
+      objScores,
+      yourScores
+    }
+  }
+
   async getMilestoneData (project) {
     let name = project.projectName
     let msState = {
@@ -150,13 +207,6 @@ class MilestoneService {
       1: 'ip',
       2: 'rs',
       3: 'rp',
-      4: 'completion'
-    }
-    let msStateReadable = {
-      0: 'inactive',
-      1: 'in progress',
-      2: 'rating stage',
-      3: 'refund period',
       4: 'completion'
     }
     let data = await this.msview.getNumberOfMilestones.call(web3.utils.keccak256(name))
@@ -168,7 +218,16 @@ class MilestoneService {
       let projectHash = web3.utils.keccak256(name)
       let pollId = web3.utils.soliditySha3(web3.utils.keccak256(name), i)
       let ms = await this.msview.getMilestoneInfo.call(projectHash, i)
+      let len = ms[0].toNumber()
+      let state = ms[1].toNumber()
+      let stateStr = msState[ms[1].toNumber()]
+      let startTime = ms[2].toNumber()
+      let endTime = ms[3].toNumber()
+      let ratingStageMinStartTimeFromBegin = await this.getRatingStageMinStartTime()
+      let ratingStageMaxStartTimeFromEnd = await this.getRatingStageMaxStartTime()
+      let refundStageMinStartTimeFromEnd = await this.getRefundStageMinStartTime()
       let objInfo = await this.msview.getMilestoneObjInfo.call(projectHash, i)
+      let objIsRegulators = await this.isRegulators(projectHash, i, objInfo[0], this.account)
       let objsStrs = []
       for (let j = 0; j < objInfo[0].length; j++) {
         objsStrs.push(await ipfs.get(byte32ToHash(objInfo[0][j])))
@@ -186,21 +245,27 @@ class MilestoneService {
       if (pollExist) {
         pollExpired = await this.carbonVoteXCore.pollExpired.call(web3.utils.keccak256('ReputationSystem'), pollId)
       }
+      let objScores = []
+      let yourScores = []
+      let now = await currentTimestamp(false)
+      if (endTime && now > endTime - ratingStageMaxStartTimeFromEnd) {
+        ;({objScores, yourScores} = await this.getObjScores(projectHash, i, objInfo[0], objIsRegulators))
+      }
       let bidInfo = null
-      if (msState[ms[1].toNumber()] === 'rs') {
+      if (stateStr === 'rs') {
         bidInfo = await regulatingRating.getBidInfo(projectHash, i, objInfo[0])
       }
       let pollInfo = null
-      if (msState[ms[1].toNumber()] !== 'inactive') {
+      if (stateStr !== 'inactive') {
         pollInfo = await repSys.getPollRequest(pollId)
       }
       let restWeiLock = null
-      if (msState[ms[1].toNumber()] !== 'inactive') {
+      if (stateStr !== 'inactive') {
         restWeiLock = await paymentManager.getRestWeiLock(projectHash, i)
       }
       let rewardInfo
       if (objFinalized.includes(true)) {
-        rewardInfo = await this.getRegulationRewardsForRegulator(projectHash, i, objInfo[0], objFinalized)
+        rewardInfo = await this.getRegulationRewardsForRegulator(projectHash, i, objInfo[0], objFinalized, objIsRegulators)
       }
       let refundInfo = await refundManager.getRefundInfo(projectHash, i)
       let voteObtained = await this.carbonVoteXCore.voteObtained.call(web3.utils.keccak256('ReputationSystem'), pollId, this.account)
@@ -215,7 +280,7 @@ class MilestoneService {
         voteRights = await this.getVoteRights(pollId, objInfo[1])
       }
 
-      result.push({
+      let msInfo = {
         id: i,
         objs: objInfo[0],
         objsStrs,
@@ -223,12 +288,14 @@ class MilestoneService {
         objTypesStrs,
         objRewards: objInfo[2],
         objFinalized,
-        len: ms[0].toNumber(),
-        state: ms[1].toNumber(),
-        stateStr: msState[ms[1].toNumber()],
-        stateStrReadable: msStateReadable[ms[1].toNumber()],
-        startTime: ms[2].toNumber(),
-        endTime: ms[3].toNumber(),
+        objIsRegulators,
+        objScores,
+        yourScores,
+        len,
+        state,
+        stateStr,
+        startTime,
+        endTime,
         pollExist,
         pollExpired,
         pollInfo,
@@ -240,8 +307,13 @@ class MilestoneService {
         estimateGas,
         voteObtained,
         voteRights,
-        bidInfo
-      })
+        bidInfo,
+        ratingStageMinStartTimeFromBegin,
+        ratingStageMaxStartTimeFromEnd,
+        refundStageMinStartTimeFromEnd
+      }
+      msInfo.stateStrReadable = await this.getStateStrReadable(msInfo)
+      result.push(msInfo)
     }
 
     return result
@@ -297,6 +369,11 @@ class MilestoneService {
 
   async getMinLength () {
     let result = await this.ms.minMilestoneLength.call()
+    return result.toNumber()
+  }
+
+  async getRatingStageMinStartTime () {
+    let result = await this.ms.ratingStageMinStartTimeFromBegin.call()
     return result.toNumber()
   }
 
