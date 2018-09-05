@@ -91,14 +91,45 @@ function currentTimestamp (sync = true) {
   }
 }
 
+let network
+function getNetwork() {
+  window.web3.version.getNetwork((err, netId) => {
+    switch (netId) {
+      case "1":
+        network = 'mainnet'
+        break
+      case "3":
+        network = 'ropsten'
+        break
+      case "4":
+        network = 'rinkeby'
+        break
+      case "42":
+        network = 'kovan'
+        break
+      default:
+        break
+    }
+  })
+}
+
 function wrapSend (target, contracts) {
+  let domainPrefixMap = {
+    mainnet: '',
+    ropsten: 'ropsten.',
+    rinkeby: 'rinkeby.',
+    kovan: 'kovan.'
+  }
   var handler = {
     get: function(obj, prop) {
       let oriVal = obj[prop]
       if (typeof oriVal === 'function') {
         let wrapper = function () {
           return oriVal.apply(obj, arguments).then(({ tx }) => {
-            toastr.success('Follow transaction in Etherscan, Click this hash: <a style="color: blue; text-decoration: underline;" target="_blank" href="https://etherscan.io/tx/' + tx + '">' + tx + '</a>')
+            if (network) {
+              toastr.success('Follow transaction in Etherscan, Click this hash: <a style="color: blue; text-decoration: underline;" target="_blank" href="https://' + domainPrefixMap[network] + 'etherscan.io/tx/' + tx + '">' + tx + '</a>')
+            }
+            
             return Promise.resolve(tx)
           })
         }
@@ -175,5 +206,6 @@ export {
   wrapSend,
   hashToByte32,
   byte32ToHash,
-  getReadableLength
+  getReadableLength,
+  getNetwork
 }
