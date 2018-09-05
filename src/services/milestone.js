@@ -211,7 +211,7 @@ class MilestoneService {
     }
     let data = await this.msview.getNumberOfMilestones.call(web3.utils.keccak256(name))
     if (data.toNumber() === 0) {
-      return null
+      return []
     }
     let result = []
     for (let i = 1; i <= data.toNumber(); i++) {

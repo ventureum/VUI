@@ -1,3 +1,6 @@
 :root:root {
   width: 100%;
 }
+:root:root .loading-wrap {
+  height: 150px;
+}

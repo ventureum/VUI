@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import saveFile from '../../../../utils/saveFile'
-import { Grid, Table, Button, Segment, Form } from 'semantic-ui-react'
+import { Grid, Table, Button, Segment, Form, Loader, Dimmer } from 'semantic-ui-react'
 import { Scrollbars } from 'react-custom-scrollbars'
 import { Base64 } from 'js-base64'
 import toastr from 'toastr'
@@ -49,6 +49,7 @@ class ProjectProfile extends Component {
     this._isMounted = true
     this.getProjectData()
     this.getMilestoneData()
+
 
     store.subscribe(async (x) => {
       const state = store.getState()
@@ -301,7 +302,7 @@ class ProjectProfile extends Component {
               <Segment>
                 {milestoneData &&
                   <Form.Field>
-                    <label><strong>Total Milestone Rewards: </strong>{this.getRewards()} ETH</label>
+                    <label><strong>Total Milestone Rewards: </strong>{this.getRewards()} ETH </label>
                   </Form.Field>
                 }
                 <Form.Field>
@@ -342,6 +343,13 @@ class ProjectProfile extends Component {
                   {milestoneRows}
                 </Table.Body>
               </Table>
+            }
+            {milestoneData === null &&
+            <Segment className='loading-wrap'>
+              <Dimmer active inverted>
+                <Loader>Loading milestone list</Loader>
+              </Dimmer>
+            </Segment>
             }
           </Grid.Column>
         </Grid>
