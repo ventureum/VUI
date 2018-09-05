@@ -20,7 +20,7 @@ import refundManager from './services/refundManager'
 import rewardManager from './services/rewardManager'
 import paymentManager from './services/paymentManager'
 import toastr from 'toastr'
-import { currentTimestamp } from './utils/utils'
+import { currentTimestamp, getNetwork } from './utils/utils'
 
 async function init () {
   async function initAccountPoll () {
@@ -59,6 +59,7 @@ async function init () {
     ])
     ReactDOM.render(<App />, document.getElementById('root'))
     await initAccountPoll()
+    getNetwork()
     toastr.options.preventDuplicates = true
     toastr.options.escapeHtml = false
     const oriError = toastr.error
