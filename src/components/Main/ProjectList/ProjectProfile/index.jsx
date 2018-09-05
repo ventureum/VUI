@@ -301,7 +301,7 @@ class ProjectProfile extends Component {
               <Segment>
                 {milestoneData &&
                   <Form.Field>
-                    <label><strong>Total Milestone Rewards: </strong>{this.getRewards()}</label>
+                    <label><strong>Total Milestone Rewards: </strong>{this.getRewards()} ETH</label>
                   </Form.Field>
                 }
                 <Form.Field>
