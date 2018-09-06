@@ -56,7 +56,8 @@
     "properties": {
       "projectName": {
         "type": "string",
-        "title": "Project Name"
+        "title": "Project Name",
+        "default": "project"
       },
       "projectOverview": {
         "type": "object",

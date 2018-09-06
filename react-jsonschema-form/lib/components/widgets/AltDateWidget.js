@@ -102,7 +102,9 @@ var AltDateWidget = function (_Component) {
       if (disabled || readonly) {
         return;
       }
-      var nowDateObj = (0, _utils.parseDateString)(new Date().toJSON(), time);
+      var temp = new Date();
+      temp.setHours(temp.getHours() - temp.getTimezoneOffset() / 60);
+      var nowDateObj = (0, _utils.parseDateString)(temp.toJSON(), time);
       _this.setState(nowDateObj, function () {
         return onChange((0, _utils.toDateString)(_this.state, time));
       });

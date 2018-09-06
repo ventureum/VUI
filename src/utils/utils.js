@@ -82,7 +82,7 @@ function currentTimestamp (sync = true) {
   if (source === 'blockchain') {
     return getTimestampFromBlockchain(sync)
   } else {
-    timestamp = moment().utc().unix()
+    timestamp = moment().unix()
     if (sync) {
       return timestamp
     } else {
@@ -166,34 +166,34 @@ function byte32ToHash (input) {
 }
 
 function getReadableLength (seconds) {
-    let result = {
-      day: 0,
-      hour: 0,
-      minute: 0,
-      second: 0
-    }
-
-    let oneMinute = 60
-    let oneHour = 60 * oneMinute
-    let oneDay = 24 * oneHour
-
-    if (seconds >= oneDay) {
-      result.day = Math.floor(seconds / oneDay)
-      seconds = seconds % oneDay
-    }
-    if (seconds >= oneHour) {
-      result.hour = Math.floor(seconds / oneHour)
-      seconds = seconds % oneHour
-    }
-    if (seconds >= oneMinute) {
-      result.minute = Math.floor(seconds / oneMinute)
-      seconds = seconds % oneMinute
-    }
-    result.second = seconds
-    return Object.keys(result)
-      .filter(key => result[key] > 0)
-      .reduce((str, key) => [str, result[key], key + '(s)'].join(' '), '')
+  let result = {
+    day: 0,
+    hour: 0,
+    minute: 0,
+    second: 0
   }
+
+  let oneMinute = 60
+  let oneHour = 60 * oneMinute
+  let oneDay = 24 * oneHour
+
+  if (seconds >= oneDay) {
+    result.day = Math.floor(seconds / oneDay)
+    seconds = seconds % oneDay
+  }
+  if (seconds >= oneHour) {
+    result.hour = Math.floor(seconds / oneHour)
+    seconds = seconds % oneHour
+  }
+  if (seconds >= oneMinute) {
+    result.minute = Math.floor(seconds / oneMinute)
+    seconds = seconds % oneMinute
+  }
+  result.second = seconds
+  return Object.keys(result)
+    .filter(key => result[key] > 0)
+    .reduce((str, key) => [str, result[key], key + '(s)'].join(' '), '')
+}
 
 export {
   toStandardUnit,

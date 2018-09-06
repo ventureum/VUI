@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import CSSModules from 'react-css-modules'
 import toastr from 'toastr'
+import moment from 'moment'
 import styles from './styles.css'
 import registry from '../../../services/registry'
 import Form from 'react-jsonschema-form'
@@ -19,7 +20,7 @@ class Application extends Component {
       form: true,
       schema: JsonSchema.schema,
       uiSchema: JsonSchema.uiSchema,
-      formData: JsonSchema.formData,
+      formData: null,
       liveValidate: true,
       minDeposit: null,
       displayModal: false
@@ -69,6 +70,14 @@ class Application extends Component {
       return
     }
 
+    let _data = JSON.parse(JSON.stringify(this.state.formData))
+    if (_data.tokenSaleDetails.dateOfTokenSaleOrDistribution.StartTime) {
+      _data.tokenSaleDetails.dateOfTokenSaleOrDistribution.StartTime = moment(_data.tokenSaleDetails.dateOfTokenSaleOrDistribution.StartTime.replace('.000Z', '').replace('T', ' ')).utc().format('YYYY-MM-DDTHH:mm:ss.000') + 'Z'
+    }
+    if (_data.tokenSaleDetails.dateOfTokenSaleOrDistribution.EndTime) {
+      _data.tokenSaleDetails.dateOfTokenSaleOrDistribution.EndTime = moment(_data.tokenSaleDetails.dateOfTokenSaleOrDistribution.EndTime.replace('.000Z', '').replace('T', ' ')).utc().format('YYYY-MM-DDTHH:mm:ss.000') + 'Z'
+    }
+
     try {
       await registry.apply(projectName)
       await fetch(process.env.REACT_APP_APPLICATION_API_GATEWAY + '/project', { // eslint-disable-line
@@ -79,7 +88,7 @@ class Application extends Component {
         },
         body: JSON.stringify({
           'projectName': this.state.formData.projectName,
-          'data': Base64.encode(JSON.stringify({application: this.state.formData}))
+          'data': Base64.encode(JSON.stringify({application: _data}))
         })
       })
       toastr.success('Success')
@@ -89,10 +98,15 @@ class Application extends Component {
   }
 
   onChange ({formData}) {
-    this.setState({ formData })
+    this.setState({
+      formData
+    })
   }
 
   validate ({ projectName }, errors) {
+    if (!projectName) {
+      errors.projectName.addError('Project Name cannot be empty')
+    }
     if (!/^\w+$/.test(projectName)) {
       errors.projectName.addError('Project Name can only contain letters and numbers')
     }
@@ -108,6 +122,17 @@ class Application extends Component {
       displayModal
     } = this.state
 
+    let _formData
+    if (formData) {
+      _formData = JSON.parse(JSON.stringify(formData))
+      if (_formData.tokenSaleDetails.dateOfTokenSaleOrDistribution.StartTime) {
+        _formData.tokenSaleDetails.dateOfTokenSaleOrDistribution.StartTime = moment(_formData.tokenSaleDetails.dateOfTokenSaleOrDistribution.StartTime).format('YYYY-MM-DD HH:mm:ss')
+      }
+      if (_formData.tokenSaleDetails.dateOfTokenSaleOrDistribution.EndTime) {
+        _formData.tokenSaleDetails.dateOfTokenSaleOrDistribution.EndTime = moment(_formData.tokenSaleDetails.dateOfTokenSaleOrDistribution.EndTime).format('YYYY-MM-DD HH:mm:ss')
+      }
+    }
+
     return (
       <div className='application'>
         <Modal size='large' open={displayModal} closeIcon onClose={this.hideModal}>
@@ -116,7 +141,7 @@ class Application extends Component {
             <Segment>
               <strong>Please double check your application before submitting.</strong>
             </Segment>
-            <ProjectPreview formData={formData} schema={JsonSchema.schema} />
+            <ProjectPreview formData={_formData} schema={JsonSchema.schema} />
             <Segment>
               <strong>Please double check your application before submitting.</strong>
             </Segment>
@@ -128,7 +153,7 @@ class Application extends Component {
         <Grid stretched>
           <Container fluid>
             <Segment>
-              <strong> Non-refundable Application Fees: </strong>{toStandardUnit(minDeposit).toNumber()} VTX
+              <strong>Non-refundable Application Fees: </strong>{toStandardUnit(minDeposit).toNumber()} VTX
             </Segment>
             <div className='bootstrap-iso'>
               <Form

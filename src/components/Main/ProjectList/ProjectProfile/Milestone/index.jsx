@@ -255,12 +255,12 @@ class MilestoneModal extends Component {
             </List.Item>
             {milestone.startTime !== 0 &&
               <List.Item>
-                <strong>Start Time: </strong>{moment.unix(milestone.startTime).utc().format('YYYY-MM-DD HH:mm:ss')}
+                <strong>Start Time: </strong>{moment.unix(milestone.startTime).format('YYYY-MM-DD HH:mm:ss')}
               </List.Item>
             }
             {milestone.endTime !== 0 &&
               <List.Item>
-                <strong>End Time: </strong>{moment.unix(milestone.endTime).utc().format('YYYY-MM-DD HH:mm:ss')}
+                <strong>End Time: </strong>{moment.unix(milestone.endTime).format('YYYY-MM-DD HH:mm:ss')}
               </List.Item>
             }
             {milestone.refundInfo.ethRefund.toNumber() > 0 &&
@@ -270,7 +270,7 @@ class MilestoneModal extends Component {
             }
             {milestone.refundInfo.availableTime > 0 &&
               <List.Item>
-                <strong>Refund Available Time: </strong>{moment.unix(milestone.refundInfo.availableTime).utc().format('YYYY-MM-DD HH:mm:ss')}
+                <strong>Refund Available Time: </strong>{moment.unix(milestone.refundInfo.availableTime).format('YYYY-MM-DD HH:mm:ss')}
               </List.Item>
             }
             <List.Item>

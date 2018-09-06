@@ -25,8 +25,8 @@ class StartVotingPoll extends Component {
         }
       },
       formData: {
-        start: moment().utc().add(1, 'days').format('YYYY-MM-DDTHH:mm:ss.000Z'),
-        end: moment.unix(props.milestone.endTime).utc().format('YYYY-MM-DDTHH:mm:ss.000Z')
+        start: moment().add(2, 'minutes').format('YYYY-MM-DDTHH:mm:ss.000Z'),
+        end: moment.unix(props.milestone.endTime).format('YYYY-MM-DDTHH:mm:ss.000Z')
       }
     }
 
@@ -62,21 +62,23 @@ class StartVotingPoll extends Component {
     if (!formData.end) {
       errors.end.addError('Please choose end time.')
     }
-    if (moment(formData.start) < moment().utc()) {
+    if (moment(formData.start.replace('T', ' ').replace('.000Z', '')) < moment().local()) {
       errors.start.addError('Start time has passed.')
     }
     if (moment(formData.start) >= moment(formData.end)) {
       errors.end.addError('End time must be later than start time.')
     }
-    if (moment(formData.end) > moment.unix(this.props.milestone.endTime)) {
+    if (moment(formData.end.replace('T', ' ').replace('.000Z', '')) > moment.unix(this.props.milestone.endTime)) {
       errors.end.addError('End time is larger than milestone end time.')
     }
     return errors
   }
 
   async startVotingPoll () {
+    let startTime = moment(this.state.formData.start.replace('.000Z', '').replace('T', ' ')).utc().format('YYYY-MM-DDTHH:mm:ss.000') + 'Z'
+    let endTime = moment(this.state.formData.end.replace('.000Z', '').replace('T', ' ')).utc().format('YYYY-MM-DDTHH:mm:ss.000') + 'Z'
     try {
-      await repSys.startPoll(this.props.project.projectName, this.props.milestone, this.state.formData.start, this.state.formData.end)
+      await repSys.startPoll(this.props.project.projectName, this.props.milestone, startTime, endTime)
       toastr.success('Voting poll started!')
       this.close()
     } catch (e) {
@@ -110,10 +112,10 @@ class StartVotingPoll extends Component {
                   <strong>ID: </strong>{this.props.milestone.id}
                 </List.Item>
                 <List.Item>
-                  <strong>Start Time: </strong>{moment.unix(this.props.milestone.startTime).utc().format('YYYY-MM-DD HH:mm:ss')}
+                  <strong>Start Time: </strong>{moment.unix(this.props.milestone.startTime).format('YYYY-MM-DD HH:mm:ss')}
                 </List.Item>
                 <List.Item>
-                  <strong>End Time: </strong>{moment.unix(this.props.milestone.endTime).utc().format('YYYY-MM-DD HH:mm:ss')}
+                  <strong>End Time: </strong>{moment.unix(this.props.milestone.endTime).format('YYYY-MM-DD HH:mm:ss')}
                 </List.Item>
               </List>
               <div className='bootstrap-iso'>

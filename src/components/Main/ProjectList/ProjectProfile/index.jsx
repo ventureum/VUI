@@ -205,6 +205,10 @@ class ProjectProfile extends Component {
     }
   }
 
+  onCountdownExpire () {
+    window.location.reload()
+  }
+
   checkWait (data) {
     let now = this.state.timestamp
     let ms = data
@@ -292,7 +296,7 @@ class ProjectProfile extends Component {
           </Grid.Column>
           <Grid.Column width={9}>
             <Segment>
-              <strong>Application Expiry: </strong>{moment.unix(project.applicationExpiry).utc().format('YYYY-MM-DD HH:mm:ss')}
+              <strong>Application Expiry: </strong>{moment.unix(project.applicationExpiry).format('YYYY-MM-DD HH:mm:ss')}
               <br />
               <strong>Your Project Token Balance: </strong>{toStandardUnit(project.balance).toNumber()}
               <br />
@@ -322,7 +326,7 @@ class ProjectProfile extends Component {
             {timestamp <= waitingTime &&
               <Segment>
                 <strong>Next voting poll will starts in: </strong>
-                <Countdown endDate={waitingTime} />
+                <Countdown endDate={waitingTime} onExpire={this.onCountdownExpire.bind(this)} />
               </Segment>
             }
             {project.isOwner && project.controllerStageStr === 'accepted' &&
