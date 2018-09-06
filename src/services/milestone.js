@@ -145,25 +145,25 @@ class MilestoneService {
   async getStateStrReadable (ms) {
     let now = await currentTimestamp()
     if (ms.state === 0) {
-      return 'inactive'
+      return 'Inactive'
     }
     if (now < ms.startTime + ms.ratingStageMinStartTimeFromBegin) {
       if (ms.pollExist) {
-        return 'vote'
+        return 'Delegate Voting'
       } else {
-        return 'in progress'
+        return 'In Progress'
       }
     }
     if (now < ms.endTime - ms.ratingStageMaxStartTimeFromEnd) {
-      return 'rating'
+      return 'Rating'
     }
     if (now < ms.endTime - ms.refundStageMinStartTimeFromEnd) {
-      return 'regulator voting'
+      return 'Regulator Voting'
     }
     if (now < ms.endTime) {
-      return 'refund'
+      return 'Refund'
     }
-    return 'completion'
+    return 'Completion'
   }
 
   async isRegulators (hash, id, objs, addr) {
