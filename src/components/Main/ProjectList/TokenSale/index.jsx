@@ -171,8 +171,7 @@ class TokenSale extends Component {
       return false
     }
     let sold = toStandardUnit(project.tokenInfo.totalTokenSold.div(project.tokenInfo.rate)).toNumber()
-    let buyAmount = this.state.buyTokenAmount / (project.tokenInfo.rate.toNumber())
-    if (sold + buyAmount < rewards) {
+    if (sold < rewards) {
       return false
     } else {
       return true
