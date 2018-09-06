@@ -101,9 +101,9 @@ class StartVotingPoll extends Component {
         onClose={stopPropagation(this.close)}
         size='small'
         closeIcon
-        trigger={<Button color='blue'>start voting poll</Button>}
+        trigger={<Button color='blue'>start delegate voting</Button>}
       >
-        <Modal.Header>Start Voting Poll</Modal.Header>
+        <Modal.Header>Start Delegate Voting</Modal.Header>
         <Modal.Content>
           <div className='ui grid stackable padded'>
             <div className='column sixteen wide'>
@@ -128,7 +128,7 @@ class StartVotingPoll extends Component {
                   validate={this.validate}
                   showErrorList={false}
                   liveValidate>
-                  <Button type='submit' primary >Start Voting Poll</Button>
+                  <Button type='submit' primary >Start Delegate Voting</Button>
                   <Button onClick={stopPropagation(this.close)}>Cancel</Button>
                 </Form>
               </div>
