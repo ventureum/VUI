@@ -210,7 +210,7 @@ class ProjectList extends Component {
               </Modal>
             </div>
             <div className='rt-td' style={{flex: '200 0 auto', width: '200px'}}><span className=''>{this.getProjectStage(project)}</span></div>
-            <div className='rt-td Number' style={{flex: '150 0 auto', width: '150px'}}>{moment.unix(project.applicationExpiry).utc().format('YYYY-MM-DD HH:mm:ss')}</div>
+            <div className='rt-td Number' style={{flex: '150 0 auto', width: '150px'}}>{moment.unix(project.applicationExpiry).format('YYYY-MM-DD HH:mm:ss')}</div>
             <div className='rt-td' style={{flex: '200 0 auto', width: '200px'}}>
               {!this.actionNeedModal(project) &&
                 <a onClick={wrapWithTransactionInfo('update-status', this.updateStatus, project)} className='ui mini button purple' href='#!'>{project.action}</a>

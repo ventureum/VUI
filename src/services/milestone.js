@@ -145,25 +145,25 @@ class MilestoneService {
   async getStateStrReadable (ms) {
     let now = await currentTimestamp()
     if (ms.state === 0) {
-      return 'inactive'
+      return 'Inactive'
     }
     if (now < ms.startTime + ms.ratingStageMinStartTimeFromBegin) {
       if (ms.pollExist) {
-        return 'vote'
+        return 'Delegate Voting'
       } else {
-        return 'in progress'
+        return 'In Progress'
       }
     }
     if (now < ms.endTime - ms.ratingStageMaxStartTimeFromEnd) {
-      return 'rating'
+      return 'Rating'
     }
     if (now < ms.endTime - ms.refundStageMinStartTimeFromEnd) {
-      return 'regulator voting'
+      return 'Regulator Voting'
     }
     if (now < ms.endTime) {
-      return 'refund'
+      return 'Refund'
     }
-    return 'completion'
+    return 'Completion'
   }
 
   async isRegulators (hash, id, objs, addr) {
@@ -176,12 +176,20 @@ class MilestoneService {
 
   async getObjScore (hash, id, obj) {
     let regulatorList = await regulatingRating.getRegulatorList(hash, id, obj)
-    let score = 0
+    let score = big(0)
+    let regulatorScoreList = []
+    let totalWeight = big(0)
     for (let i = 0; i < regulatorList.length; i++) {
       let info = await regulatingRating.getRegulatorVoteInfo(hash, id, obj, regulatorList[i])
-      score += toStandardUnit(info.weight.times(info.score)).toNumber()
+      regulatorScoreList.push(info)
+      totalWeight = info.weight.plus(totalWeight)
     }
-    return score.toFixed(2).replace(/[.,]00$/, "")
+    if (!totalWeight.eq(0)) {
+      regulatorScoreList.forEach(item => {
+        score = item.weight.times(item.score).div(totalWeight).plus(score)
+      })
+    }
+    return toStandardUnit(score).toNumber().toFixed(2).replace(/[.,]00$/, "")
   }
 
   async getObjScores (hash, id, objs, objIsRegulators) {
@@ -211,7 +219,7 @@ class MilestoneService {
     }
     let data = await this.msview.getNumberOfMilestones.call(web3.utils.keccak256(name))
     if (data.toNumber() === 0) {
-      return null
+      return []
     }
     let result = []
     for (let i = 1; i <= data.toNumber(); i++) {
@@ -247,8 +255,7 @@ class MilestoneService {
       }
       let objScores = []
       let yourScores = []
-      let now = await currentTimestamp(false)
-      if (endTime && now > endTime - ratingStageMaxStartTimeFromEnd) {
+      if (state >= 2) {
         ;({objScores, yourScores} = await this.getObjScores(projectHash, i, objInfo[0], objIsRegulators))
       }
       let bidInfo = null

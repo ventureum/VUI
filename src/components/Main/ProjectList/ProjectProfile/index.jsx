@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import saveFile from '../../../../utils/saveFile'
-import { Grid, Table, Button, Segment, Form } from 'semantic-ui-react'
+import { Grid, Table, Button, Segment, Form, Loader, Dimmer } from 'semantic-ui-react'
 import { Scrollbars } from 'react-custom-scrollbars'
 import { Base64 } from 'js-base64'
 import toastr from 'toastr'
@@ -49,6 +49,7 @@ class ProjectProfile extends Component {
     this._isMounted = true
     this.getProjectData()
     this.getMilestoneData()
+
 
     store.subscribe(async (x) => {
       const state = store.getState()
@@ -204,6 +205,10 @@ class ProjectProfile extends Component {
     }
   }
 
+  onCountdownExpire () {
+    window.location.reload()
+  }
+
   checkWait (data) {
     let now = this.state.timestamp
     let ms = data
@@ -291,7 +296,7 @@ class ProjectProfile extends Component {
           </Grid.Column>
           <Grid.Column width={9}>
             <Segment>
-              <strong>Application Expiry: </strong>{moment.unix(project.applicationExpiry).utc().format('YYYY-MM-DD HH:mm:ss')}
+              <strong>Application Expiry: </strong>{moment.unix(project.applicationExpiry).format('YYYY-MM-DD HH:mm:ss')}
               <br />
               <strong>Your Project Token Balance: </strong>{toStandardUnit(project.balance).toNumber()}
               <br />
@@ -301,7 +306,7 @@ class ProjectProfile extends Component {
               <Segment>
                 {milestoneData &&
                   <Form.Field>
-                    <label><strong>Total Milestone Rewards: </strong>{this.getRewards()}</label>
+                    <label><strong>Total Milestone Rewards: </strong>{this.getRewards()} ETH </label>
                   </Form.Field>
                 }
                 <Form.Field>
@@ -321,7 +326,7 @@ class ProjectProfile extends Component {
             {timestamp <= waitingTime &&
               <Segment>
                 <strong>Next voting poll will starts in: </strong>
-                <Countdown endDate={waitingTime} />
+                <Countdown endDate={waitingTime} onExpire={this.onCountdownExpire.bind(this)} />
               </Segment>
             }
             {project.isOwner && project.controllerStageStr === 'accepted' &&
@@ -342,6 +347,13 @@ class ProjectProfile extends Component {
                   {milestoneRows}
                 </Table.Body>
               </Table>
+            }
+            {milestoneData === null &&
+            <Segment className='loading-wrap'>
+              <Dimmer active inverted>
+                <Loader>Loading milestone list</Loader>
+              </Dimmer>
+            </Segment>
             }
           </Grid.Column>
         </Grid>

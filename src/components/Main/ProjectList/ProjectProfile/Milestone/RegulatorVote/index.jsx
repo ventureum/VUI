@@ -54,7 +54,7 @@ class RegulatorVote extends Component {
       return false
     }
     if (this.state.score > this.props.project.maxScore) {
-      toastr.error('Score must be less than ' + this.props.project.maxScore + '.')
+      toastr.error('Score must be less than or equal to ' + this.props.project.maxScore + '.')
       return false
     }
     return true
